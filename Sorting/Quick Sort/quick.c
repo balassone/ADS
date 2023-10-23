@@ -8,33 +8,8 @@ int getRandom(int p, int r) {
     return p + rand() % (r - p + 1);
 }
 
-int randomizedPartition(int* A, int p, int r) {
-    int i = getRandom(p, r); // Randomly select a pivot index
-    int temp = A[r];
-    A[r] = A[i];
-    A[i] = temp;
-    
-    int x = A[r];
-    i = p - 1;
-
-    for (int j = p; j <= r - 1; j++) {
-        if (A[j] <= x) {
-            i++;
-            int temp = A[i];
-            A[i] = A[j];
-            A[j] = temp;
-        }
-    }
-    
-    temp = A[i + 1];
-    A[i + 1] = A[r];
-    A[r] = temp;
-
-    return i + 1;
-}
-
 int partition(int* A, int p, int r){
-    int x = A[p];
+    int x = A[r];
     int i=p-1;
     int j=r+1;
     while (true)    {
@@ -55,10 +30,26 @@ int partition(int* A, int p, int r){
     
 }
 
+int randomizedPartition(int* A, int p, int r) {
+    int i = getRandom(p, r); // Randomly select a pivot index
+    int temp = A[r];
+    A[r] = A[i];
+    A[i] = temp;
+    return partition(A,p,r);
+}
+
 void QuickSort(int* A, int p, int r){
     if(p<r){
         int q = partition(A,p,r);
         QuickSort(A,p,q);
         QuickSort(A,q+1,r);
+    }
+}
+
+void randomQuickSort(int* A, int p, int r){
+    if(p<r){
+        int q = randomizedPartition(A,p,r);
+        randomQuickSort(A,p,q);
+        randomQuickSort(A,q+1,r);
     }
 }
