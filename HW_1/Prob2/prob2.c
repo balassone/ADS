@@ -33,7 +33,7 @@ void LCS(string* A, int p, int r, string* result){ // T(n)=2T(n/2)+O(n), è Thet
         LCS(A,p,q,&L);
         LCS(A,q+1,r,&R);
         singleLCS(L,strlen(L),R,strlen(R),&res);
-        strcpy(*(result),res);
+        memcpy(*(result),res,sizeof(res));
     }
 }
 
