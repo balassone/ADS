@@ -33,7 +33,7 @@ void LCS(string* A, int p, int r, string* result){ // T(n)=2T(n/2)+O(n), è Thet
         LCS(A,p,q,&L);
         LCS(A,q+1,r,&R);
         singleLCS(L,strlen(L),R,strlen(R),&res);
-        strcpy(*(result),res);
+        memcpy(*(result),res,sizeof(res));
     }
 }
 
@@ -45,7 +45,7 @@ int main(){
     while(cases>0){
         int i=0;
         string strs[100];
-        while(fscanf(file,"%s",strs[i])>0 && strcmp(strs[i],"STOP")!=0){
+        while(fscanf(file,"%s",strs[i])>0 && strcmp(strs[i],"END")!=0){
             i++;
         }
         string subsequence;

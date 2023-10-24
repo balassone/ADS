@@ -25,10 +25,10 @@ void BSTInsert(node** root, node* n) {
 void TreapInsert(node** root, node* n) {
     BSTInsert(root, n);
 
-    // Esegui la rotazione per mantenere la proprietà del treap
+    // Ruoto per mantenere le proprietà treap (min-heap)
     while (*root != NULL && (*root)->priority > n->priority) {
-        if (n->key < (*root)->key) {
-            // Rotazione a destra
+        if (n->key < (*root)->key) { // se n è un figlio sinistro
+            // Ruoto a dx
             node* newRoot = (*root)->left;
             (*root)->left = newRoot->right;
             newRoot->right = *root;
@@ -36,7 +36,7 @@ void TreapInsert(node** root, node* n) {
             (*root)->parent = newRoot;
             *root = newRoot;
         } else {
-            // Rotazione a sinistra
+            // Ruoto a sx
             node* newRoot = (*root)->right;
             (*root)->right = newRoot->left;
             newRoot->left = *root;
@@ -48,12 +48,10 @@ void TreapInsert(node** root, node* n) {
 }
 
 int main() {
-    // Esempio di utilizzo
     node* root = NULL;
     node n;
     n.key = 5;
     n.priority = 10;
     TreapInsert(&root, &n);
-    // Altre operazioni di inserimento o manipolazione dell'albero
     return 0;
 }

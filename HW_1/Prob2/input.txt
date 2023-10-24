@@ -3,11 +3,11 @@ apple
 ape
 april
 applied
-STOP
+END
 maruzzella
 maruzara
 maruziio
-STOP
+END
 lucia
 lucio
 lucar
