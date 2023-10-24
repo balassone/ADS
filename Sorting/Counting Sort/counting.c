@@ -27,7 +27,7 @@ void countingSort(int A[], int B[], int n, int k) {
 }
 
 int main() {
-    int A[] = {4, 2, 2, 8, 3, 3, 1};
+    int A[] = {4, 2, 2, 8, 3, 3};
     int n = sizeof(A) / sizeof(A[0]);
     int k = 8; // Range of values
 
