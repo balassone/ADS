@@ -45,7 +45,7 @@ int main(){
     while(cases>0){
         int i=0;
         string strs[100];
-        while(fscanf(file,"%s",strs[i])>0 && strcmp(strs[i],"STOP")!=0){
+        while(fscanf(file,"%s",strs[i])>0 && strcmp(strs[i],"END")!=0){
             i++;
         }
         string subsequence;
