@@ -1,57 +1,73 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-typedef struct node {
-    struct node* parent;
-    struct node* left;
-    struct node* right;
-    int key;
-    int priority;
+typedef struct {
+    int key, priority;
+    node *left, *right;
 } node;
 
-void BSTInsert(node** root, node* n) {
-    if (*root == NULL) {
-        *root = n;
-        n->parent = n->left = n->right = NULL;
-    } else if (n->key < (*root)->key) {
-        BSTInsert(&((*root)->left), n);
-        (*root)->left->parent = *root;
-    } else if (n->key > (*root)->key) {
-        BSTInsert(&((*root)->right), n);
-        (*root)->right->parent = *root;
-    }
+node* newNode(int key) {
+    node* temp = (node*)malloc(sizeof(node));
+    temp->key = key;
+    temp->priority = rand()%100;
+    temp->left = temp->right = NULL;
+    return temp;
 }
 
-void TreapInsert(node** root, node* n) {
-    BSTInsert(root, n);
+node* rightRotate(node* y) {
+    node* x = y->left,  *T2 = x->right;
+    x->right = y;
+    y->left = T2;
+    return x;
+}
 
-    // Ruoto per mantenere le proprietà treap (min-heap)
-    while (*root != NULL && (*root)->priority > n->priority) {
-        if (n->key < (*root)->key) { // se n è un figlio sinistro
-            // Ruoto a dx
-            node* newRoot = (*root)->left;
-            (*root)->left = newRoot->right;
-            newRoot->right = *root;
-            newRoot->parent = (*root)->parent;
-            (*root)->parent = newRoot;
-            *root = newRoot;
-        } else {
-            // Ruoto a sx
-            node* newRoot = (*root)->right;
-            (*root)->right = newRoot->left;
-            newRoot->left = *root;
-            newRoot->parent = (*root)->parent;
-            (*root)->parent = newRoot;
-            *root = newRoot;
-        }
+node* leftRotate(node* x) {
+    node* y = x->right, *T2 = y->left;
+    y->left = x;
+    x->right = T2;
+    return y;
+}
+
+node* insert(node* root, int key) {
+    if (root == NULL)
+        return newNode(key);
+
+    if (key <= root->key) {
+        root->left = insert(root->left, key);
+
+        if (root->left->priority < root->priority)
+            root = rightRotate(root);
+    } else {
+
+        root->right = insert(root->right, key);
+
+        if (root->right->priority < root->priority)
+            root = leftRotate(root);
+    }
+    return root;
+}
+
+void inorder(node* root) {
+    if (root) {
+        inorder(root->left);
+        printf("key: %d | priority: %d \n", root->key, root->priority);
+        inorder(root->right);
     }
 }
 
 int main() {
     node* root = NULL;
-    node n;
-    n.key = 5;
-    n.priority = 10;
-    TreapInsert(&root, &n);
+    srand(time(NULL));
+
+    root = insert(root, 10);
+    root = insert(root, 20);
+    root = insert(root, 30);
+    root = insert(root, 40);
+    root = insert(root, 50);
+    root = insert(root, 25);
+
+    inorder(root);
+
     return 0;
 }
