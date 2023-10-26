@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-int merge(int* A, int p, int q, int r){ // Cosa O(n)
+int merge(int* A, int p, int q, int r){ // Costa O(n)
     int n1 = q-p+1;
     int n2 = r-q;
     int L[n1], R[n2];
@@ -23,7 +23,7 @@ int merge(int* A, int p, int q, int r){ // Cosa O(n)
         } else {
             A[k] = R[j];
             j++;
-            scambi += n1-i; // sto "scavalcando" tutti gli n1-1 elementi che rimangono in L per inserire R[j]
+            scambi += n1-i; // sto "scavalcando" tutti gli n1-i elementi che rimangono in L per inserire R[j], dove i è l'indice associato alla posizione dove andrà il mio elemento
         }
         k++;
     }
