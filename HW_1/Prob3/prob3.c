@@ -34,13 +34,13 @@ node* insert(node* root, int key) {
         return newNode(key);
 
     if (key <= root->key) {
-        root->left = insert(root->left, key);
+        root->left = insert(root->left, key); //inserimento BST e ritorno il puntatore
 
         if (root->left->priority < root->priority)
             root = rightRotate(root);
     } else {
 
-        root->right = insert(root->right, key);
+        root->right = insert(root->right, key); //inserimento BST e ritorno il puntatore
 
         if (root->right->priority < root->priority)
             root = leftRotate(root);

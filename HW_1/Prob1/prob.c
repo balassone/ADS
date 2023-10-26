@@ -1,32 +1,8 @@
-/*
-Si richiede di analizzare un particolare algoritmo di ordinamento. 
-
-L'algoritmo elabora una
-sequenza di n interi distinti scambiando due elementi adiacenti finché la sequenza non viene
-ordinata in ordine crescente.
-
-La lunghezza massima della sequenza di input è n < 500.000.
-
-
-Per la sequenza di input: 91054, l’algoritmo produce l'output 01459.
-
-
-Bisogna determinare quante operazioni di scambio sono necessarie a quest’algoritmo per
-ordinare una determinata sequenza di input.
-
-Un modo alternativo di vedere è il problema è in termini di “inversioni”: in una sequenza A,
-la coppia (i, j) è un’inversione se i < j e Ai > Aj. Il problema consiste nel trovare il 
-conteggio delle inversioni.
-
-Divide et impera
-
-
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-int merge(int* A, int p, int q, int r){
+int merge(int* A, int p, int q, int r){ // Cosa O(n)
     int n1 = q-p+1;
     int n2 = r-q;
     int L[n1], R[n2];
@@ -60,7 +36,7 @@ int merge(int* A, int p, int q, int r){
     return scambi;
 }
 
-int MergeSort(int* A, int p, int r){
+int MergeSort(int* A, int p, int r){ // T(n)=2T(n/2) + O(n): costa O(n log n)
     int scambi=0;
     if(p<r){
         int q = (p+r)/2;

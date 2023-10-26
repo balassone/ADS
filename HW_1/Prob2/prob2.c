@@ -3,7 +3,7 @@
 
 typedef char string[256];
 
-void singleLCS(string A, int dimA, string B, int dimB, string* res){ // Costa O(n): unico ciclo for sulla dimensione della stringa minore.
+void singleLCS(string A, int dimA, string B, int dimB, string* res){ // Costa O(l): unico ciclo for sulla lunghezza della stringa minore.
 
     string result;
     int dim = dimA<dimB ? dimA : dimB;
@@ -22,7 +22,7 @@ void singleLCS(string A, int dimA, string B, int dimB, string* res){ // Costa O(
     memcpy(*(res),result,sizeof(result));
 }
 
-void LCS(string* A, int p, int r, string* result){ // T(n)=2T(n/2)+O(n), è Theta(n log n) per metodo dell'esperto
+void LCS(string* A, int p, int r, string* result){ // T(n)=2T(n/2)+O(l), è Theta(l log n), dove n è il numero di stringhe in A
     if(r<p) return;
     if(r-p==0){
         memcpy(*(result),A[p],sizeof(A[0]));
