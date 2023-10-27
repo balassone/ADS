@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#define MAX 500000
 
 int merge(int* A, int p, int q, int r){ // Costa O(n)
     int n1 = q-p+1;
@@ -23,7 +24,7 @@ int merge(int* A, int p, int q, int r){ // Costa O(n)
         } else {
             A[k] = R[j];
             j++;
-            scambi += n1-i; // sto "scavalcando" tutti gli n1-i elementi che rimangono in L per inserire R[j], dove i è l'indice associato alla posizione dove andrà il mio elemento
+            scambi += n1-i; // sto "scavalcando" tutti gli n1-i elementi che rimangono in L per inserire R[j]
         }
         k++;
     }
@@ -51,7 +52,7 @@ int main(){
     FILE* file = fopen("input.txt", "r");
     int length;
     fscanf(file,"%d",&length);
-    while(length!=0){
+    while(length!=0 && length<MAX){
         int A[length];
         for(int i=0; i<length; i++){
             fscanf(file,"%d",&A[i]);
