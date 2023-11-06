@@ -1,45 +1,89 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdbool.h>
+#define MAXS 256
+#define MAX 100
 
-#define MAX 101
+typedef struct {
+    int i;
+    int j;
+} neighbor;
 
-int dp[MAX][MAX];
-int grid[MAX][MAX];
-int R, C;
 
-int max(int a, int b) {
-   return (a > b) ? a : b;
+bool inBound(int i, int j, int rows, int cols){
+    return (i>=0 && i<rows && j>=0 && j<cols);
 }
 
-int longestDecreasingPath(int i, int j) {
-   if (i < 0 || j < 0 || i >= R || j >= C || grid[i][j] == 0)
-       return 0;
-   if (dp[i][j] != -1)
-       return dp[i][j];
-   int res = 1 + max(longestDecreasingPath(i-1, j),
-                    longestDecreasingPath(i+1, j));
-   res = max(res, 1 + longestDecreasingPath(i, j-1));
-   res = max(res, 1 + longestDecreasingPath(i, j+1));
-   dp[i][j] = res;
-   return res;
+void build_neighbors(int matrix[][MAX],int rows, int cols, int x, int y,neighbor* neighbors, int* nneighbors){
+    if(inBound(x-1,y,rows,cols) && matrix[x-1][y]<matrix[x][y]){
+        neighbors[*nneighbors].i=x-1;
+        neighbors[*nneighbors].j=y;
+        (*nneighbors)++;
+    }
+    if(inBound(x,y-1,rows,cols) && matrix[x][y-1]<matrix[x][y]){
+        neighbors[*nneighbors].i=x;
+        neighbors[*nneighbors].j=y-1;
+        (*nneighbors)++;
+    }
+    if(inBound(x,y+1,rows,cols) && matrix[x][y+1]<matrix[x][y]){
+        neighbors[*nneighbors].i=x;
+        neighbors[*nneighbors].j=y+1;
+        (*nneighbors)++;
+    }
+    if(inBound(x+1,y,rows,cols) && matrix[x+1][y]<matrix[x][y]){
+        neighbors[*nneighbors].i=x+1;
+        neighbors[*nneighbors].j=y;
+        (*nneighbors)++;
+    }
 }
 
-int main() {
-   int N;
-   FILE* file = fopen("input.txt","r");
-   fscanf(file,"%d", &N);
-   while (N--) {
-       char name[MAX];
-       fscanf(file," %s %d %d", name, &R, &C);
-       for (int i = 0; i < R; i++)
-           for (int j = 0; j < C; j++)
-               fscanf(file,"%d", &grid[i][j]);
-       memset(dp, -1, sizeof(dp));
-       int maxPath = 0;
-       for (int i = 0; i < R; i++)
-           for (int j = 0; j < C; j++)
-               maxPath = max(maxPath, longestDecreasingPath(i, j));
-       printf("%s: %d\n", name, maxPath);
-   }
-   return 0;
+int backtrack(int matrix[][MAX], int rows, int cols, int x, int y){
+    neighbor neighbors[4];
+    int nneighbors=0;
+    build_neighbors(matrix,rows,cols,x,y,neighbors,&nneighbors);
+    if(nneighbors==0){
+        return 1;
+    } else {
+        int a;
+        int max = -1;
+        for(int i=0; i<nneighbors; i++){
+            a=1+backtrack(matrix,rows,cols,neighbors[i].i,neighbors[i].j);
+            if(a>max){
+                max=a;
+            }
+        }
+        return max;
+    }
+    return 1;
+
+}
+
+int main(){
+    FILE* file = fopen("input.txt","r");
+    int tc;
+    fscanf(file,"%d",&tc);
+    while(tc--){
+        char pista[MAXS];
+        fscanf(file,"%s",pista);
+        int matrix[MAX][MAX];
+        int rows, cols;
+        fscanf(file,"%d %d",&rows, &cols);
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                fscanf(file,"%d",&matrix[i][j]);
+            }
+        }
+        int max=-1;
+        int a;
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                a = backtrack(matrix,rows,cols,i,j);
+                if(a>max){
+                    max=a;
+                }
+            }
+        }
+        printf("%s: %d\n",pista,max);
+    }
+    fclose(file);
+    return 0;
 }
