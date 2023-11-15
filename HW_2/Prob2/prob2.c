@@ -1,21 +1,24 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdbool.h>
 #define MAX 100
 
+// O(N)
+
 bool possiblePosition(int matrix[][MAX], int N, int x, int y) {
     
+    // Controllo sulla riga
     for (int i = 0; i < N; i++) {
         if (matrix[x][i] == 1) {
             return false;
         }
     }
-
+    // Controllo sulla colonna
     for (int i = 0; i < N; i++) {
         if (matrix[i][y] == 1) {
             return false; 
         }
     }
-    
+    // Controllo sulle due diagonali, in alto e in basso
     for (int i = x, j = y; i >= 0 && j >= 0; i--, j--) {
         if (matrix[i][j] == 1) {
             return false; 
@@ -43,10 +46,10 @@ bool possiblePosition(int matrix[][MAX], int N, int x, int y) {
     return true;
 }
 
-
+// O(N^2): chiama N volte possiblePosition
 void build_candidates(int matrix[][MAX], int N, int* candidates, int* nc, int placed){
     for(int i=0; i<N; i++){
-        if(possiblePosition(matrix,N,i,placed)){
+        if(possiblePosition(matrix,N,i,placed)){ // Aggiungo ai candidati solo se la soluzione è giusta
             candidates[*nc]=i;
             (*nc)++;
         }
@@ -54,9 +57,9 @@ void build_candidates(int matrix[][MAX], int N, int* candidates, int* nc, int pl
 }
 
 
-
+// Nel caso peggiore O(N!)
 int backtrack(int matrix[][MAX], int N, int placed){
-    if(placed==N){
+    if(placed==N){ // Se ho posizionato tutte le regine
         return 1;
     }
     int candidates[N];
@@ -64,7 +67,7 @@ int backtrack(int matrix[][MAX], int N, int placed){
     build_candidates(matrix,N,candidates,&nc,placed);
     int count=0;
     for(int i=0; i<nc; i++){
-        matrix[candidates[i]][placed]=1;
+        matrix[candidates[i]][placed]=1; // Posiziono le regine da sx verso dx, placed indica a che colonna mi trovo
         placed++;
         count += backtrack(matrix,N,placed);
         placed--;
