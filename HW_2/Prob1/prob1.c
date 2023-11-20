@@ -1,27 +1,54 @@
 #include <stdio.h>
-
+#include <string.h>
+#include <stdlib.h>
+#define MAX 100
 // Complessità O(n): scorro tutto l'array
 
 int main(){
+    
     FILE* file = fopen("input.txt","r");
 
-    int array[4]; // Dimensione fixata pari a 4 per i test case.
+    char line[256];
 
-    while(fscanf(file,"%d %d %d %d",&array[0],&array[1],&array[2],&array[3])>0){
+    while(fgets(line,sizeof(line),file)){
 
-        int placeholder_count=array[0]; // Segnaposto per il massimo sottoarray
+        if(strcmp("END",line)==0) break;
 
-        int basic_count=0; // Somma parziale
+        char* token = strtok(line, " ");
+        int len = 0;
 
-        for(int i=0; i<4; i++){ // Complessità O(n)
-            if(basic_count+array[i]>basic_count){ // Se il prossimo elemento aumenta la somma parziale
-                basic_count+=array[i];
-                if(basic_count>placeholder_count) placeholder_count=basic_count; // Se la nuova somma è maggiore
-                // del segnaposto
-            } else basic_count=0; // Azzero la somma parziale alla ricerca di una somma migliore
+        int array[MAX];
+
+        while(token != NULL){
+            array[len++]=atoi(token);
+            token = strtok(NULL," ");
+        }
+
+        int somma_tot=array[0]; // Segnaposto per il massimo sottoarray, lo inizializzo al primo elemento
+
+        int somma_par=0; // Somma parziale, parte da zero e successivamente sarà pari o ad una somma o all'i-esimo elemento
+
+        for(int i=0; i<len; i++){
+
+            if(somma_par+array[i]>=array[i]){
+
+                somma_par+=array[i]; // Se la somma è comunque un numero più grande dell'elemento corrente la continuo a considerare: io voglio il massimo.
+
+            
+            } else {
+
+                somma_par=array[i];
+            }
+            // Se l'elemento corrente è maggiore della nuova somma parziale, allora la "resetto" con l'elemento corrente (e non a 0 altrimenti lo "dimentico").
+
+            // Es. -8 +3: sicuramente -5 è meno promettente di +3, quindi inizio a contare da 3
+            
+            if(somma_par>somma_tot) somma_tot=somma_par; // Se la somma parziale è più grande della totale (inizialmente maggiore del primo elemento) allora la sostituisco
         }
         
-        printf("%d\n",placeholder_count);
+        printf("%d\n",somma_tot);
     }
+    
+    fclose(file);
     return 0;
 }

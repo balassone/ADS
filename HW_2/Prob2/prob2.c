@@ -57,7 +57,7 @@ void build_candidates(int matrix[][MAX], int N, int* candidates, int* nc, int pl
 }
 
 
-// Nel caso peggiore O(N!)
+// Nel caso peggiore esplode a O(N!)
 int backtrack(int matrix[][MAX], int N, int placed){
     if(placed==N){ // Se ho posizionato tutte le regine
         return 1;
