@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+/*
+C++ 
+T(n)=T(n/2)+O(1)
+Complessità O(log n)
+*/
+int getSum(int A[], int p, int r){
+    if(p==r) return A[p];
+    if(r-p==1) return A[p]+A[r];
+    if(p<r){
+        int q = (p+r)/2;
+        int sum = getSum(A,p,q);
+        sum+=getSum(A,q+1,r);
+        return sum;
+    }
+    return 0;
+}
+
+int main(){
+    FILE* file = fopen("input.txt","r");
+    int tc;
+    fscanf(file,"%d",&tc);
+    while(tc--){
+        int dim;
+        fscanf(file,"%d",&dim);
+        int arr[dim];
+        for(int i=0; i<dim; i++){
+            fscanf(file,"%d",&arr[i]);
+        }
+        int sum = getSum(arr,0,dim-1);
+        int succession = (dim+1)*0.5*(arr[0]+arr[dim-1]);
+        if(succession-sum>0) printf("%d\n",succession-sum);
+        else printf("NON TROVATO\n");
+    }
+    fclose(file);
+    return 0;
+}

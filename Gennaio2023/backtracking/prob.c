@@ -101,15 +101,16 @@ int main(){
         int rows, cols;
         fscanf(file,"%d %d", &rows, &cols);
         char matrix[MAX][MAX];
-        int solution[MAX][MAX];
+        //int solution[MAX][MAX];
         position array[MAX];
-
+        /*
         for(int i=0; i<rows; i++){
             for(int j=0; j<cols; j++){
                 fscanf(file," %c",&matrix[i][j]);
                 solution[i][j]=0;
             }
         }
+        */
         
         for(int i=0; i<rows; i++){
             for(int j=0; j<cols; j++){
