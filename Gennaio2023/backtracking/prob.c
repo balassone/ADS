@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include<string.h>
-#include<stdbool.h>
+#include <string.h>
+#include <stdbool.h>
 
 #define MAXC 256
 #define MAX 100
