@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+
+#define N 1000
+
+PROBLEMA 1
+//complessità O(nlogn)
+//M63001171
+
+// funzione che restituisce il numero di occorrenze di k
+int conteggio(int v[N], int first, int n, int k)
+{
+
+    // caso base
+    if (first == n)
+    {
+        if (v[first] == k)
+        {
+            return 1;
+        }
+        else
+            return 0;
+    }
+    else
+    {
+
+        //ricorsione
+        int m = (first + n) / 2;
+
+        int count_1 = conteggio(v, first, m, k);
+        int count_2 = conteggio(v, m + 1, n, k);
+
+        return (count_1 + count_2);
+    }
+}
+
+int main()
+{
+    int test;
+    cin >> test;
+
+    while (test--)
+    {
+        int k; // numero da cercare
+        int v[N];
+
+        int n; // dimensione array
+
+        cin >> k;
+        cin >> n;
+
+        for (int i = 0; i < n; i++)
+        {
+            cin >> v[i];
+        }
+
+        cout << conteggio(v, 0, n - 1, k);
+    }
+
+    return 0;
+}

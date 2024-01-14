@@ -1,0 +1,305 @@
+//PROBLEMA 1 DI NEGRI FEDERICO 
+//IL SEGUENTE ALGORITMO PRESENTA COMPLESSITA' O(nlogn) IN QUANTO VIENE USATO COME ALGORITMO DI ORDINAMENTO IL MERGESORT
+//IL MERGESORT IMPLEMENTA UN APPROCCIO DI TIPO "DIVIDE ET IMPERA"->DIVIDE CONTINUAMENTE A METà L'ARRAY DI PARTENZA, ORDINA LE SOTTOLISTE E POI LE UNISCE
+
+
+
+
+#include <iostream>
+
+using namespace std;
+
+void merge(int v[], int p, int q, int r)
+{
+    int n1 = q - p + 1;
+    int n2 = r - q; 
+    int i, j, k;
+    int left_array[n1 + 1];
+    int right_array[n2 + 1];
+
+    left_array[n1] = INT_MAX;
+    right_array[n2] = INT_MAX;
+
+    for (i = 0; i < n1; i++)
+        left_array[i] = v[p + i];
+    for (j = 0; j < n2; j++)
+        right_array[j] = v[q + j + 1];
+
+    i = 0;
+    j = 0;
+
+    for (k = p; k <= r; k++) {
+        if (left_array[i] <= right_array[j]) {
+            v[k] = left_array[i];
+            i++;
+        } else {
+            v[k] = right_array[j];
+            j++;
+        }
+    }
+}
+
+
+void mergeSort(int v[], int p, int r) //IN INGRESSO AL MERGESORT ABBIAMO IL VETTORE DA ORDINARE, INDICE DEL 1 ELEMENTO E INDICE DELL'ULTIMO ELEMENTO
+{
+
+	if (p < r) {
+		int q = (p + r) / 2;
+		mergeSort(v, p, q);
+		mergeSort(v, q + 1, r);
+		merge(v, p, q, r);
+	}
+}
+
+int main()
+{
+    int testcases;
+    cin>>testcases;
+    while(testcases--)
+    {
+        int k,dim;
+        int count=0;
+        cin>>k;
+        cin>>dim;
+
+        int *vet=new int[dim];
+
+        for(int i=0;i<dim;i++)
+        {
+            cin>>vet[i];
+        }
+
+        mergeSort(vet, 0, dim-1);
+        
+        int i=0;
+        bool minore=true;
+
+        //conto elementi nel vettore ordinato = k, mi fermo appena trovo un elemento superiore (inutile scorrerlo tutto)
+
+        while(i<dim && minore)
+
+        {
+
+            if(vet[i]==k){
+
+                count++;
+
+            }
+
+            else if (vet[i]>k)
+
+            {
+
+                minore=false;
+
+            }
+
+            i++; 
+
+        }
+
+        
+
+        cout<<count<<endl;
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//PROBLEMA 2 NEGRI FEDERICO
+//BACKTRACKING 
+//complessita' del tipo O((n-1)^n) in quanto ho n-1 valori per cui io calcolo n mosse (possibili) 
+
+#include <iostream>
+#include <string>
+#include <climits>
+#include <string.h>
+
+using namespace std;
+
+
+
+
+//funzione per il calcolo di numeri primi
+void calcoloprimi(int *v, int n) 
+{
+
+    int i,j;
+    for(i=2; i<=n; i++){
+        if(v[i]==0)
+        { 
+            for(j=2*i; j<=n; j+=i) 
+            {
+                //imposto v[j] a 1 escludendo i  multipli
+                v[j]=1;        
+            }
+        }
+    }
+}
+
+bool prime(int number) //funzione che certifica che il num sia primo
+{
+
+    int i=1;
+
+    if(number>1){
+
+        do{
+
+            i++;
+
+        }while(number%i);
+
+    }
+
+    if(i==number) return true;
+    else return false;
+}
+
+void backtrack(int * sequenza_finale, int N, int somma, int somma_attuale, int dim_soluzione, int dim_primi, int* primi, int passo);
+
+bool jackpot(int dim_soluzione, int N)
+{
+    //faccio jackpot quando la mia soluzione ha dimensione N fissata
+    if(dim_soluzione==N)
+    {
+        return true;
+    }
+    return false;
+    
+}
+
+void algorithm(){
+
+    int test=0;
+    cin>>test;
+    int conteggio=1;
+
+    while(test--)
+    {
+        int N;
+        int somma;
+        int p;
+        int dim_primi=0;
+
+        cin>>somma;
+
+        cin>>N;
+
+        cin>>p;
+
+        int* sequenza_finale= new int[N];  //sequenza finale da costruire
+        int* primi_totali= new int[somma]; //tutti i numeri primi calcolati
+        int* primi= new int[somma];         //numeri primi maggiori di p
+
+        for(int i=0; i<somma;i++)
+        {
+            primi_totali[i]=0;
+        }
+
+        calcoloprimi(primi_totali,somma);
+        int j=0;
+        
+
+        for(int i=0; i<somma; i++)
+        {
+            if( primi_totali[i]==0 && i>p) //costurisco vettore dei primi maggiori di p
+            {
+                primi[j]=i;
+                dim_primi++;
+                j++;
+            }
+        }
+
+        primi[dim_primi]=somma;
+        dim_primi++;
+
+        for(int i=0; i<N;i++)
+        {
+            sequenza_finale[i]=0;
+        }
+
+        
+        cout<<"CASO DI TEST "<<conteggio<<endl;
+        backtrack(sequenza_finale,N,somma,0,0,dim_primi,primi,-1); //chiamo funzione di backtracktrack
+        conteggio++;
+
+    }
+
+    return;
+}
+    
+bool is_safe(int num, int somma, int somma_attuale)
+{
+    
+    
+    if(somma_attuale+num <= somma && num!=-1)  //se la somma attuale  è minore o uguale della somma da raggiungere ed è ottenuta con un numero valido allora ok!
+    {
+        return true;
+    }
+    return false;
+ 
+}
+
+void backtrack(int * sequenza_finale, int N, int somma, int somma_attuale, int dim_soluzione, int dim_primi, int* primi, int passo)
+{
+    if(jackpot(dim_soluzione,N)==true)
+    {
+        //se ho trovato la sequenza ed è proprio uguale alla somma-->la stampo
+        if(somma_attuale==somma) 
+        {
+                for(int i=0; i<N; i++)
+                {
+                    cout<<" "<<sequenza_finale[i];
+                }
+                cout<<endl;
+        }
+        return;
+    }
+    
+    int num=0;
+    int nuova_somma= somma_attuale;
+    int nuova_dim_sol= dim_soluzione;
+    
+
+    for(int k=passo+1; k<dim_primi; k++)
+    {
+        
+        num=primi[k];
+
+        if(is_safe(num,somma,somma_attuale)==true)
+        {
+            
+            primi[k]=-1;
+            nuova_somma= somma_attuale + num;
+            sequenza_finale[dim_soluzione]=num;
+            nuova_dim_sol= dim_soluzione +1;
+
+            backtrack(sequenza_finale,N,somma,nuova_somma,nuova_dim_sol,dim_primi,primi,k);
+
+            sequenza_finale[dim_soluzione]=0;
+            primi[k]=num;
+        } 
+    }
+    return;
+}
+
+int main()
+{
+    algorithm();
+    return 0;
+}

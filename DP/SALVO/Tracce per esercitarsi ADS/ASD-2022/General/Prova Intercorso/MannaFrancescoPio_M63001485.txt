@@ -1,0 +1,123 @@
+// ES1
+#include <bits/stdc++.h>
+
+using std::vector;
+using std::cin;
+using std::cout;
+using std::endl;
+
+int cont = 0;
+
+int f(vector<int> sequence, int k, int start, int end)
+{
+
+    if ((start > end)|| (start == end && sequence.at(start) != k))
+        return 0;
+
+    if (start == end && sequence.at(start) == k) {
+
+        return 1;
+    }
+
+    return  f(sequence, k, 1 + (end + start) / 2, end) + f(sequence, k,  start,(end + start) / 2);
+}
+
+
+int main() {
+
+    int t;
+    int k;
+    int dim;
+    cin >> t;
+    while (t--) {
+        cin >> k;
+        cin >> dim;
+
+        vector<int> vet(dim);
+
+        for (int i = 0; i < vet.size(); i++)
+            cin >> vet.at(i);
+
+        sort(vet.begin(), vet.end());
+
+        cout << f(vet, k, 0, vet.size()-1) << endl;
+    }
+
+    return 0;
+} // COMPLESSITA O(n log n)
+
+
+
+
+// ES2
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+vector<int> prime_sequence(20);
+
+bool isPrime(int n)
+{
+    if (n <= 1)
+        return false;
+
+    for (int i = 2; i < n; i++)
+        if (n % i == 0)
+            return false;
+
+    return true;
+}
+
+
+void find_prime_sequence(int p, int s){
+    for(int i=p+1; i<=s; i++)
+        if(isPrime(i))
+            prime_sequence.push_back(i);
+}
+
+
+void backtrack(vector<int> solution, int s, int n, int p, int current_sum, int k){
+
+    if(current_sum == s && solution.size() == n){
+        for(int i=0; i<solution.size(); i++)
+            cout << solution.at(i) << " ";
+        cout << endl;
+
+        return;
+    }
+
+    if(current_sum > s || k==prime_sequence.size())
+        return;
+
+    // aggiungo il candidato al vettore soluzione
+    solution.push_back(prime_sequence.at(k));
+
+    // aggiorno la somma
+    backtrack(solution, s, n, p, current_sum + prime_sequence.at(k), k+1);
+
+    // tolgo il candidato dal vettore soluzione
+    solution.pop_back();
+
+    // passo al prossimo candidato
+    backtrack(solution,  s, n, p, current_sum, k+1);
+} 
+
+
+
+int main(){
+    int t;
+    cin >> t;
+
+    while(t--){
+        int somma_da_raggiungere;
+        int p;
+        int n;
+        cin >> somma_da_raggiungere >> p >> n;
+
+        vector<int> solution(p);
+
+        backtrack(solution, somma_da_raggiungere, n, p, 0, 0);
+    }
+}
+

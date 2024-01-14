@@ -1,0 +1,229 @@
+Sofia Della Penna
+
+--------------------------------------------------------------------------------------------------------
+
+/* ESERCIZIO 1: Complessità stimata nel caso peggiore pari a: O(n*lg(n)) */
+
+#include <iostream>
+
+using namespace std;
+
+int COUNT;
+
+void mergeSort(int arr[], int l, int r);
+void merge(int arr[], int p, int q, int r);
+void printArray(int arr[], int N);
+void modifiedBinarySearch(int arr[], int l, int r, int x);
+
+int main() {
+
+    int test_cases;
+    int k;
+    int N;
+    int* array;
+
+    cout << "Inserisci il numero di casi di test:\n";
+    cin >> test_cases;
+
+    while (test_cases--) {
+
+        cout << "Inserisci il numero da cercare e la dimensione dell'array:\n";
+        scanf("%d %d", &k, &N);
+
+        array = new int[N];
+
+        cout << "Inserisci gli elementi dell'array:\n";
+        for (int i = 0; i < N; i++) scanf("%d", &array[i]);
+
+        // ordino l'array con merge sort
+        mergeSort(array, 0, N-1);
+
+        //printArray(array, N);
+
+        COUNT = 0;
+
+        modifiedBinarySearch(array, 0, N-1, k);
+
+        cout << "Il numero di occorrenze dell'elemento " << k << " è: " << COUNT << endl << endl;
+
+    }
+
+    return 0;
+}
+
+void printArray(int arr[], int N) {
+    for (int i = 0; i < N; i++) cout << arr[i] << " ";
+    cout << endl;
+}
+
+// Merge two subarrays L and M into arr
+void merge(int arr[], int p, int q, int r) {
+
+  // Create L ← A[p..q] and M ← A[q+1..r]
+  int n1 = q - p + 1;
+  int n2 = r - q;
+
+  int L[n1], M[n2];
+
+  for (int i = 0; i < n1; i++) L[i] = arr[p + i];
+  for (int j = 0; j < n2; j++) M[j] = arr[q + 1 + j];
+
+  // Maintain current index of sub-arrays and main array
+  int i, j, k;
+  i = 0;
+  j = 0;
+  k = p;
+
+  // Until we reach either end of either L or M, pick larger among
+  // elements L and M and place them in the correct position at A[p..r]
+  while (i < n1 && j < n2) {
+    if (L[i] <= M[j]) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = M[j];
+      j++;
+    }
+    k++;
+  }
+
+  // When we run out of elements in either L or M,
+  // pick up the remaining elements and put in A[p..r]
+  while (i < n1) {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+
+  while (j < n2) {
+    arr[k] = M[j];
+    j++;
+    k++;
+  }
+}
+
+// Divide the array into two subarrays, sort them and merge them
+void mergeSort(int arr[], int l, int r) {
+  if (l < r) {
+    // m is the point where the array is divided into two subarrays
+    int m = l + (r - l) / 2;
+
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+
+    // Merge the sorted subarrays
+    merge(arr, l, m, r);
+  }
+}
+
+void modifiedBinarySearch(int arr[], int l, int r, int x) {
+
+    if (r >= l) {
+        int mid = l + (r - l) / 2;  // l=left, r=right
+
+        if (arr[mid] == x) COUNT++;
+
+        modifiedBinarySearch(arr, l, mid - 1, x);
+
+        if (arr[mid] > x) return;
+
+        modifiedBinarySearch(arr, mid + 1, r, x);
+    }
+
+    return;
+}
+
+---------------------------------------------------------------------------------------------------------
+
+/* ESERCIZIO 2: Complessità stimata nel caso peggiore pari a: O(2^(N-P)) */
+
+#include <iostream>
+
+using namespace std;
+
+void backtrack(int S, int N, int P, int* solution, int k);
+void printSoluzione(int* solution, int N);
+int sum(int* solution, int N);
+bool isPrime(int n);
+bool isSafe(int S, int P, int* solution,int k, int i);
+
+int main() {
+
+    int test_cases;
+    int count_test_cases = 0;
+    int S;
+    int N;
+    int P;
+
+    int *solution;
+
+    cout << "Inserisci il numero di casi di test:\n";
+    cin >> test_cases;
+    cout << endl;
+
+    while (test_cases--) {
+
+        count_test_cases++;
+
+        scanf("%d %d %d", &S, &N, &P);
+
+        solution = new int[N];
+        for(int i = 0; i<N; i++) solution[i] = 0;
+
+        cout<< "CASO DI TEST " << count_test_cases << endl;
+
+        backtrack(S, N, P, solution, 0);
+
+        cout << endl;
+
+    }
+
+    return 0;
+
+}
+
+void backtrack(int S, int N, int P, int* solution, int k) {
+
+    if(k == N){
+        if(sum(solution, N) == S) printSoluzione(solution, N);
+    }
+
+    for(int i=P; i<=S; i++){
+        if(isSafe(S, P, solution, k, i)){
+            solution[k] = i;
+            backtrack(S, N, i, solution, k+1);
+            solution[k] = 0;
+        }
+    }
+}
+
+void printSoluzione(int* solution, int N) {
+    for(int i=0;i<N;i++) cout << solution[i] << " ";
+    cout<<endl;
+}
+
+int sum(int* solution, int N) {
+    int sum = 0;
+    for(int i=0; i<N; i++) sum += solution[i];
+    return sum;
+}
+
+bool isPrime(int n) {
+
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+
+    if (n % 2 == 0 || n % 3 == 0) return false;
+
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return false;
+
+    return true;
+}
+
+bool isSafe(int S, int P, int* solution, int k, int i) {
+
+    return (sum(solution, k) + 1 <= S && isPrime(i) && i > P);
+
+}

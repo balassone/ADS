@@ -1,0 +1,126 @@
+// Nicola Ciotta M63001350
+ESERCIZIO 1:
+
+#include <iostream>			// complessità O(nlogn)
+					
+using namespace std;
+
+int Count(int a[], int k, int n,int left, int right){
+	if( right - left == 1 ){
+		if( a[left] == k) return 1;
+		else return 0;
+	}
+	else{
+		int mid = (left + right) / 2;
+		int c1,c2;
+		c1 = Count(a,k,n,left, mid);
+		c2 = Count(a,k,n, mid, right);
+		int c = c1 + c2;
+     	return c;
+	}
+}
+
+int main(){
+	
+	int t,k,n;
+	cin>>t;
+	
+	while(t--){
+		cin>>k;
+		cin>>n;
+		int a[n] = {0};
+		
+		for(int i = 0 ; i < n ; i++)
+			cin>>a[i];
+			
+		
+			
+			
+		cout<< Count(a,k,n,0,n) << endl;
+	}
+}
+
+ESERCIZIO 2:
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+vector<int> set;
+vector<int> primo;
+
+int NumPrim(int x)
+{
+  
+  int rad = sqrt(x);
+  
+  for (int i = 2; i <= rad; i++)
+    if (x % i == 0)
+      return 0;
+
+  
+  return 1;
+}
+
+void print()
+{
+  int n = set.size();
+  for (int i = 0; i < n; i++)
+    cout << set[i] << " ";
+  cout <<endl;
+}
+
+void Somma(int totale, int N, int S, int index)
+{  
+
+  if (totale == S && set.size() == N)
+  {
+    print();
+    return;
+  }
+
+  // ci fermiamo se il totale è maggiore di S o se l'indice ha raggiunto l'ultimo elemento  
+  if (totale > S || index == primo.size())
+    return;
+
+  set.push_back(primo[index]);
+
+  Somma(totale+primo[index], N, S, index+1);
+  
+  set.pop_back(); //backtrack
+
+  Somma(totale, N, S, index+1);
+}
+
+
+void numPrimi(int N, int S, int P)
+{
+  int stop = 0; 
+
+  for (int i = P+1; i <=S ; i++) // andiamo a creare il vettore dei numeri primi da P a S
+  {
+    if (NumPrim(i) == 1)
+      primo.push_back(i);
+  }
+
+  if (primo.size() < N)
+    return;
+  Somma(0, N, S, 0);
+}
+
+
+int main()
+{ 
+  	int t;
+	cin>>t;
+	
+	while(t--){
+		int S,N,P;
+		cin>>S>>N>>P;
+		
+		numPrimi(N,S,P);
+	}
+
+  return 0;
+}

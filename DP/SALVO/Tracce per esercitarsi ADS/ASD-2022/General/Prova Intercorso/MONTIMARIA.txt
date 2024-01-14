@@ -1,0 +1,158 @@
+ESERCIZIO 1
+Complessità:O(nlogn)
+
+
+#include <iostream>
+using namespace std;
+
+int conta_occorrenze(int v[], int first, int last, int k)
+{
+ 
+    if ((first > last) || (first == last && v[first] != k))
+        return 0;
+ 
+    
+    if (first== last && v[first] == k)
+        return 1;
+ 
+   
+    return conta_occorrenze(v, first, (first + last) / 2, k) + conta_occorrenze(v, 1 + (first+ last) / 2, last, k);
+}
+ 
+
+
+
+
+
+
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
+int main(int argc, char** argv) {
+
+	int tc, r;
+	int a[100];
+	
+	cin>>tc;
+	while(tc--){
+		int k;
+		cin>>k;
+		cin>>r;
+		
+		for(int i=0; i<r; i++){
+			cin>>a[i];
+			
+		}
+		 
+ 
+    cout << conta_occorrenze(a, 0, r - 1, k);
+}
+    return 0;
+
+}
+
+
+
+
+
+
+
+ESERCIZIO 2: Complessità 2^(S-P)
+
+
+#include <iostream>
+using namespace std;
+
+bool isPrime(int n);
+bool isSafe(int n, int *output, int k);
+bool backtrack(int N, int P, int S, int *output, int k,int number);
+bool isASolution(int *output, int N, int S);
+void stampa(int *output,int N);
+
+bool isPrime(int n){
+    bool is_prime = true;
+      if (n == 0 || n == 1) {
+        is_prime = false;
+     }
+      for (int i = 2; i <= n/2; ++i) {
+    if (n % i == 0) {
+          is_prime = false;
+          break;
+        }
+      }
+      return is_prime;
+}
+
+bool isASolution(int *output, int N, int S){
+    int sum = 0;
+    for(int i = 0; i<N; i++){
+        sum += output[i];
+    }
+    if(sum == S){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
+bool isSafe(int n, int *output, int k){
+    if( !isPrime(n) ){
+        return false;
+    }
+    for(int i=0; i<k; i++){
+        if(output[i] == n){return false;}
+    }
+    return true;
+}
+
+bool backtrack(int N, int P, int S, int *output, int k, int number){
+    if( k == N  ){
+        if(isASolution(output, N, S)){
+            stampa(output, N);
+            return true;
+        }else{
+            return false;
+        }
+    }
+    bool res = false;
+    for(int i=number; i<=S ; i++ ){
+        if(isSafe(i,output,k)){
+            output[k]= i;
+            res = backtrack(N, P, S, output, k+1,i) || res;
+            output[k] = 0;
+        }
+    }
+    return res;
+    
+}
+
+
+void stampa(int *output,int N){
+    for(int i = 0; i<N;i++){
+        cout<<output[i]<<" ";
+    }
+    cout<<endl;
+}
+
+int main(int argc, const char * argv[]) {
+    int S,N,P;
+    int *output;
+    int tc;
+    int count_tc = 0;
+    cout<<"Inserisci numero di casi di test"<<endl;
+    cin>>tc;
+    while(count_tc < tc){
+        cin>> S;
+        cin>> N;
+        cin>> P;
+        output = new int[N];
+        for(int i = 0; i<N;i++){
+            output[i] = 0;
+        }
+        cout<<"CASO DI TEST "<<count_tc+1<<endl;
+        backtrack(N, P, S, output, 0,P);
+        delete[] output;
+        count_tc++;
+    }
+    return 0;
+}

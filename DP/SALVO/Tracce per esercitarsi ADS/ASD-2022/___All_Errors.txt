@@ -1,0 +1,14 @@
+CorrelationId: ad682e80-2d2a-420b-b89f-232531f7e786
+UTC DateTime: 10/19/2023 07:17:42
+
+The following files/folders have not been downloaded
+0. General/Recordings/View Only/Lezione 13 dicembre-20221213_123729-Registrazione della riunione.mp4
+1. General/Recordings/View Only/Lezione 14 novembre-20221114_144055-Registrazione della riunione.mp4
+2. General/Recordings/View Only/Lezione 17 ottobre-20221017_144909-Registrazione della riunione.mp4
+3. General/Recordings/View Only/Lezione 24 Ottobre - Hashing.mp4
+4. General/Recordings/View Only/Lezione 3 Novembre-20221103_123954-Registrazione della riunione.mp4
+5. General/Recordings/View Only/Lezione 3.mp4
+6. General/Recordings/View Only/Lezione 4.mp4
+7. General/Recordings/View Only/Lezione 5 dicembre-20221205_144755-Registrazione della riunione.mp4
+8. General/Recordings/View Only/Lezione 7 Novembre-20221107_144646-Registrazione della riunione.mp4
+9. General/Recordings/View Only/Riunione con ROBERTO PIETRANTUONO-20221011_124624-Registrazione della riunione.mp4

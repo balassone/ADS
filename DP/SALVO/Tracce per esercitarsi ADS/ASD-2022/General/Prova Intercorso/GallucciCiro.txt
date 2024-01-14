@@ -1,0 +1,258 @@
+/**
+ * INTERCORSO I ASD
+ * 
+ * ESERCIZIO 1
+ * 
+ * GALLUCCI CIRO
+ * 
+ * Matricola M63001446
+ * 
+ * 01 Dicembre 2022
+**/
+
+/**
+ * ANALISI DI COMPLESSITA'
+ * 
+ * La complessita' e' O(n log n) -- uso del MergeSort
+ */
+
+#include <iostream>
+#include <climits>
+using namespace std;
+
+//Funzione di merge, il cui scopo e' riunire gli array divisi
+//La complessita' e' O(2n)
+void merge(int v[], int p, int q, int r){
+    int n1 = q-p+1;
+    int n2 = r-q; 
+    int i, j, k;
+    int left_array[n1+1];
+    int right_array[n2+1];
+
+    left_array[n1] = INT_MAX;
+    right_array[n2] = INT_MAX;
+
+    for (i = 0; i < n1; i++)
+        left_array[i] = v[p+i];
+    for (j = 0; j < n2; j++)
+        right_array[j] = v[q+j+1];
+
+    i = 0;
+    j = 0;
+
+    for (k = p; k <= r; k++) {
+        if (left_array[i] <= right_array[j]) {
+            v[k] = left_array[i];
+            i++;
+        } else {
+            v[k] = right_array[j];
+            j++;
+        }
+    }
+}
+
+//MergeSort, la cui complessita' e' O(n*log n)
+//Tale funzione sfrutta la merge teste' definita
+//Prende in ingresso il vettore e gli indici di primo ed ultimo elemento
+//E' un algoritmo divide and conquer, il cui scopo è dividere un vettore
+//a meta', per poi unire, in modo ordinato, i sotto-array.
+//Il MergeSort e' un algoritmo stabile
+// Considerazioni sulla complessita'
+// Nel caso peggiore, medio e migliore, la complessita' e' sempre O(n*log n)
+// Lo spazio ausiliario e' O(n)
+void mergeSort(int v[], int p, int r) {
+	if (p < r) {
+		int q = (p + r)/2;
+		mergeSort(v, p, q);
+		mergeSort(v, q + 1, r);
+		merge(v, p, q, r);
+	}
+}
+
+int main(){
+    int testcases; //numero dei casi di test
+    int k, n; //k elemento da cercare, n dimensione dell'array
+    int counter; //conteggio del numero di hit, stampato al termine dell'algoritmo
+
+    cin>>testcases; //prelevo il numero di casi di test
+
+    while(testcases--){ //finché ho ancora casi di test
+        counter = 0; //inizializzo il counter volta per volta a 0
+        cin>>k; //standard input
+        cin>>n;
+
+        int*array = new int[n]; //array dinamico di dimensione n
+
+        for(int i=0; i<n; ++i){ //riempimento da standard input
+            cin>>array[i];
+        }
+
+        mergeSort(array, 0, n-1); //ordino la sequenza - DIVIDE AND CONQUER O(n*log n)
+
+        int i = 0;
+        bool flag = true;
+        while(i<n && flag){
+            if(array[i]==k) counter++;
+            else if (array[i]>k) flag=false;
+            i++;
+        }
+       
+
+        cout<<counter<<endl; //stampa finale
+
+    }
+    return EXIT_SUCCESS;
+}
+
+
+//----------------------------------------------------------------------------------------------------------
+
+/**
+ * INTERCORSO I ASD
+ * 
+ * ESERCIZIO 2
+ * 
+ * GALLUCCI CIRO
+ * 
+ * Matricola M63001446
+ * 
+ * 01 Dicembre 2022
+**/
+
+/**
+ * ANALISI DI COMPLESSITA'
+ * 
+ * La complessità è O((n-1)^n)
+ * Ho n-1 valori da esaminare (candidati), per i quali effettuo n possibili mosse
+**/
+
+/**
+ * NOTA PER L'ESECUZIONE -- IMPORTANTE
+ * Indicare anche il numero di casi di test
+ * Per quello proposto, l'input diventa 
+ * 
+ * 3
+ * 63 3 5 
+ * 23 3 2
+ * 17 1 5
+**/
+
+#include <iostream>
+#include <climits>
+using namespace std;
+
+//Funzione di backtrack
+void backtrack(int* sequence, int N, int sum, int actual_sum, int sol_dimension, int prime_dimension, int* primi, int ciclo);
+
+//Funzione che, in un apposito vettore con tutti i numeri da 1 ad un dato n, 
+//marca con 1 gli elementi che non sono numeri primi
+void crivello_di_eratostene(int *v, int n) {
+    for(int i=2; i<=n; i++){
+        if(v[i]==0){ //check se è 0
+            for(int j=2*i; j<=n; j+=i) {
+                //se il number e' primo, non saranno primi i sui multipli
+                v[j]=1;        
+            }
+        }
+    }
+}
+
+//Funzione di jackpot: ho fatto bingo nel backtrack
+bool jackpot(int sol_dimension, int N){
+    if(sol_dimension==N) return true;
+    return false;
+}
+
+//Mossa lecita
+bool is_safe(int number, int sum, int actual_sum){
+    //se la somma è minore di sum e il numero è lecito
+    if(actual_sum + number <= sum && number!=-1)  return true;
+    return false;
+}
+
+//Funzione di backtrack
+void backtrack(int* sequence, int N, int sum, int actual_sum, int sol_dimension, int prime_dimension, int* primi, int ciclo){
+
+    if(jackpot(sol_dimension, N)==true){ //jackpot
+        if(actual_sum==sum){ //abilito quindi la stampa
+            for(int i=0; i<N; i++) cout<<sequence[i]<<" ";
+            cout<<endl;
+        }
+        return;
+    }
+    
+    //Tengo traccia dei prossimi valori
+    int number=0;
+    int next_actual_sum = actual_sum;
+    int next_sol_dimension = sol_dimension;
+    
+    //Ciclo con k
+    for(int k = ciclo+1; k<prime_dimension; k++){
+        number=primi[k];
+
+        if(is_safe(number,sum,actual_sum)==true){
+            //Make move
+            primi[k] = -1;
+            next_actual_sum = actual_sum + number;
+            sequence[sol_dimension] = number;
+            next_sol_dimension = sol_dimension +1;
+            
+            backtrack(sequence, N, sum, next_actual_sum, next_sol_dimension, prime_dimension, primi, k);
+
+            //Unmake move
+            sequence[sol_dimension] = 0;
+            primi[k] = number;
+        } 
+    }
+    return;
+}
+
+//Main
+int main(){
+    int testcases=0; //casi di test
+    cin>>testcases; //standard input per prelevare il numero di casi di test
+
+    int index = 1; //index per la stampa "CASO DI TEST index"
+
+    while(testcases--){ //fintantoche' non scende a 0
+        int sum, N, prime; //sum e' S, N e' N, prime e' P
+        int prime_dimension=0;
+
+        cin>>sum>>N>>prime; //standard input
+
+        //Array dinamici
+        int* sequence = new int[N];
+        int* totali   = new int[sum];
+        int* primi    = new int[sum];
+
+        //Inizializzo il vettore
+        for(int i=0; i<sum; i++)  totali[i]=0;
+
+        crivello_di_eratostene(totali, sum); //indico i numeri primi fino a sum
+        //Dopo tale operazione, gli elementi di totali, con indice che finisce a sum,
+        //saranno 0 o 1: se 0, allora è pari
+
+        int j=0, h=0;
+
+        //In primi vanno tutti gli elementi 0 di totali
+        for(int i=0; i<sum; i++){
+            if(totali[i]==0 && i>prime){
+                primi[j]=i;
+                prime_dimension++;
+                j++;
+            }
+        }
+
+        primi[prime_dimension]=sum;
+        prime_dimension++;
+
+        for(int i=0; i<N; i++)  sequence[i]=0;
+
+        cout<<"CASO DI TEST "<<index++<<endl; //stampa richiesta prima di ogni caso di test
+        backtrack(sequence, N, sum, 0, 0, prime_dimension, primi, -1); //richiamo il backtrack
+    }
+
+    return EXIT_SUCCESS;
+}
+
+

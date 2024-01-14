@@ -1,0 +1,126 @@
+// Esercizio 1 prova intercorso 01/12/2022
+// Fedele Genny M63001422
+
+#include <iostream>
+
+using namespace std;
+#define N 20
+
+// La complessità dell'algoritmo è O(nlogn)
+//dove n è il numero di elementi appartenenti al vettore
+int conta(int vet[N],int l, int r,int k){
+	int count;
+	// quando arrivo al sottoproblema dove r e l coincidono, verifico se l'elemento 
+	//coincide a k
+	if ((l == r && vet[l] != k))
+		return 0;
+	if(l==r && vet[l]==k){
+		return 1;
+	}
+	count=conta(vet,l,(l+r)/2,k)+conta(vet,1+(l+r)/2,r,k);
+	return count;
+	
+}
+
+int main(){
+	int t;
+	
+	cin>>t;
+	while(t--){
+		int k;
+		int dim;
+		cin>>k;
+		cin>>dim;
+		int vet[dim];
+		for(int i=0;i<dim;i++){
+			cin>>vet[i];
+		}
+		
+		cout<<conta(vet,0,dim-1,k);
+		
+	}
+	return 0;
+	
+}
+
+
+
+
+
+
+
+// Esercizio 2 prova intercorso 01/12/2022
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+vector <int> primi;
+vector <int> vett;
+bool primo(int n){
+	
+	if(n<=2){
+		return true;
+	}
+	for(int i=2;i<n;i++){
+		if(n%i==0){
+			return false;
+		}
+		
+	}
+	return true;
+	
+}
+
+void genera_primi( int S, int P){
+	for(int i=P+1;i<=S;i++){
+		if(primo(i)){
+			primi.push_back(i);
+		}
+	}
+	
+}
+void print(vector <int> &vet){
+		for(int i=0;i<vet.size();i++){
+		cout<<" "<<vet[i];
+	}
+	cout<<endl;
+	
+}
+
+void solve(int S,int N,int sum,int count){
+	if(sum==S && vett.size()==N){
+		print(vett);
+		return;
+	}
+	if(sum>S || count==primi.size()){ // se la somma parziale sfora mi fermo oppure sono arrivato all'ultimo elemento
+		return ;
+	}
+	
+	
+	vett.push_back(primi[count]); // aggiungo l'i-esimo numero primo
+	solve(S,N,sum+primi[count],count+1);// vado avanti	 aggiungendo l'elemento alla somma parziale e incremento l'indice
+	vett.pop_back();	// rimuovo l'elemento inserito
+	solve(S,N,sum,count+1); // scarto l'i-esimo numero primo 
+	
+}
+
+
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		int S,N,P;
+		int i=1;
+		cin>>S;
+		cin>>N;
+		cin>>P;
+		genera_primi(S,P); // genero tutti i numeri primi maggiori di P e minori di S
+		cout<<"Caso di test "<<i<<endl;
+		solve(S,N,0,0);
+		primi.erase(primi.begin(),primi.end()); // pulisco il vettore di numeri primi per il nuovo test
+		i++;
+	}
+	
+	return 0;
+}

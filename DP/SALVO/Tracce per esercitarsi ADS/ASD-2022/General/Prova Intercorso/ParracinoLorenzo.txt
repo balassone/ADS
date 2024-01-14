@@ -1,0 +1,201 @@
+PROBLEMA 1
+
+COMPLESSITA': O(n*log n)
+
+CODICE:
+
+#include <iostream>
+using namespace std;
+
+int occorrenze;
+
+void mergeSort(int arr[], int l, int r);
+void merge(int arr[], int p, int q, int r);
+void contaOccorrenzeBS(int arr[], int l, int r, int x);
+
+int main(){
+    
+    int NUM_CASE_TEST;
+    int k;
+    int dim;
+    int* arr;
+
+    cin>>NUM_CASE_TEST;
+
+    while(NUM_CASE_TEST--){
+
+        cin>>k;
+        cin>>dim;
+
+        arr = new int[dim];
+
+        for(int i=0;i<dim;i++){
+            cin>>arr[i];
+        }
+
+        //ordino il vettore con merge-sort
+        mergeSort(arr,0,dim-1);
+
+        //conto quante volte e' presenta l'elemento lo cerco con una versione modificata del BinarySearch
+        occorrenze=0;
+        contaOccorrenzeBS(arr,0,dim-1,k);
+
+        cout<<occorrenze<<endl;
+
+        free(arr);
+    }
+    return 0;
+}
+void merge(int arr[], int p, int q, int r) {
+
+  int n1 = q - p + 1;
+  int n2 = r - q;
+
+  int L[n1], M[n2];
+
+  for (int i = 0; i < n1; i++) L[i] = arr[p + i];
+  for (int j = 0; j < n2; j++) M[j] = arr[q + 1 + j];
+
+  int i, j, k;
+  i = 0;
+  j = 0;
+  k = p;
+
+  while (i < n1 && j < n2) {
+    if (L[i] <= M[j]) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = M[j];
+      j++;
+    }
+    k++;
+  }
+
+  while (i < n1) {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+
+  while (j < n2) {
+    arr[k] = M[j];
+    j++;
+    k++;
+  }
+}
+void mergeSort(int arr[], int l, int r) {
+  if (l < r) {
+    int m = l + (r - l) / 2;
+
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+    merge(arr, l, m, r);
+  }
+}
+void contaOccorrenzeBS(int arr[], int l, int r, int x) {
+
+    if (r >= l) {
+        int mid = l + (r - l) / 2;
+        if (arr[mid] == x) 
+            occorrenze++;
+        contaOccorrenzeBS(arr, l, mid - 1, x);
+        if (arr[mid] > x) 
+            return;
+        contaOccorrenzeBS(arr, mid + 1, r, x);
+    }
+    return;
+}
+
+PROBLEMA 2
+
+COMPLESSITA': O(N^(N-P))
+
+CODICE:
+
+#include <iostream>
+using namespace std;
+
+int somma(int* soluzione,int N);
+void printSoluzione(int* soluzione, int N);
+void backtrack(int S, int N, int P,int* soluzione,int k);
+bool isSafe(int S,int P, int* soluzione,int k, int i);
+bool isPrime(int n);
+
+int main(){
+
+    int i=0;
+    int NUM_CASE_TEST;
+    int S,N,P;
+
+    int* soluzione;
+
+    cin>>NUM_CASE_TEST;
+
+    while(i<=NUM_CASE_TEST){
+
+        i++;
+        scanf("%d %d %d",&S,&N,&P);
+
+        soluzione = new int[N];
+        for(int i=0;i<N;i++){
+            soluzione[i]=0;
+        }
+
+        cout<<"CASO DI TEST "<<i<<endl;
+
+        backtrack(S,N,P,soluzione,0);
+
+        free(soluzione);
+    }
+    return 0;
+}
+int somma(int* soluzione,int N){
+    int sum=0;
+    for(int i=0;i<N;i++)
+        sum+=soluzione[i];
+    return sum;
+}
+void printSoluzione(int* soluzione, int N){
+    for(int i=0;i<N;i++)
+        cout<<soluzione[i]<<" ";
+    cout<<endl;
+}
+void backtrack(int S, int N, int P,int* soluzione,int k){
+
+    if(k == N){
+
+        if(somma(soluzione,N)==S)
+            printSoluzione(soluzione,N);
+
+    }
+
+    for(int i=P; i<=S; i++){
+
+        if(isSafe(S,P,soluzione,k,i)){
+            soluzione[k] = i;
+            backtrack(S,N,i,soluzione,k+1);
+            soluzione[k]= 0;
+        }
+    }
+}
+bool isSafe(int S,int P, int* soluzione,int k, int i){
+
+    return (somma(soluzione,k)+1 <= S && isPrime(i) && i>P);
+
+}
+bool isPrime(int n){
+    if (n <= 1)
+        return false;
+    if (n <= 3)
+        return true;
+
+    if (n % 2 == 0 || n % 3 == 0)
+        return false;
+
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return false;
+ 
+    return true;
+}

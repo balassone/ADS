@@ -1,0 +1,102 @@
+"""
+    Si implementi un algoritmo seguendo l’approccio Divide et Impera
+    per contare le occorrenze di un intero K in un array non ordinato A[].
+    La complessita di un singolo caso di test è data da O(n), siccome è successione
+    di ricerca (complessità O(log)) e il counting sort (complessita O(n)).
+    Nel caso l'array non sia di interi, basterà utilizzare la funzione sort
+    della lista di python (con complessità O(nlogn), questa però aumenta la complessità del
+    test case a O(nlogn)
+"""
+
+
+def countingSort(arr):
+    size = len(arr)
+    output = [0] * size
+    count = [0] * (max(arr) + 1)
+
+    for m in range(0, size):
+        count[arr[m]] += 1
+
+    for m in range(1, (max(arr) + 1)):
+        count[m] += count[m - 1]
+
+    m = size - 1
+    while m >= 0:
+        output[count[arr[m]] - 1] = arr[m]
+        count[arr[m]] -= 1
+        m -= 1
+
+    for m in range(0, size):
+        arr[m] = output[m]
+
+def binarySearch(array : list, left : int, right : int, k : int) -> int:
+    if(left > right):
+        return -1
+    center = (left + right) // 2
+    if array[center] == k and ((center == len(array) - 1) or array[center + 1] != array[center]):
+        return center
+    elif array[center] > k:
+        return binarySearch(array, left, center - 1, k)
+    else:
+        return binarySearch(array, center + 1, right, k)
+
+
+n_test_cases = int(input())
+for i in range(0, n_test_cases):
+    array = str.split(input(), " ")
+    array = [int(i) for i in array]
+    k = array.pop(0)
+    countingSort(array)
+    print(binarySearch(array, 0, len(array), k) + 1)
+
+"""
+    Sia data una tripladi interi S, N e P. Sindica una somma.
+    P indica un numero primo. Si trovino tutti gli N elementi strettamente maggiori di P tali che la loro somma è
+    uguale ad S. Possono esistere più sequenze che soddisfano tale condizione. La complessità di questo algoritmo è
+    O((n-1)^n) il numero di mosse possibili elevato al numero di elementi dell'input.
+
+"""
+
+def is_prime(n : int) -> bool:
+    for i in range(2, n):
+        if n%i == 0:
+            return False
+    return True
+
+def get_prime_numbers_list(bottom_bound : int, upper_bound : int, current_solution : list) -> list:
+    res = []
+    for i in range(bottom_bound + 1, upper_bound + 1):
+        if is_prime(i) and current_solution.count(i) == 0: #In realtà si può fare di meglio creando una lista ordinata di numeri primi e accedendovi con binary search
+            res.append(i)
+    return res
+
+def backTracking(target_sum : int, size : int, prime_number : int, current_solution = []) -> list:
+    current_sum = sum(current_solution)
+    if size == 0:
+        if current_sum == target_sum:
+            return current_solution
+        else:
+            return []
+
+    candidates = get_prime_numbers_list(prime_number, target_sum - current_sum, current_solution)
+    res = []
+    for i in candidates:
+        temp = current_solution.copy()
+        temp.append(i)
+        result = backTracking(target_sum, size - 1, i, temp)
+        if len(result) > 0:
+            if isinstance(result[0], list):
+                for i in result:
+                    res.append(i)
+            else:
+                res.append(result)
+    return res
+
+n_test_cases = int(input())
+
+for i in range(0, n_test_cases):
+    array = str.split(input(), " ")
+    array = [int(i) for i in array]
+    print("TEST CASE " + str(i + 1))
+    for i in backTracking(array[0], array[1] ,array[2]):
+        print(i)

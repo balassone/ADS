@@ -1,0 +1,215 @@
+//***************************PROBLEMA 1************************************
+
+/* [Codice in C++]
+Per l'implementazione di un algoritmo che conti le occorrenze di un intero K in un array non ordinato A[] è
+stato utilizzato l’approccio Divide et Impera con complessità O(nlogn).
+Dopo aver effettuato l'inserimento degli elementi nel vettore, tramite delle funzioni standard, è stata 
+richiamata la funzione conteggio che implementa l'approccio divide et impera. 
+*/
+
+#include <iostream>
+using namespace std;
+
+void insert_in_vector(int [], int);
+int conteggio(int [], int, int, int);
+
+
+int main(){
+
+    /*Numero di casi di test*/
+    int tc;
+    cin>>tc;
+
+    int K; //elemento di cui contare le occorrenze
+    int n; //dimensione del vettore
+
+    while(tc--){
+        cin>>K;
+        cin>>n;
+
+        //Inserimento nel vettore -> complessità O(n)
+        int * A= new int[n];
+        insert_in_vector(A,n);
+
+        //Viene chiamata la funzione conteggio sul vettore A per il calcolo delle occorrenze
+        int cont = conteggio(A, 0, n - 1, K);
+        cout<<cont<<endl;
+        delete A;
+    }
+
+    system("PAUSE");
+    return 0;
+}
+
+
+//FUNZIONI
+
+/*Funzione per effettuare l'inserimento dei valori nel vettore.
+La funzione ha complessità O(n).*/
+void insert_in_vector(int A[], int n){
+    for(int i=0; i<n; i++){
+        cin>>A[i];
+    }
+}
+
+/*Funzione per il conteggio delle occorrenze di K.
+Si utilizza un approccio divide et impera, infatti si effettua una chiamata ricorsiva in cui si divide 
+il vettore a metà fino a che non si ha un solo elemento. Se quell'unico elemento è diverso da K, allora 
+la funzione restituisce 0, altrimenti restituisce 1.
+Nel passo di merge viene sommato il conteggio calcolato nella prima metà del vettore a quello calcolato
+nella seconda metà del vettore.
+La funzione ha complessità O(nlogn).*/
+int conteggio(int A[], int indice_iniziale, int indice_finale, int K){
+
+// In questo primo controllo si verifica se il il sottoarray è valido 
+// oppure se il vettore si compone di un solo elemento, e questo è diverso dal valore K che si sta cercando,
+// allora restituisce 0.
+    if ((indice_iniziale>indice_finale) || (indice_iniziale==indice_finale && A[indice_iniziale]!=K)){
+        return 0;
+    }
+
+// In questo secondo controllo invece si vede se il vettore è composto da un solo elemento che è propio 
+// uguale a K allora restituisce 1.
+    if (indice_iniziale == indice_finale && A[indice_iniziale] == K){
+        return 1;
+    }
+
+// Approccio di Divide-et-impera in cui si divide il vettore a metà per ogni passo interativo.
+// Per ogni passo quindi trova il conteggio delle occorrenze di K per la prima metà e le somma con 
+// quelle trovate per la seconda metà del vettore.
+    int somma_1 = conteggio(A, indice_iniziale, (indice_iniziale + indice_finale)/2, K);
+    int somma_2 = conteggio(A, 1 + (indice_iniziale + indice_finale)/2, indice_finale, K);
+    return somma_1 + somma_2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*****************************PROBLEMA 2************************************
+
+//* [Codice C++]
+Il codice risolve il problema utilizzando il metodo del backtracking e utilizza una funzione ausiliaria per trovare
+i numeri primi tra S e P. Il codice mostra a video le possibili sequenze di numeri che generano tale somma.*/
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+ 
+
+vector<int> set;
+vector<int> prime;
+ 
+bool check_primo(int x);
+void check_sum(int totale, int N, int S, int indice);
+void primi_SP(int N, int S, int P);
+void stampa();
+
+ 
+ 
+int main() {
+
+    /*Numero di casi di test*/
+    int n;
+    cin>>n;
+
+    int S, N, P;
+    while(n--){
+        cin>>S;
+        cin>>N; 
+        cin>>P; 
+    
+    cout<<"CASO DI TEST "<<n<<endl;
+    primi_SP(N, S, P);
+    }
+
+    return 0;
+}
+
+
+/*Funzione che passa un valore x e valuta se questo è un numero primo.
+Per prima cosa viene effettuato un check sul valore 1 e successivamente viene effettuato un ciclo for
+per vedere se esistono divisori del numero, ovviamente se viene trovato almeno un divisore la funzione 
+ritorna false.*/
+bool check_primo(int x){
+    int sqroot = sqrt(x);
+    bool flag = true;
+ 
+    // caso base del numero 1 che non è un numero primo
+    if (x == 1)
+        return false;
+ 
+    // se c'è almeno un divisore per un numero qualisasi allora la funzione ritorna false
+    for (int i=2; i<= sqroot; i++){
+        if (x % i == 0){
+            return false;
+        }
+    }
+    
+    // Se si è usciti dal ciclo for senza effettuare mai la return allora non ci sono divisori di quel nu
+    return true;
+}
+
+/* Funzione che valuta tutti i possibili numeri N che sono primi e la cui somma è uguale a S*/ 
+void check_sum(int totale, int N, int S, int indice){
+   /*se la somma è uguale a S e sum viene raggiunto utilizzando N numeri primi*/
+    if (totale == S && set.size() == N){
+        stampa();
+        return;
+    }
+ 
+    /*se la somma è maggiore di S o se l'indice ha raggiunto l'ultimo elemento*/
+    if (totale > S || indice == prime.size())
+        return;
+ 
+
+    //make_move
+    set.push_back(prime[indice]);
+
+    //backtracking
+    check_sum(totale+prime[indice], N, S, indice+1);
+
+    //unmake_move
+    set.pop_back();
+
+    check_sum(totale, N, S, indice+1);
+}
+ 
+// Funzione per generare tutti i numeri primi tra P e S
+void primi_SP(int N, int S, int P){
+
+    for (int i = P+1; i <=S ; i++){
+        if (check_primo(i))
+            prime.push_back(i);
+    }
+ 
+    if (prime.size() < N)
+        return;
+    check_sum(0, N, S, 0);
+}
+
+
+//funzione per la stampa dei numeri
+void stampa() {
+    int lunghezza = set.size();
+    for (int i = 0; i < lunghezza; i++)
+        cout << set[i] << " ";
+    cout << "\n";
+}

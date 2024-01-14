@@ -1,0 +1,137 @@
+Emanuele Agostino Messuri
+
+Problema 1
+
+import java.io.*;
+import java.util.*;
+
+public class Ricorrenza {
+ 
+    static int count(int arr[], int low, int high, int x)
+    {
+ 
+        // Se il subarray non è valido o l'elemento non viene trovato
+        if ((low > high) || (low == high && arr[low] != x))
+            return 0;
+ 
+        // Se c'è un solo elemento uguale a x
+        if (low == high && arr[low] == x)
+            return 1;
+ 
+        // Dividiamo l'array in due parti e troviamo le ricorrenze di x in entrambi i pezzi
+        return count(arr, low, (low + high) / 2, x) + count(arr, 1 + (low + high) / 2, high, x);
+    }
+ 
+    public static void main(String args[])
+    {
+        int arr[] = {1,1,2,2,2,2,3};
+        int n = 7;
+        int x = 3;
+        System.out.print(count(arr, 0, n - 1, x)+ " ");
+    }
+}
+
+la complessità è O(NlogN)
+
+Problema 2
+
+import java.io.*;
+ import java.util.*;
+  
+ class prova2
+ {
+     
+     static ArrayList<Integer> set =
+                      new ArrayList<Integer>();
+     static ArrayList<Integer> prime =
+                      new ArrayList<Integer>();
+      
+ 
+     static boolean Primo(int x)//ritorna true se x è primo 
+     {
+
+         int sqroot = (int)Math.sqrt(x);
+  
+         if (x == 1)
+             return false;
+      
+         for (int i = 2;
+                  i <= sqroot; i++)
+             if (x % i == 0)
+                 return false;
+      
+         return true;
+     }
+      
+
+     static void stampa() //funzione di stampa
+     {
+         int length = set.size();
+         for (int i = 0;
+                  i < length; i++)
+             System.out.print(
+                    set.get(i) + " ");
+         System.out.println();
+     }
+      
+   
+     static void SommaPrimi(int total, int N,
+                          int S, int indice)
+     {
+         
+         if (total == S &&
+             set.size() == N)
+         {
+        
+             stampa();
+             return;
+         }
+      
+        
+         if (total > S ||
+             indice == prime.size() || set.size() >= N)
+             return;
+     
+         set.add(prime.get(indice));
+      
+    
+         SommaPrimi(total + prime.get(indice),
+                          N, S, indice + 1);
+      
+        
+         set.remove(set.size() - 1);
+      
+         
+         SommaPrimi(total, N,
+                  S, indice + 1);
+     }
+      
+
+     static void Risultato(int N,
+                          int S, int P)
+     {
+ 
+         for (int i = P + 1;
+                  i <= S ; i++)
+         {
+           
+             if (Primo(i))
+                 prime.add(i);
+         }
+      
+  
+         if (prime.size() < N)
+             return;
+         SommaPrimi(0, N, S, 0);
+     }
+      
+ 
+     public static void main(String args[])
+     {
+      
+         int S = 23, N = 3, P = 2;
+         Risultato(N, S, P);
+     }
+ }
+
+La complessità è O(max[(P-S)*sqrt(P),(N)])

@@ -1,0 +1,170 @@
+/*esercizio 1: prova intercorso, GIOVANNI DIOGUARDI M63001418 */
+
+//COMPLESSITA DELL'ALGORITMO logn 
+
+#include <iostream>
+#include<vector>
+
+
+
+using namespace std;
+int k;
+
+
+void count(int arr[], int l, int r, int x)
+{
+	 
+    if (r >= l) {
+        int mid = l + (r - l) / 2;
+ 
+        if (arr[mid] == x)
+             k++;
+        
+        count(arr,l,mid-1,x);
+        count(arr,mid+1,r,x);
+ 
+      
+    }
+ 
+     
+    
+}
+
+int main(){
+	
+	  int T;
+	 cin>>T;
+	 
+	 while(T--){
+	 	
+	 	int n;
+	   cin>>n;
+	   
+	  int arr[n];
+	  
+	  for(int i = 0; i <n; i++){
+	  	
+	  	 cin>>arr[i];
+	  }
+	  
+	   int num=arr[0];
+	   
+	 count(arr,1,n,num);
+	    cout<<k;
+	    
+	    k=0;
+
+       cout<<endl;
+}
+	
+	
+	return 0;
+}
+-------------------------------------
+#include <iostream>
+#include <cmath>
+#include <vector>
+
+//GIOVANNI DIOGUARDI : ESERCIZIO2 : COMPLESSITA' N! 
+
+using namespace std;
+
+vector<int>primi;
+vector<int>vet;
+
+void print_solution(){
+	
+	for(int i = 0; i < vet.size(); i++){
+		
+		cout<<" "<<vet[i];
+		
+	}
+}
+
+bool safe(int v){
+	 
+	 
+	int sqroot = sqrt(v);
+	bool flag = true;
+	
+	//1 non è un numero primo 
+	if(v == 1)
+	  return false;
+	  
+	for(int i = 2; i <= sqroot; i++){
+		if(v % i == 0)
+		 return false;
+		 
+	}
+	return true;
+}
+void totaleprimi(int total, int S, int N, int P, int i){
+	
+	 //se il totale è uguale a S e il totale è raggiunto usando 
+	 //N numeri primi
+	 
+	 	//tutti i numeri primi minori di S
+	
+	for(int i = P+1; i <= S; i++){
+		
+		//se i è un numero primo lo aggiungo a un vettore nuovo (utilizzo la libreria vector per praticità)
+		if(safe(i)){
+			
+			 primi.push_back(i);
+		}
+	}
+	//se i numeri primi sono meno di N
+	 if(primi.size() < N){
+	 	 return;
+	 }
+	 
+	
+	 if(total == S && vet.size() == N){
+	 	 print_solution();
+	 	 cout<<endl;
+	 	 return;
+	 }
+	 
+
+	 //se il totale è maggiore di S oppure l'indice ha raggiunto l'ultimo elemento 
+	  
+	   if(total > S || i == primi.size())
+	       return;
+	    
+	    //aggiungo primi[i] al vettore vet
+	      vet.push_back(primi[i]);
+	    
+	    totaleprimi(total+primi[i],S,N,P,i+1);
+	    
+	    //backtracking
+	     vet.pop_back();
+	  
+	    totaleprimi(total,S,N,P,i+1);
+}
+
+
+
+int main(){
+	
+	 int T;
+	 cin>>T; //inserisco i casi di test
+	 
+	 while(T--){
+	 	
+	 	int S,N,P; //rappresentano rispettivamente la somma, il numero di numeri primi, P il numero primo di base 
+	 	
+	 	cin>>S;
+	 	cin>>N;
+	 	cin>>P;
+	 	
+	    totaleprimi(0,S,N,P,0);
+	 	cout<<endl;
+	 	
+	 	
+	 }
+	
+	
+	
+	
+	return 0;
+}

@@ -1,0 +1,134 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+
+
+using namespace std;
+
+
+
+vector<int> set_values;
+vector<int> prime_values;
+
+
+bool prime_check(int x){
+    
+    if (x == 1)
+        return false;
+    
+    int radix = sqrt(x);
+
+
+
+   for (int i = 2; i <= radix; i++)
+        if (x % i == 0)
+            return false;
+
+
+
+   return true;
+}
+
+void print_set_values(){
+    for (int i = 0; i < set_values.size(); i++)
+        cout<<set_values[i]<<' ';
+    cout<<endl;
+}
+
+
+
+void prime_sum(int total_sum, int N, int S, int index){
+    // if total_sum equals S And
+    // total_sum is reached using N primes
+    if (total_sum == S && set_values.size() == N){
+        print_set_values();
+        return;
+    }
+
+
+
+   // if total_sum is greater than S
+    // or if index has reached last element
+    if (total_sum > S || index == prime_values.size())
+        return;
+
+
+
+   // add prime[index] to set_values vector
+    set_values.push_back(prime_values[index]);
+
+
+
+   // include primes to total_sum
+    prime_sum(total_sum + prime_values[index], N, S, index+1);
+
+
+
+   // remove element from set_values vector
+    set_values.pop_back();
+
+
+    prime_sum(total_sum, N, S, index+1);
+}
+
+
+
+void wrapped(int S, int N, int P){
+    
+    for(int i = P+1; i <= S ; i++)
+        if(prime_check(i))
+            prime_values.push_back(i);
+
+
+
+   if (prime_values.size() < N)
+        return;
+        
+    prime_sum(0, N, S, 0);
+    
+}
+
+
+
+int main(){
+    
+    int case_test, S, N, P;
+	cin>>case_test;
+    
+    while(case_test--){
+        
+        cout<<"CASO DI TEST "<<case_test + 1<<endl;
+        
+        cin>>S>>N>>P;
+        wrapped(S, N, P);
+        
+        prime_values.clear();
+        
+    }
+    return 0;
+    
+}
+
+Sample Input:
+
+3
+63 3 5
+23 3 2
+17 1 5
+
+
+Sample Output:
+
+CASO DI TEST 3
+7 13 43 
+7 19 37 
+11 23 29 
+13 19 31 
+CASO DI TEST 2
+3 7 13 
+5 7 11 
+CASO DI TEST 1
+17 
+
+La complessità individuata è o(n^2)

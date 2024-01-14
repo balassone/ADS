@@ -1,0 +1,43 @@
+import java.util.Scanner;
+//la complessità del seguente algoritmo è O(logn) con logn dato dall'approccio dividi et impera(ricerca binaria)
+public class Main {
+
+	public static void main(String[] args) {
+		Scanner scan=new Scanner(System.in);
+		System.out.print("Inserisci numero casi di test: ");
+		int n=scan.nextInt();
+
+		while(n-->0)
+		{
+			System.out.println("Inserisci intero da cercare: ");
+			int k=scan.nextInt();
+			System.out.print("Inserisci dimensione array: ");
+			int dim=scan.nextInt();
+			int v[]=new int[dim];
+			System.out.print("Inserisci elementi array: ");
+			for(int i=0;i<dim;i++)
+			{
+				v[i]=scan.nextInt();
+			}
+			int risultato=conta(v,0,dim-1,k);
+			System.out.println("Il numero di occorrenze di "+k+" nel vettore è: "+risultato);
+		}
+		scan.close();
+	}
+	
+	//opero con il modus operandi della ricerca binaria:divido in 2 sottoarray ad ogni passo e cerco l'elemento
+	public static int conta(int v[], int inizio,int fine, int k)
+	{
+		int mid=(inizio+fine)/2;
+		if((inizio>fine)||(inizio==fine && v[inizio]!=k))//caso in cui i parametri in ingresso non sono giusti oppure non trovo l'elemento all'interno del sottoarray
+		{
+			return 0;
+		}
+		if (inizio==fine && v[inizio]==k)//caso in cui ho un solo elemento ed è quello che cerco
+		{
+			return 1;//aggiungo uno alle occorrenze
+		}
+		return conta(v,inizio,mid,k)+conta(v,mid+1,fine,k);//divido in 2 sottoarray trovando ad ogni chiamata il mid e cerco l'elemento in entrambi
+	}
+
+}

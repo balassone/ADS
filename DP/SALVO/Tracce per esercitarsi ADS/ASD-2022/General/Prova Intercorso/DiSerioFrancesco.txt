@@ -1,0 +1,175 @@
+/* Il linguaggio di programmazione utilizzato è il Java */
+
+/**********************************************************************************************************************************************************************/
+
+/* Primo problema */
+/* package codechef; // don't place package name! */
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+/* Name of the class has to be "Main" only if the class is public. */
+class Codechef
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		Scanner s = new Scanner(System.in);
+		int test_cases = s.nextInt();
+		int value, N;
+		Vector<Integer> input;
+		
+		for (int t = 0; t < test_cases; ++t) {
+			value = s.nextInt();
+			N = s.nextInt();
+			
+			input = new Vector<Integer>();
+			for (int i = 0; i < N; ++i) {
+				input.add(s.nextInt());
+			}
+			
+			System.out.println(conta(input, 0, N-1, value));
+		}
+		
+		s.close();
+	}
+	
+	public static int conta(Vector<Integer> a, int p, int r, int v) {
+		int count, q;
+		
+		if (p < r) {
+			count = 0;
+			q = p + (r-p)/2;
+			
+			count += conta(a, p, q, v);
+			count += conta(a, q+1, r, v);
+			
+			return count;
+		}
+		
+		// Caso base
+		if (a.get(p) == v) return 1;
+		else return 0;
+	}
+}
+
+/* La funzione "conta" è implementata mediante la tecnica del Divide et Impera. In particolare, il tempo di esecuzione è definito mediante la seguente ricorrenza:
+   T(n) = 2 T(n/2) + O(1) (infatti ogni problema ha due sottoproblemi di dimensione dimezzata, e il tempo per dividere e combinare è complessivamente costante).
+   Con il metodo dell'esperto, si dimostra che T(n) = O(n), perché:
+   -a = 2;
+   -b = 2;
+   -logb(a) = log2(2) = 1;
+   -f(n) = O(1) = O(n^(logb(a)-epsilon)), con epsilon = 1.
+   In conclusione, posso affermare che la complessità dell'algoritmo è lineare. */
+
+/**********************************************************************************************************************************************************************/
+
+/* Secondo problema */
+/* package codechef; // don't place package name! */
+
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+/* Name of the class has to be "Main" only if the class is public. */
+class Codechef
+{
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		Scanner s = new Scanner(System.in);
+		int test_case = 0;
+		int S, N, P; 
+		Vector<Integer> soluzione, seq_primi;
+		
+		while(s.hasNext()) {
+			S = s.nextInt();
+			N = s.nextInt();
+			P = s.nextInt();
+			
+			test_case++;
+			System.out.println("CASO DI TEST " + test_case);
+			
+			// Costruisco la sequenza dei numeri primi > P e <= S
+			seq_primi = new Vector<Integer>();
+			primes(P, S, seq_primi);
+			
+			// Cerco le sequenze
+			soluzione = new Vector<Integer>();
+			backtrack(soluzione, N, S, seq_primi);
+		}
+		
+		s.close();
+	}
+	
+	// funzione che restituisce true quando mi posso fermare (non è necessario inserire altri elementi in a)
+	public static boolean is_a_solution(Vector<Integer> a, int N, int S) {
+		return (sum(a) >= S) || (a.size() == N);
+	}
+	
+	// funzione che inserisce nel vettore c i possibili candidati da aggiungere ad a
+	public static void construct_candidates(Vector<Integer> a, Vector<Integer> s, Vector<Integer> c) {	
+		int first;
+		
+		if (a.size() == 0) first = 0;
+		else first = s.indexOf(a.lastElement()) + 1;
+		
+		for (int i = first; i < s.size(); ++i) c.add(s.get(i));	
+	}
+	
+	// funzione che processa la soluzione a
+	public static void process_solution(Vector<Integer> a, int N, int S) {
+		if (a.size() == N && sum(a) == S) print(a);
+	}
+	
+	// funzione che implementa la tecnica del backtracking
+	public static void backtrack(Vector<Integer> a, int N, int S, Vector<Integer> seq) {
+		Vector<Integer> c = new Vector<Integer>();	// vettore usato per contenere i possibili candidati
+		
+		if (is_a_solution(a, N, S)) {
+			process_solution(a, N, S);
+		}
+		else {
+			construct_candidates(a, seq, c);
+			
+			for (int i = 0; i < c.size(); ++i) {
+				a.add(c.get(i));
+				backtrack(a, N, S, seq);
+				a.remove(a.lastElement());
+			}
+		}
+	}
+	
+	// funzione che calcola la somma della sequenza
+	public static int sum(Vector<Integer> a) {
+		int somma = 0;
+		for (int i = 0; i < a.size(); ++i) somma += a.get(i);		
+		return somma;
+	}
+	
+	// funzione che stampa la sequenza
+	public static void print(Vector<Integer> a) {
+		for (int i = 0; i < a.size(); ++i) System.out.print(a.get(i) + " ");	
+		System.out.println();
+	}
+	
+	// funzione che inserisce in c tutti i numeri primi > P e <= S
+	public static void primes(int P, int S, Vector<Integer> c) {
+		for (int i = P+1; i <= S; ++i) if(is_prime(i)) c.add(i);
+	}
+	
+	// funzione che restituisce true se il numero n è primo
+	public static boolean is_prime(int n) {
+		for (int i = 2; i <= Math.ceil(Math.sqrt(n)); ++i) {
+			if (n % i == 0) return false;
+		}
+		return true;
+	}
+}
+
+/* La costruzione della sequenza di numeri primi richiede un tempo pari a (S-P)*(tempo per verificare se un numero è primo), dove il secondo fattore è al più un O(sqrt(S)).
+   Premettendo che la funzione sum e print hanno tempo di esecuzione lineare rispetto a N, la funzione "backtrack" effettua una chiamata a is_a_solution (lineare) e:
+   - se siamo arrivati ad una soluzione, effettua solo una chiamata a process_solution (lineare);
+   - se non siamo arrivati ad una soluzione, effettua una chiamata a construct_candidates e un ciclo for che hanno la stessa complessità, al cui interno c'è una chiamata 
+     ricorsiva a backtrack, ma con il vettore a che ha un elemento in più.
+   Nel caso peggiore, alla prima esecuzione della funzione backtrack abbiamo M = S-P chiamate ricorsive, alla seconda M-1, alla terza M-2, e così via fino alla N-esima esecuzione.
+   Il tempo di esecuzione nel caso peggiora risulta essere pari a O(N * M!/(M-N)!) =  O(N* (S-P)!/(S-P-N)!). */

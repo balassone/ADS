@@ -1,0 +1,152 @@
+***ESERCIZIO 1***
+#include <iostream>
+#include<algorithm>
+using namespace std;
+
+//Restituisce numero intero per le occorrenze
+int occorrenze(int A[], int elem_l, int elem_h, int k)
+{
+
+	if ((elem_l > elem_h) || (elem_l == elem_h && A[elem_l] != k))  //Controlla se ci sono elementi validi
+		return 0;
+
+	if (elem_l == elem_h && A[elem_l] == k) //Controlla se c'è un solo elemento pari a k
+		return 1;
+
+    //Divido il problema in due sottoproblemi
+	return occorrenze(A, elem_l, (elem_l + elem_h) / 2, k) + occorrenze(A, 1 + (elem_l + elem_h) / 2, elem_h, k);                                                                                                                    i x in entrambe le parti
+}
+
+int main()
+{
+    int Test_case;
+    cout<<"Inserire numeri casi di test: ";
+    cin>>Test_case;
+    cout<<"Inserire i valori (k,dim,valori effettivi): ";
+        while(Test_case){
+
+        int k;
+        cin>>k;
+        int dim;
+        cin>>dim;
+        int A[dim];
+        for(int i=0; i<dim; i++)
+            cin>>A[i];
+        int n = (sizeof(A)) / sizeof(int);
+
+        cout<<"\n"<<occorrenze(A, 0, n - 1, k)<<endl;
+        Test_case = Test_case-1;
+    }
+    return 0;
+}
+
+//Complessità dell'algoritmo pari a O(nlogn) in quanto l'approccio utilizzato è
+//il Divide et Impera e divide il problema in due sottoproblemi ricorsivamente
+
+
+
+
+
+***ESERCIZIO 2***
+
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isPrimo(int n);
+bool isSafe(int n, int *output, int k);
+bool numPrimiBacktracking(int N, int P, int S, int *output, int k,int number);
+bool isOk(int *output, int N, int S);
+void stampa(int *output,int N);
+
+int main(int argc, const char * argv[]) {
+    int N, P, S;
+    int *output;
+    int test_case;
+    int num_test = 0;
+    cout<<"Inserire numero di casi di test"<<endl;
+    cin>>test_case;
+    while(num_test < test_case){
+        cin>> S;
+        cin>> N;
+        cin>> P;
+        output = new int[N];
+        for(int i = 0; i<N;i++){
+            output[i] = 0;
+        }
+        cout<<"CASO DI TEST "<<num_test+1<<endl;
+        numPrimiBacktracking(N, P, S, output, 0,P);
+                delete[] output;
+            num_test=num_test+1;
+    }
+    return 0;
+}
+
+
+bool isPrimo(int n){
+    bool is_primo = true;
+      if (n == 0 || n == 1) {
+        is_primo = false;
+     }
+      for (int i = 2; i <= n/2; ++i) {
+    if (n % i == 0) {
+          is_primo = false;
+          break;
+        }
+      }
+      return is_primo;
+}
+
+bool isSafe(int n, int *output, int k){
+    if( !isPrimo(n) ){
+        return false;
+    }
+    for(int i=0; i<k; i++){
+        if(output[i] == n){
+            return false;
+        }
+    }
+       return true;
+}
+
+bool numPrimiBacktracking(int N, int P, int S, int *output, int k, int number){
+    if( k == N  ){
+        if(isOk(output, N, S)){
+            stampa(output, N);
+            return true;
+        }
+            else{
+                return false;
+        }
+    }
+    bool res = false;
+    for(int i=number+1; i<=S ; i++ ){
+        if(isSafe(i,output,k)){
+            output[k]= i;
+            res = numPrimiBacktracking(N, P, S, output, k+1,i) || res;
+            output[k] = 0;
+        }
+    }
+    return res;
+
+}
+
+bool isOk(int *output, int N, int S){
+    int somma = 0;
+    for(int i = 0; i<N; i++){
+        somma += output[i];
+    }
+    if(somma == S){
+           return true;
+    }else{
+        return false;
+    }
+}
+
+void stampa(int *output,int N){
+    for(int i = 0; i<N;i++){
+        cout<<output[i]<<" ";
+    }
+    cout<<endl;
+}
+
+//COMPLESSITA' O(2^(s-t)) poichè utilizzo il backtracking ed ottengo una complessità esponenziale a causa delle ricorsioni continue.

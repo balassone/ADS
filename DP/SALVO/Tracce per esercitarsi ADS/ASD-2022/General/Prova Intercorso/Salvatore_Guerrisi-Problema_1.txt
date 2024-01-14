@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+
+int trova(int vett[],int a, int b, int val){
+	
+	// Se l'elemento non è stato trovato o il vettore non è valido
+	if((a>b) || (a==b && vett[a]!=val))
+		return 0;
+	//Se esiste un singolo elemento e questo è uguale al valore
+	if(a==b && vett[a]==val)
+		return 1;
+	
+	//Dividiamo il vettore il due parti e trivamo il numero delle occorrenze nelle due metà
+	return trova(vett,a,(a+b)/2,val)+trova(vett,1+(a+b)/2,b,val);
+
+	
+}
+
+
+
+
+
+int main(){
+	
+	int tc;
+	cout<<"Numero di test: ";
+	cin>>tc;
+	
+	while(tc--){
+		
+		int k;
+		int dim;
+		cout<<"Inserire valore e dimensione: ";
+		cin>>k>>dim;
+		cout<<"Inserimento vettore: ";
+		int vett[dim];
+		for(int i=0;i<dim;i++){
+			cin>>vett[i];
+		}
+		cout<<"Occorrenza: "<<trova(vett,0,dim-1,k)<<endl;
+	}
+	
+	
+	system("PAUSE");
+	return 0;
+	
+	
+}
+
+Complessità individuata O(nlogn) a causa dell'algoritmo di ricerca implementato poichè si va a dividere il vettore a meta e fare il controllo su parte destra e
+parte sinistra e così via fino alla condizione di terminazione

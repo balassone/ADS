@@ -1,0 +1,120 @@
+# PROBLEMA 1
+def divideEtImpera(array, low, high, k):
+    if low == high:
+        return 0 if array[low] != k else 1
+    if (low < high):
+        mid = (low+high)//2
+        n1 = divideEtImpera(array, low, mid, k)
+        n2 = divideEtImpera(array, mid+1, high, k)
+        return n1+n2
+
+n_tests = int(input())
+for i in range(n_tests):
+    array = [int(i) for i in str(input()).split(" ")]
+    k = array[0]
+    array = array[1:]
+    print(divideEtImpera(array, 0, len(array)-1, k))
+
+"""
+Complessità:
+Il "merge" è una semplice somma quindi a complessità costante.
+T(n) = 2T(n/2) + c
+a = 2
+b = 2
+f(n) = O(1)
+logb(a) = 1
+f(n) = O(n^(1-e))
+Per il primo teorema dell'esperto,
+Complessità = O(n)
+"""
+
+# PROBLEMA 2
+class Solution:
+    def __init__(self, sum = 0, elements: list = []):
+        self.sum = sum
+        self.elements = elements
+
+
+solutions = []
+primes = []
+
+def isPrime(num):
+    if num > 1:
+        for i in range(2, int(num/2)+1):
+            if (num % i) == 0:
+                return False
+        else:
+            return True
+    else:
+        return False
+
+def getPrimes(p, s):
+    primes = []
+    for i in range(p, s+1):
+        if isPrime(i):
+            primes.append(i)
+    return primes
+
+def construct_candidates(solution: Solution, s, n, p):
+    if not solution.elements:
+        primes = getPrimes(p+1, s)
+    else:
+        primes = getPrimes(solution.elements[-1]+1, s)
+    candidates = []
+
+    if len(solution.elements) >= n:
+        return []
+
+    if len(solution.elements) == n - 1:
+        for prime in primes:
+            if prime + solution.sum == s:
+                candidates.append(prime)
+    else:    
+        for prime in primes:
+            if prime + solution.sum < s:
+                candidates.append(prime)
+    return candidates
+
+def backtrack(solution: Solution, s, n, p):
+    global solutions
+    if len(solution.elements) == n:
+        for element in solution.elements:
+            print(element, end=" ")
+        print()
+    
+    candidates = construct_candidates(solution, s, n, p)
+    for candidate in candidates:
+        solution.elements.append(candidate)
+        solution.sum += candidate
+        backtrack(solution, s, n, p)
+        solution.elements.pop()
+        solution.sum -= candidate
+
+n_tests = int(input())
+for i in range(n_tests):
+    solutions = []
+    primes = []
+    array = [int(x) for x in str(input()).split(" ")]
+    s = array[0]
+    n = array[1]
+    p = array[2]
+    primes = getPrimes(p, s)
+    print("CASO DI TEST", i+1)
+    backtrack(Solution(), s, n, p)
+    for solution in solutions:
+        for element in solution:
+            print(element, end=" ")
+        print()
+
+"""
+LA COMPLESSITÀ PUÒ ESSERE NETTAMENTE MIGLIORATA PRECALCOLANDO I NUMERI PRIMI
+
+Complessità:
+isPrime = O(s)
+getPrimes = O(s*(s-p))
+constructCandidates = O(s*(s-p))
+
+Massimo numero di candidati = (s-p)
+Complessità Totale = O((s-p)^(n)  *  s*(s-p))
+Numero di volte che viene chiamata backtracking * complessità constructCandidates
+"""

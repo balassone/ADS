@@ -1,0 +1,139 @@
+"""
+
+Problema 1 - Intercorso ASD 01/12/22
+
+Complessità O(nlogn)
+
+"""
+
+# Conta la frequenza di K dividendo il problema
+# in sottoproblemi più facilmente risolvibili.
+def k_in_array(arr, low, high, k):
+    # Primo caso base (usato soprattutto per uscire dalla ricorsione):
+    # Array invalido o K non trovato nemmeno nell'ultimo indice
+    if low > high or (low == high and arr[low] != k):
+        return 0
+    # Secondo caso base:
+    # Esiste un solo K nell'array
+    if low == high and arr[low] == k:
+        return 1
+
+    return k_in_array(arr, low, (low + high) // 2, k) + k_in_array(arr, 1 + (low + high) // 2, high, k)
+
+
+# Driver code
+n_of_test_cases = int(input("Quanti test case vuoi considerare?\n"))
+
+#Inizializzo la lista dei casi di test
+arr = [[0]]*n_of_test_cases
+
+# Chiedo di riempire un caso di test alla volta
+for i in range(n_of_test_cases):
+	print("Inserisci il test case {0}:".format(i+1))
+	arr[i] = list(map(int, input().split()))
+	#print(arr[i])
+# Itero per ogni sotto-array e stampo la soluzione una per riga
+for j in range(n_of_test_cases):
+	n = arr[j][1]
+	k = arr[j][0]
+	print(k_in_array(arr[j][2:], 0, n-1, k))
+
+
+
+
+"""
+
+Problema 2
+
+Complessità O(N^2)
+
+"""
+
+
+# Controlla che il numero sia primo
+def is_prime(x):
+    # Per verificare che un numero sia primo,
+    # controlla che non sia divisibile da 2 a se stesso - 1
+
+    # Prima considera il caso base 1 (che non è un numero primo)
+    if x == 1:
+        return False
+
+    for i in range(2, x):
+        if x % i == 0:
+            return False
+
+    # Se nessun divisore è stato trovato, il numero è primo
+    return True
+
+
+# Stampo gli N numeri primi la sui somma è S
+def print_prime():
+    global temp_prime, prime
+    for i in range(0, len(temp_prime)):
+        print(temp_prime[i], end=" ")
+    print()
+
+
+# Trova e confronta tutti i possibili N la cui somma è S
+def sum_prime(total, N, S, index):
+    global temp_prime, prime
+
+    # Se sono stati usati N numeri per la somma,
+    # allora li stampa
+    if total == S and len(temp_prime) == N:
+        print_prime()
+        return
+
+    # Se ha superato S oppure è all'ultimo index
+    if total > S or index == len(prime):
+        return
+
+    temp_prime.append(prime[index])
+    sum_prime(total + prime[index], N, S, index + 1)
+    temp_prime.pop()
+    sum_prime(total, N, S, index + 1)
+
+
+# Genera tutti i numeri primi tra P e S.
+# Poi chiama sum_prime per controllarne la somma.
+def all_prime(N, S, P):
+    global temp_prime, prime
+
+    for i in range(P + 1, S + 1):
+        if (is_prime(i)):
+            prime.append(i)
+
+    # Controlla ci siano almeno N numeri primi,
+    # altrimenti sarebbe inutile continuare.
+    if len(prime) < N:
+        return
+    sum_prime(0, N, S, 0)
+
+
+# Driver code
+
+# Vettori usati per conservare i numeri primi
+temp_prime = []
+prime = []
+
+n_of_test_cases = int(input("Quanti test case vuoi considerare?\n"))
+
+#Inizializzo la lista dei casi di test
+arr = [[0]]*n_of_test_cases
+
+# Chiedo di riempire un caso di test alla volta
+for i in range(n_of_test_cases):
+	print("Inserisci il test case {0}:".format(i+1))
+	arr[i] = list(map(int, input().split()))
+	#print(arr[i])
+
+for j in range(n_of_test_cases):
+    print("CASO DI TEST {0}".format(j+1))
+    S = arr[j][0]
+    N = arr[j][1]
+    P = arr[j][2]
+    all_prime(N, S, P)
+    
+
+

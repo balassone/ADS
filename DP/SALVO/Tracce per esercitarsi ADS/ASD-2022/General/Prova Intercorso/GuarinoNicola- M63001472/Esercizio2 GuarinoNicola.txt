@@ -1,0 +1,102 @@
+import java.util.ArrayLis
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String[] args)
+	{
+		Scanner scan=new Scanner(System.in);
+		System.out.print("Inserisci numero casi di test: ");
+		int z=scan.nextInt();
+		int j=1;//indice dei casi di test
+		while(z-->0)
+		{
+			System.out.println("CASO DI TEST "+(j++));
+			System.out.println("Inserisci S: ");
+			int s=scan.nextInt();
+			System.out.println("Inserisci N: ");
+			int n=scan.nextInt();
+			System.out.println("Inserisci P: ");
+			int p=scan.nextInt();
+			
+			VerificaPrimi(s,n,p);
+			lista.clear();
+			nPrimi.clear();//ripulisco le liste per il caso di test successivo
+		}
+		scan.close();
+	}
+	
+	
+	public static ArrayList<Integer> lista =new ArrayList<Integer>();
+	public static ArrayList<Integer> nPrimi =new ArrayList<Integer>();
+	
+	
+	public static void VerificaPrimi(int s,int n, int p)
+	{
+		for(int i=p+1;i<=s;i++)//valuto tutti i numeri maggiori di P e minori o uguali a S
+		{
+			if(isPrime(i))
+			{
+				nPrimi.add(i);//li aggiungo alla lista dopo aver controllato che siano primi
+			}
+		}
+		
+		if(nPrimi.size()<n)
+		{
+			return;//se sono meno di N ritorno perchè non ho possibilità
+		}
+		sommaNPrimi(0,n,s,0);//provo a trovare la soluzione
+	}
+	
+	
+	public static void sommaNPrimi(int totale,int n,int s,int i)
+	{
+		if(totale==s && lista.size()==n)//valuto se la somma degli interi è S e se la lunghezza è N
+		{
+			stampaLista();//ho trovato la sequenza
+		}
+		
+		if(totale>s || i==nPrimi.size() || lista.size()>=n)//ritorno se il totale ha sforato o se sono arrivato all'ultimo elemento o se l'indice raggiunge l'ultimo elemento
+		{
+			return;
+		}
+		
+		lista.add(nPrimi.get(i));//aggiungo un possibile candidato alla lista
+		
+		sommaNPrimi(totale+nPrimi.get(i),n,s,i+1);//sommo l'elemento al totale e richiamo la funzione sommaNPrimi
+		
+		lista.remove(lista.size()-1);//BACKTRACKING:rimuovo l'elemento precedentemente inserito nella lista, torno indietro e riprovo con un altro
+		
+		sommaNPrimi(totale,n,s,i+1);//passo al prossimo elemento richiamando la funzione su i+1
+	}
+		
+	
+	public static boolean isPrime(int esaminato)//funzione per controllare se il numero è primo
+	{
+		int rad=(int)Math.sqrt(esaminato);//calcolo rad(x)
+
+		if(esaminato==1)
+		{
+			return false;//1 non è un numero primo
+		}
+		for(int i=2;i<=rad;i++)//controllo se il numero è divisibile per i numeri da 2 alla radice
+		{
+			if(esaminato%i==0)
+			{
+				return false;//se trovo resto 0 non è primo...
+			}
+		}
+		return true;//...altrimenti lo è
+	}
+	
+	
+	public static void stampaLista()//funzione per stampare la lista 
+	{
+		for (int i=0;i<lista.size();i++)
+		{
+			System.out.print(lista.get(i)+" ");
+		}
+		System.out.println();
+	}
+	
+}

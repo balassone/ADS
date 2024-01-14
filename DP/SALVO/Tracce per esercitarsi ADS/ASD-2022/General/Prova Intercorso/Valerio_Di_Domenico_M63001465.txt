@@ -1,0 +1,145 @@
+PROBLEMA 1
+
+#include <iostream>
+using namespace std;
+
+//La complessità di questo algoritmo è nlg(n)
+
+//Richiamo questa funzione che calcola il numero di elementi uguali e gli passo il vettore, il primo elemento e l'ultimo ed il valore da confrontare 
+
+int occorrenze(int primo, int ultimo,int vett[] ,int val)
+{
+ 	
+    if ((primo == ultimo && vett[primo] != val) || (primo > ultimo))
+        return 0;
+ 
+    if (vett[primo] == val && primo == ultimo)
+        return 1;
+ 	//Passo dividi et impera
+    return occorrenze (primo, (primo + ultimo) / 2,vett, val) + occorrenze(1 + (primo + ultimo) / 2, ultimo, vett, val);
+}
+
+int main(){
+	
+	int t,n;
+	cin>>t;
+	int dim; 
+	int k;
+
+	while(t--){
+		cin>>k;
+		cin>>n;
+		int vett[n];
+		for (int i=0; i<n; i++){
+			cin>>vett[i];
+		}
+		cout<<occorrenze(0,n-1, vett, k);
+		cout<<endl;
+	}
+	return 0;
+
+}
+
+
+
+
+
+
+
+
+
+PROBLEMA 2
+
+
+
+#include <iostream>
+#include <cmath>
+#include <cstring>
+#include <algorithm>
+#include <vector>
+#include <cstring>
+#include<iomanip>
+using namespace std;
+
+//Vettori globali per i numeri primi e per quelli che rispettano tale vincolo
+
+vector<int> num_primi; 
+
+vector<int> final;
+
+
+void stampa()
+{
+	int n = final.size();
+	for (int i = 0; i < n; i++)
+		cout << setw(2)<<final[i] << "    ";
+	cout <<endl;
+}
+
+//Calcolo i numeri primi
+bool primo(int n){
+	if(n<=2){
+		return true;
+	}
+	for(int i=2;i<n;i++){
+		if(n%i==0){
+			return false;
+		}
+	}
+	return true;
+}
+
+
+//Genero due funzioni per valutare una tutti i primi e poi l'altra per verificare la condizione sulla somma
+void check(int N,int s1, int S, int h);
+void print_prime(int S, int P,int N);
+
+void print_prime(int S, int P,int N)
+{
+	
+	//Poiché devo considerare tutti i numeri primi dopo P inizio da i=P+1 la cui somma è minore di S
+	for (int k = P+1; k <=S ; k++)
+	{
+		if (primo(k))
+			num_primi.push_back(k);
+	}
+	if (num_primi.size()<N)
+		return;
+	//Richiamo la mia funzione poiché non ho ancora trovato un numero N di elementi
+	check(N,0, S, 0);
+}
+void check(int N,int s1, int S, int h)
+{
+	//Se sono arrivato ad N e se la somma è S posso terminare
+	if (final.size() == N && s1 == S)
+	{
+		stampa();
+		return;
+	}
+
+	if ( h == num_primi.size() || s1 > S)
+		return;
+
+	final.push_back(num_primi[h]);
+	check(N,s1+num_primi[h], S, h+1);
+	//Faccio il passo di UNDO
+	final.pop_back();
+	check(N,s1, S, h+1);
+}
+
+int main()
+{	
+	int t,n,s,p;
+	int i=0;
+	cin>>t;
+	int dim; 
+	int k;
+	
+	while(t--){
+		i++;
+		cin>>s>>n>>p;
+		cout<<"Caso di test : "<<i<<endl;
+		print_prime(s,p,n);
+	}
+	return 0;
+}

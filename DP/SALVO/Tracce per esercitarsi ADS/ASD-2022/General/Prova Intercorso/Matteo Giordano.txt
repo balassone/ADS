@@ -1,0 +1,157 @@
+/******************************************** ESERCIZIO 1 ********************************************/
+// Complessità algoritmo countOccurrences: O(n)
+// La complessità è infatti T(n) = 2T(n/2) + f(n), dove f(n) è costante, ed è dunque asintoticamente limitata
+// polinomialmente da n^log_b(a) = n. Dunque T(n) = Theta(n).
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// p: indice primo elemento, r: indice ultimo elemento
+// a: array non ordinato
+// k: elemento di cui contare le occorrenze
+int countOccurrences(int a[], int k, int p, int r) {
+
+	// Caso base
+	if (p == r) {
+		if (a[p] == k)
+			return 1;
+		else
+			return 0;
+	}
+
+	// Divide
+	int q = p + (r - p) / 2;
+
+	// Conquer
+	int occ1 = countOccurrences(a, k, p, q);
+	int occ2 = countOccurrences(a, k, q+1, r);
+
+	// Combine
+	return (occ1 + occ2);
+}
+
+int main() {
+
+	int T, N, K;
+	int a[1000];
+
+	cin >> T;
+
+	while (T--) {
+
+		// Input
+		cin >> K >> N;
+
+		for (int i = 0; i < N; ++i) {
+			cin >> a[i];
+		}
+
+		// Output
+		cout << countOccurrences(a, K, 0, N-1) << endl;
+	}
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+/******************************************** ESERCIZIO 2 ********************************************/
+// complessità isPrime: O(n)
+// complessità primeSequence: O(n*(S-P))
+
+// complessità algoritmo backtrack:
+// ho al più S-P chiamate ricorsive ogni volta, con un albero di ricorsione di profondità massima N. Ciascuno dei nodi dell'albero
+// ha un costo dovuto all'esecuzione di primeSequence O(seq[i-1]*(S-P)). Poiché l'elemento massimo di seq è S, tale costo
+// è un O(S*(S-P)) che riscriviamo come O(S^2).
+// Dunque il costo di ciascun livello dell'albero è (S-P)^i * O(S^2) che si può maggiorare con
+// S^i * O(S^2). Per N livelli dell'albero si ha una complessità totale (dal risultato della serie geometrica):
+//
+// T(n) = O( S^(N+2) ) = O(S^N)
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// Determina se un numero è primo in O(n)
+bool isPrime(int n) {
+	for (int i = n-1; i > 1; i--)
+		if (n%i == 0)
+			return false;
+	return true;
+}
+
+// Trova sequenza di numeri primi > P e <= S in O(n*(S-P))
+void primeSequence(int P, int S, int c[], int *nc) {
+	*nc = 0;
+
+	for (int i = P+1; i <= S; i++)
+		if (isPrime(i)) {
+			c[*nc] = i;
+			(*nc)++;
+		}
+}
+
+void backtrack(int P, int S, int N, int seq[], int partialSum, int i) {
+
+	// Caso base
+	// Arrivato a sequenza di N elementi, fermati.
+	// Se la somma è S, la soluzione è corretta, altrimenti è errata
+	if (i == N) {
+		if (partialSum == S) {		// Successo
+			for (int h = 0; h < N; ++h) {
+				cout << seq[h] << " ";
+			}
+			cout << endl;
+		}
+
+		else						// Fallimento
+			return;
+	}
+
+
+	// Caso ricorsivo
+	// Trova sequenza di numeri primi > dell'ultimo inserito seq[i-1] e <= S
+	int choices[S-P];
+	int nc;
+
+	if (i == 0)	// Al passo 0, non esiste seq[i-1]
+		primeSequence(P, S, choices, &nc);
+	else		// Questo serve a scegliere una sequenza strettamente crescente di numeri primi
+		primeSequence(seq[i-1], S, choices, &nc);
+
+
+	// Itera sui possibili numeri primi da inserire come scelta seq[i]
+	for (int k = 0; k < nc; k++) {
+		seq[i] = choices[k];
+
+		backtrack(P, S, N, seq, partialSum + choices[k], i+1);
+	}
+
+}
+
+int main() {
+	int T, S, N, P;
+	int seq[1000];
+
+	cin >> T;
+
+	for (int k = 1; k <= T; k++) {
+		cin >> S >> N >> P;
+
+		cout << "CASO DI TEST " << k << endl;
+		backtrack(P, S, N, seq, 0, 0);
+	}
+
+
+
+	return 0;
+}

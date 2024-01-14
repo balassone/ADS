@@ -1,0 +1,125 @@
+************* SIMONE DOTOLO N46004814
+
+PROBLEMA 1:
+
+def counting(nums,target):
+
+    limit = max(nums)
+
+    if(target > limit):
+        return 0
+
+    frequencies = [0] * (limit+1)
+
+    for i in range(len(nums)):
+        frequencies[nums[i]] += 1
+
+    return frequencies[target]
+
+n_tests = int(input())
+
+for i in range(n_tests):
+
+    test = input()
+
+    test = [int(x) for x in test.split(' ')]
+
+    target = test[0]
+    n = test[1]
+
+    nums = test[2:]
+
+    print(counting(nums,target))
+
+COMPLESSITA': 0(n)
+
+************* NOTA: nel caso l'array fosse ordinato, sarebbe possibile contare il numero di elementi target con una complessità O(logn + numero di occorrenze) con il seguente algoritmo
+
+def counttarget(nums,start,end,target):
+
+    count = 0
+
+    if(start > end):
+        return count
+
+    mid = end - (end-start) // 2
+
+    if(nums[mid] > target):
+        return counttarget(nums,start,mid-1,target)
+    elif(nums[mid] < target):
+        return counttarget(nums,mid+1,end,target)
+    else:
+        count += 1
+        countright = counttarget(nums,start,mid-1,target)
+        countleft = counttarget(nums,mid+1,end,target)
+
+        count += (countright + countleft)
+
+        return count
+
+**********************************************************************************++
+
+PROBLEMA 2:
+
+def is_prime(n):
+    for i in range(2,n-1):
+        if(n % i == 0):
+            return False
+    
+    return True
+
+def make_move(nums,position,path):
+    path.append(nums[position])
+
+def unmake_move(path):
+    path.pop()
+
+def is_valid(nums,position,path,s,n):
+    return len(path) < n and position < len(nums) and nums[position] + sum(path) <= s
+
+def is_solution(path,n,s):
+    return len(path) == n and sum(path) == s
+
+def solve(nums,position,path,res,n,s):
+
+    if(is_valid(nums,position,path,s,n) is False):
+        return
+
+    make_move(nums,position,path)
+
+    if(is_solution(path,n,s)):
+        res.append(path.copy())
+    else:
+        for i in range(position+1,len(nums)):
+            solve(nums,i,path,res,n,s)
+
+    unmake_move(path)
+
+test = input()
+count = 1
+while(test):
+
+    test = [int(x) for x in test.split(' ')]
+
+    s = test[0]
+    n = test[1]
+    p = test[2]
+
+    nums = [i for i in range(p+1,s+1) if is_prime(i)]
+
+    path = []
+    res = []
+
+    for i in range(len(nums)):
+        solve(nums,i,path,res,n,s)
+
+    print(f'CASO DI TEST {count}')
+
+    for el in res:
+        print(' '.join([str(x) for x in el]))
+    
+    count += 1
+    
+    test = input()
+    
+COMPLESSITA': O(s^n)

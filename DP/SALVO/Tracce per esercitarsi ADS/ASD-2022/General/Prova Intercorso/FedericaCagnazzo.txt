@@ -1,0 +1,140 @@
+//Federica Cagnazzo M63001383
+
+
+//ESERCIZIO 1 FEDERICA CAGNAZZO M63001383
+#include <iostream>
+using namespace std;
+
+
+int ConteggioOcc(int A[], int p1, int p2, int k)
+{
+	//Questi due if sono stati fatti per verificare se c'è k o meno
+	if ((p1 > p2) || (p1 == p2 && A[p1] != k))
+		return 0;
+	else if (p1 == p2 && A[p1] == k)
+		return 1;
+	
+	//Divdo l'array in due parti e cerco l'occorrenza in entrambe le parti
+	int cont = ConteggioOcc(A, p1,	(p1 + p2) / 2, k) + ConteggioOcc(A, 1 + (p1 + p2) / 2, p2, k);
+	return cont;
+}
+
+int main()
+{
+	int dim, k=0;
+	cout<<"Inserisci la dimensione dell'array"<<endl;
+	cin>>dim;
+	
+	int A[dim];
+	cout<<"Inserisci gli elementi"<<endl;
+	for(int i=0; i<dim; i++)
+		cin>>A[i];
+	
+	cout<<"Il numero da ricercare e'"<<endl;
+	cin>>k;	
+
+	cout << ConteggioOcc(A, 0, dim - 1, k);
+
+	return 0;
+}
+
+
+//La complessità dell'algoritmo è O(nlogn)
+
+
+
+
+//ESERCIZIO 2 FEDERICA CAGNAZZO M63001383
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+vector<int> set;
+vector<int> primo;
+
+// Funzione per i numeri primi
+bool NumPrim(int x)
+{
+	
+	int p = sqrt(x);
+	bool flag = true;
+
+	
+	if (x == 1) // non è numero primo
+		return false;
+
+	
+	for (int i = 2; i <= p; i++)
+		if (x % i == 0)
+			return false;
+
+	
+	return true;
+}
+
+// Funzione che mi permette di visualizzare gli N numeri primi la cui somma è uguale a S
+void visualizza()
+{
+	int length = set.size();
+	for (int i = 0; i < length; i++)
+		cout << set[i] << " ";
+	cout << "\n";
+}
+
+// Funzione per valutare gli N numeri primi la cui somma è uguale a S
+void Somma(int totale, int N, int S, int index)
+{	
+
+	if (totale == S && set.size() == N)
+	{
+		visualizza();
+		return;
+	}
+
+	// se il totale è maggiore di S o se l'indice ha raggiunto l'ultimo elemento	
+	if (totale > S || index == primo.size())
+		return;
+
+	set.push_back(primo[index]);
+
+	Somma(totale+primo[index], N, S, index+1);
+	
+	set.pop_back();
+
+	Somma(totale, N, S, index+1);
+}
+
+
+void FunzPrimo(int N, int S, int P)
+{
+	
+	for (int i = P+1; i <=S ; i++)
+	{
+		//Se l'iesimo elemento è primo allora lo aggiugniamo al vettore dei primi
+		if (NumPrim(i))
+			primo.push_back(i);
+	}
+
+	if (primo.size() < N)
+		return;
+		
+	Somma(0, N, S, 0);
+}
+
+
+int main()
+{
+	// S Somma, P primo, N elementi strettamenti maggiori di P tali che la loro NumPrim è uguale ad S
+	int S, N, P=0;
+	
+	cout<<"Inserisci S"<<endl;
+	cin>>S;
+	cout<<"Inserisci N"<<endl;
+	cin>>N;
+	cout<<"Inserisci P"<<endl;
+	cin>>P;
+	//Ricgiamo la funzione
+	FunzPrimo(N, S, P);
+	return 0;
+}

@@ -1,0 +1,118 @@
+//I esercizio
+
+#include <iostream>
+using namespace std;
+
+int count(int arr[],int low, int high, int x)
+{
+if ((low > high)
+    || (low == high && arr[low] != x))
+    return 0;
+
+    if (low == high && arr[low] == x)
+        return 1;
+
+        return count(arr,low,(low + high) / 2, x) + count(arr, 1+(low+high)/2,high,x);
+
+
+}
+
+int main()
+{
+    int t;
+ cin>>t;
+ 
+ 
+ while(t--){
+     int k;
+     cin>>k;
+     
+     int dim;
+     cin>>dim;
+     
+     int arr[dim];
+     for(int i=0; i<dim; i++){
+         cin>>arr[i];
+     }
+     
+     int n = sizeof(arr) / sizeof(int);
+     
+     cout << count(arr, 0, n - 1, k)<<endl;
+ }
+
+ return 0;
+}
+//Complessita
+//O(NlogN)
+
+
+//II esercizio
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isPrime(int n) {
+	for (int i = n-1; i > 1; i--)
+		if (n%i == 0)
+			return false;
+	return true;
+}
+
+
+void primeSeq(int P, int S, int c[], int *nc) {
+	*nc = 0;
+
+	for (int i = P+1; i <= S; i++)
+		if (isPrime(i)) {
+			c[*nc] = i;
+			(*nc)++;
+		}
+}
+
+void backtrackin(int P, int S, int N, int seq[], int partialSum, int i) {
+
+	if (i == N) {
+		if (partialSum == S) {		
+			for (int h = 0; h < N; ++h) {
+				cout << seq[h] << " ";
+			}
+			cout << endl;
+		}
+
+		else						
+			return;
+	}
+
+	int choices[S-P];
+	int nc;
+
+	if (i == 0)	
+		primeSeq(P, S, choices, &nc);
+	else		
+		primeSeq(seq[i-1], S, choices, &nc);
+
+	for (int k = 0; k < nc; k++) {
+		seq[i] = choices[k];
+		backtrack(P, S, N, seq, partialSum + choices[k], i+1);
+	}
+
+}
+
+int main() {
+	int X, S, N, P;
+	int seq[1000];
+
+	cin >> X;
+
+	for (int k = 1; k <= X; k++) {
+		cin >> S >> N >> P;
+
+		cout << "TEST " << k << endl;
+		backtrackin(P, S, N, seq, 0, 0);
+	}
+
+
+
+	return 0;
+}

@@ -1,0 +1,139 @@
+// Problema 1
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+void ricercabin(int* vet, int val, int i, int n, int & conteggio){
+    if(i>n)
+      return;
+
+    int m = (n+i)/2;
+
+    if(vet[m]==val) // se lo trovo incremento il conteggio
+        conteggio++;
+
+    if(m==0 || m==n) // controllo per non sforare l'la dimensione del vettore
+        return;
+
+    if(vet[m]==val && vet[m+1]!=val && vet[m-1]!=val) // se prima o dopo di me non c'è ancora il valore da cercare ho finito
+        return;
+    if(vet[m]>val || vet[m-1]==val){ // caso ce n'è un altro prima
+        ricercabin(vet,val,i,m-1,conteggio);
+    }   
+    if(vet[m]<val || vet[m+1]==val) // caso ce n'è un altro dopo
+        ricercabin(vet,val,m+1,n,conteggio);
+}
+
+int conta(int* vettore, int n, int k){
+    int conteggio = 0;
+
+    sort(vettore,vettore+n); // ordino il vettore
+    ricercabin(vettore,k,0,n-1,conteggio);
+
+    return conteggio;
+} // Complessità O(nlogn) dovuta al merge (la ricerca binaria modificata è sempre O(logn))
+
+int main(){
+    int t, k, n;
+
+    cin >> t;
+    int results[t];
+
+    for(int i=0; i<t; i++){
+        cin >> k >> n;
+        int vettore[n];
+        for(int j=0; j<n; j++)
+            cin >> vettore[j];
+        results[i] = conta(vettore,n,k);
+    }
+
+    for(int i=0; i<t; i++)
+        cout << results[i] << endl;
+
+    return 0;
+}
+
+
+
+// Problema 2
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+ 
+// funzione per verificare i numeri primi
+bool isPrime(int x){
+    int radice_x = sqrt(x);
+ 
+    if (x == 1) // perché 1 non è primo
+        return false;
+ 
+    // se trovo almeno un divisore faccio return false
+    for (int i = 2; i<=radice_x; i++)
+        if (x % i == 0)
+            return false;
+ 
+    // altrimenti è primo e ritorno true
+    return true;
+}
+ 
+void stampa(vector<int> vet){
+    int length = vet.size();
+    for (int i = 0; i<length; i++)
+        cout << vet[i] << ' ';
+    cout << endl;
+}
+ 
+// funzione per valutare tutti i possibili numeri primi N la cui somma faccia S
+void verify_sum(int totale, int N, int S, int indice, vector<int> num_primi, vector<int> set){
+    // se la somma totale è S e la raggiungo con N numeri primi ho finito
+    if (totale == S && set.size()==N){
+        stampa(set);
+        return;
+    }
+ 
+    // se il totale è maggiore di S oppure sono arrivato all'ultimo elemento dei primi allora torno indietro(e escludo quell'elemento primo)
+    if (totale>S || indice==num_primi.size())
+        return;
+ 
+    set.push_back(num_primi[indice]); // lo aggiungo al set
+ 
+    // includo l'elemento nella pos indice al totale
+    verify_sum(totale+num_primi[indice], N, S, indice+1,num_primi,set);
+ 
+    // backtrack
+    set.pop_back();
+ 
+    // escludo dal totale il numero primo nella posizione di indice
+    verify_sum(totale, N, S, indice+1, num_primi, set);
+}
+ 
+void find_all_num_primi(int N, int S, int P, vector<int> num_primi, vector<int> set){
+    //Tutti i numeri primi minori di S
+    for (int i = P+1; i <=S ; i++){
+        if (isPrime(i))
+            num_primi.push_back(i);
+    }
+ 
+    // se numeri primi minori di N ho finito
+    if (num_primi.size() < N)
+        return;
+    verify_sum(0, N, S, 0, num_primi, set);
+}
+ 
+int main(){
+    int t,S,P,N;
+
+    vector<int> set; // vettore che mantiene il set di numeri primi utili alla somma
+    vector<int> num_primi; // vettore che contiene i numeri primi fino ad S
+
+    cin >> t;
+
+    for(int i=0; i<t; i++){
+        cin >> S >> N >> P;
+        cout << "CASO DI TEST " << i+1 << endl;
+        find_all_num_primi(N, S, P, num_primi, set);
+    }
+
+    return 0;
+}

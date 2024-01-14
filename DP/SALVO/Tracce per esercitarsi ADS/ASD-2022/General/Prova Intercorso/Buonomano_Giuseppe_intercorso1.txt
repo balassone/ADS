@@ -1,0 +1,217 @@
+Buonomano Giuseppe M63001506
+
+ESERCIZIO 1:
+
+
+#include <iostream>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+using namespace std;
+
+int cerca_occorrenze(vector<int> arr, int k){
+
+    int cnt = 0;
+    for(int i=0; i<arr.size(); i++){
+        if (arr[i] == k){
+            cnt++;
+        }
+    }
+
+    return cnt;
+
+}
+
+int main(){
+
+    string line;
+    vector<int> v;
+    
+    int n;
+
+    cin >> n;
+    getline(cin,line);     
+
+    while(n--){
+
+        getline(cin, line);
+    
+        v.clear();
+
+        istringstream iss(line);
+        int x;
+        while(iss >> x){
+            v.push_back(x);
+        }
+
+        vector<int> arr(v.size()-1, 0);
+        int k = v[0];
+        for (int i=0; i<arr.size(); i++){
+            arr[i] = v[i+1];
+        }
+
+        sort(arr.begin(), arr.end());
+            
+        cout << cerca_occorrenze(arr, k) << endl;
+        arr.clear();
+    }
+
+    return 0;
+}
+
+L’algoritmo ha una complessità pari ad nlog n (ordinamento) + O(n) per il for.
+In totale O(nlogn)
+
+
+
+
+
+
+
+
+_________________________________________________________________
+ESERCIZIO 2:
+
+#include <iostream>
+#include <vector>
+#include <sstream>
+using namespace std;
+
+
+void print(vector<int> v){
+    
+        for (int i=0; i<v.size(); i++){
+            cout << v[i] << " ";
+        }
+        cout << endl;
+
+}
+
+bool isPrime(int num){
+
+    if (num < 2){
+        return false;
+    } else {
+
+        for (int i=num-1; i>=2; i--){
+            if (num % i == 0){
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+}
+
+void primes(int P, int S, vector<int> & nprimi){
+
+    
+    for (int i=P+1; i<S; i++){
+        if (isPrime(i)){
+            nprimi.push_back(i);
+        }
+    }
+
+}
+
+bool isS(vector<int> sequence, int S){
+    int sum = 0;
+    for (int i=0; i<sequence.size(); i++){
+        sum = sum+sequence[i];
+    }
+
+    if(sum == S){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+bool isValid(int i, vector<int> used){
+    if (used[i] == -1){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void backtrack(vector<int> & sequence, vector<int> & used, vector<int> nprimi, int S, int N, int P){
+
+    if (N == 1){
+            if (S > P && isPrime(S)){
+            cout << S;
+            return;
+            }
+        
+    }
+
+    if (sequence.size() == N){
+        if (isS(sequence, S)){
+        print(sequence);
+        }
+        return;
+    }
+
+    for (int i=0; i<nprimi.size(); i++){
+        
+        if (isValid(i, used)){
+            used[i] = 1;
+            sequence.push_back(nprimi[i]);
+            backtrack(sequence, used, nprimi, S, N, P);
+            sequence.pop_back();
+            used[i] = -1;
+        }
+    }
+
+}
+
+int main(){
+
+    string line;
+    vector<int> v, nprimi;
+    int n;
+
+    cin >> n;
+    getline(cin,line);     
+
+    while(n--){
+
+        cout << "Inserisci gli elementi: ";
+        getline(cin, line);
+    
+        v.clear();
+
+        istringstream iss(line);
+        int x;
+        while(iss >> x){
+            v.push_back(x);
+        }
+
+        int S = v[0];
+        int N = v[1];
+        int P = v[2];
+
+        cout << " S: " << S << endl;
+        cout << " N: " << N << endl;
+        cout << " P: " << P << endl;
+
+        primes(P, S, nprimi);
+
+        vector<int> used(nprimi.size(), -1);
+        vector<int> sequence;
+
+        backtrack(sequence, used, nprimi, S, N, P);
+
+        used.clear();
+        sequence.clear();
+        nprimi.clear();
+        used.clear();
+
+    }
+
+    return 0;
+}
+

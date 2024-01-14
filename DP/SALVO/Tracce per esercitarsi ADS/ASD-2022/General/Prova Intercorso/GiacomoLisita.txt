@@ -1,0 +1,120 @@
+ES1
+def count(arr, first, last, k):
+ 
+    
+#verifica i subarray non validi
+    if ((first == last and arr[first] != k) or (first > last)):
+        return 0;
+ 
+    #verifica se c'è un elemento singolo uguale a k
+    if (first == last and arr[first] == k):
+        return 1;
+ 
+    #Dividi l'array in due parti e trova le occorrenze di k in ambedue le parti
+    return count(arr, first, (first + last) // 2, k) +\
+    count(arr, 1 + (first + last) // 2, last, k);
+ 
+# Driver code
+if __name__ == '__main__':
+    f = open("/Users/giacomolisita/Desktop/es1.txt", "r")
+    tc = int(f.readline())
+    i = 0
+    while i < tc:
+        arr = list(f.readline())
+        key = arr[0]
+        n = arr[1]
+        arr.remove(key)
+        arr.remove(n)
+        i += 1
+        print(count(arr, 0, len(arr)-1, key))
+
+#complessità temporale O(nlogn) 
+
+ES2
+
+import math
+
+# funzione per stampare i primi N primi la cui somma è S
+def display() :
+
+	global arr, prime_arr
+	length = len(arr)
+	for i in range(0, length) :
+		print (arr[i], end = " ")
+	print ()
+
+#funzione per verificare se un numero è primo
+def isPrime(x) :
+
+	# radice quadrata
+	radice = int(math.sqrt(x))
+	flag = True
+
+	# verifica 1
+	if (x == 1) :
+		return False
+
+	# se ci sono fattori ritorna falso
+	for i in range(2, radice + 1) :
+		if (x % i == 0) :
+			return False
+
+	# se non ci sono fattori
+	return True
+
+#funzione per trovare tutti gli N primi la cui somma è S
+def primeSum(total, N,
+			S, index) :
+	
+	global arr, prime_arr
+	
+	if (total == S and len(arr) == N) :
+		display()
+		return
+
+	if (total > S or index == len(prime_arr)) :
+		return
+
+	arr.append(prime_arr[index])
+    
+    #include l'index-esimo valore di prime_arr al totale
+	primeSum(total + prime_arr[index], N, S, index + 1)
+
+	#rimozione dell'elemento dal vettore
+	arr.pop()
+
+	primeSum(total, N, S, index + 1)
+
+# funzione per creare l'array totale
+def allprime(N:int, S:int, P:int) :
+
+	global arr, prime_arr
+
+	for i in range(P + 1,
+				S + 1) :
+        #se i è primo lo aggiunge al vettore dei primi
+		if (isPrime(i)) :
+			prime_arr.append(i)
+	
+	# elimina i valori minori di N
+	if (len(prime_arr) < N) :
+		return
+	primeSum(0, N, S, 0)
+
+arr = []
+prime_arr = []    
+
+if __name__ == '__main__':
+    f = open("/Users/giacomolisita/Desktop/es2.txt", "r")
+    line = 3
+    i=0
+    while i < line:
+        arr = f.readline()
+        arr = arr.split(" ")
+        S = int(arr[0])
+        N = int(arr[1])
+        P = int(arr[2])
+        allprime(N, S, P)
+
+
+#complessità temporale esponenziale

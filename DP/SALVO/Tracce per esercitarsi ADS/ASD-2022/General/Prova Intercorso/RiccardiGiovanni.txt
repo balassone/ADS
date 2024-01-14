@@ -1,0 +1,166 @@
+PROBLEMA 1.
+
+#include <iostream>
+using namespace std;
+
+#define N 1000
+ 
+
+int count(int arr[], int low, int high, int K)// La funzione count implementata ritorna il numero di occorrenze del dato valore K nel sottovettore passato
+{
+ 
+    
+    if ((low > high) || (low == high && arr[low] != K))//Controllo se il vettore è valido
+        return 0;
+ 
+    
+    if (low == high && arr[low] == K)// Controllo se c' è un unico vaore nel vettore, uguale a K
+        return 1;
+ 
+    
+    return count(arr, low, (low+high)/2, K) + count(arr, 1+(low+high)/2, high, K); //Divido il vettore e cerco le occorrenze nei due subarray
+}
+ 
+
+int main()
+{ 
+    int t_case;
+    cin>>t_case;
+        while(t_case){ //Eseguo per ogni test case
+        int K;
+        cin>>K;        //Valore da cercare
+        int dim;
+        cin>>dim;      //dimensione del vettore da inserire
+        int vett[dim];
+        for(int i=0; i<dim; i++)
+            cin>>vett[i];
+        int n = (sizeof(vett)) / sizeof(int);  //dimensione dell' intero vettore in memoria
+     
+        cout << count(vett, 0, n-1, K)<<endl; 
+        t_case--;
+    }
+    return 0;
+}
+
+TEST CASE:
+Input:
+3
+3 5 4 5 2 3 3
+2 4 3 4 2 3
+6 6 3 2 1 6 6 5
+Output:
+2
+1
+2
+
+COMPLESSITA': O(n logn) dove n numero di elementi dell' array.
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+PROBLEMA 2.
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+bool isPrime(int n, int *output, int k){ //Restituisce true se il numero è primo
+    bool is_prime = true;
+      if (n == 0 || n == 1) {
+        is_prime = false;
+     }
+      for (int i = 2; i <= n/2; ++i) {
+    if (n % i == 0) {
+          is_prime = false;
+          break;
+        }
+      }
+      return is_prime;
+    for(int i=0; i<k; i++){
+        if(output[i] == n){ //Controlla se è gia presente
+            is_prime= false;
+        }
+    }
+    return is_prime;
+}
+
+bool isSol(int *output, int N, int S){ //Controlla la soluzione
+    int sum = 0;
+    for(int i = 0; i<N; i++){
+        sum += output[i];
+    }
+    if(sum == S){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+void stampa(int *output,int N){
+    for(int i = 0; i<N;i++){
+        cout<<output[i]<<" ";
+    }
+    cout<<endl;
+}
+
+bool primeBacktrack(int N, int P, int S, int *output, int k, int number){    //Funzione ricorsiva che implementa il Backtracking e stampa le soluzioni
+    if( k == N  ){
+        if(isSol(output, N, S)){
+            stampa(output, N);
+            return true;
+        }else{
+            return false;
+        }
+    }
+    bool res = false;
+    for(int i=number+1; i<=S ; i++ ){
+        if(isPrime(i,output,k)){
+            output[k]= i;
+            res = primeBacktrack(N, P, S, output, k+1,i) || res;
+            output[k] = 0;
+        }
+    }
+    return res;
+    
+}
+
+
+int main() {
+    int N, P, S;
+    int *output;
+    int t_case;
+    int conto_test = 0;
+    
+    cin>>t_case;
+    int i=0;
+    while(t_case){
+        cin>> S;
+        cin>> N;
+        cin>> P;
+        output = new int[N];
+        for(int i = 0; i<N;i++){
+            output[i] = 0;
+        }
+        cout<<"CASO DI TEST "<<++i<<endl;
+        primeBacktrack(N, P, S, output, 0,P);
+        delete[] output;
+        t_case--;
+    }
+    return 0;
+}
+
+TEST CASE:
+Input:
+2
+63 3 5
+23 3 2
+Output:
+CASO DI TEST 1
+7 13 43 
+7 19 37 
+11 23 29 
+13 19 31 
+CASO DI TEST 2
+3 7 13 
+5 7 11 
+
+COMPLESSITA': O(2^(s-p))

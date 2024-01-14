@@ -1,0 +1,269 @@
+INTERCORSO ASD: ZAIRA ABDEL MAJID M64001494
+
+
+Complessità problema 1: nlogn (mergesort)
+----------------------------------------------------------PROBLEMA 1-------------------------------------------------------------------
+//algoritmo di divide et impera per ocntare le occorrenze di un arrai a non ordinato
+#include <bits/stdc++.h>
+#include <iostream>
+
+using namespace std;
+void solve(int*, int k, int dim);
+void mergesort(int* a, int start, int end);
+void merge(int* a, int start, int mid, int end);
+
+int main(){
+
+    int testcases, k, dim;
+    cin>> testcases;
+    while(testcases--){
+
+        cin>> k;
+        cin>> dim;
+        int* a= new int[dim];
+        for(int i=0;i<dim;i++){
+            cin>> a[i];
+        }
+        solve(a,k, dim);
+
+    }
+}
+
+
+void solve(int*a, int k, int dim){
+
+mergesort(a,0, dim-1);
+int count=0;
+
+ for(int i=0; i<dim; ++i){
+            if(a[i]==k){
+                count++;
+            }
+}
+cout<<count<<endl;
+}
+
+
+
+
+void mergesort(int* a, int start, int end)
+{
+if(start<end) {
+int mid= start+(end-start)/2; //a= 5 b=7 b-a=2 b-a/2= 1 quindi a+1= 6 che è la metà.
+mergesort(a,start,mid);
+mergesort(a,mid+1,end);
+
+merge(a,start,mid,end);
+}
+}
+
+
+
+void merge(int* a, int start, int mid, int end)
+{
+    int i,j,k;
+    int n1=mid-start+1;
+    int n2=end-mid;
+    int L1[n1];
+    int L2[n2];
+
+    for(i=0;i<n1;i++)
+        L1[i]=a[start+i]; //copia gli elementi della suddivisione in questo array prendendoli dalla posizione dell'array originario
+    for(i=0;i<n2;i++)
+        L2[i]=a[mid+1+i];
+    i=0;
+    j=0;
+    k=start; //comincia dall'inizio
+    while(i<n1 && j<n2){ //fai il check dall'inizio dei due array fino alla loro fine 
+        if(L1[i]<L2[j]){ //se L1 è minore di L2
+            a[k]=L1[i]; //metti L1 in prima posizione 
+            i++;
+        }else{
+            a[k]=L2[j]; //metti L2 in prima posizione 
+            j++;
+        }
+        k++;
+    }
+       //poichè nel while c'è una condizione in && può darsi che una venga incontrata e l'altra no. Quindi copia i restanti elementi che sono già
+       //ordinati nella restante parte di a    
+    while(i<n1){
+        a[k]=L1[i];
+        i++;
+        k++;
+    }
+     while(j<n2){
+        a[k]=L2[j];
+        j++;
+        k++;
+    }
+
+
+
+}
+
+
+________________________________________________________________________________________________________-
+
+
+complessità problema 2 (n-1)^n le mosse possibili sono n-1
+-------------------------------------------------PROBLEMA 2-------------------------------------------------------
+#include <iostream>
+#include <string>
+#include <climits>
+#include <string.h>
+
+using namespace std;
+
+int *sol_final;
+int test_iter=0;
+
+
+void get_primes(int *v, int n);
+bool prime(int number);
+void backtrack(int * seq, int N, int sum, int sum_now, int dim_sol, int dim_primes, int* primes, int iter);
+void solve();
+bool is_solution(int dim_sol, int N);
+bool is_safe(int num, int sum, int sum_now);
+
+int main()
+{
+    solve();
+    return 0;
+}
+
+void get_primes(int *v, int n) {
+
+    int i,j;
+    for(i=2; i<=n; i++){
+        if(v[i]==0){
+            for(j=2*i; j<=n; j+=i) {
+                v[j]=1;        
+            }
+        }
+    }
+}
+
+bool prime(int number)
+{
+    int i=1;
+    if(number>1){
+        do{
+            i++;
+        }while(number%i);
+
+    }
+
+    if(i==number) 
+    return true;
+    else          
+    return false;
+}
+
+
+void solve(){
+
+    int testcase=0;
+    cin>>testcase;
+
+    while(testcase--)
+    {
+        int N;
+        int sum;
+        int p;
+        int dim_primes=0;
+
+        cin>>sum;
+        cin>>N;
+        cin>>p;
+
+        int* seq= new int[N];
+        int* totali= new int[sum];
+        int* primes= new int[sum];
+
+        for(int i=0; i<sum;i++)
+        {
+            totali[i]=0;
+        }
+
+        get_primes(totali,sum);
+        int j=0;
+        int h=0;
+
+        for(int i=0; i<sum; i++)
+        {
+            if( totali[i]==0 && i>p)
+            {
+                primes[j]=i;
+                dim_primes++;
+                j++;
+            }
+        }
+        primes[dim_primes]=sum;
+        dim_primes++;
+        for(int i=0; i<N;i++)
+            seq[i]=0;
+        cout<< "CASO DI TEST "<<test_iter+1<<endl;
+        test_iter++;
+        backtrack(seq,N,sum,0,0,dim_primes,primes,-1);
+
+    }
+
+    return;
+}
+    
+
+void backtrack(int * seq, int N, int sum, int sum_now, int dim_sol, int dim_primes, int* primes, int iter)
+{
+    if(is_solution(dim_sol,N)==true)
+    {
+        if(sum_now==sum)
+        {      
+                for(int i=0; i<N; i++)
+                    cout<<" "<<seq[i];
+                cout<<endl;
+        }
+        return;
+    }
+    
+    int num=0;
+    int new_sum= sum_now;
+    int new_dim_sol= dim_sol;
+    
+
+    for(int k=iter+1; k<dim_primes; k++)
+    {
+        num=primes[k];
+        if(is_safe(num,sum,sum_now)==true)
+        {
+            primes[k]=-1;
+            new_sum= sum_now + num;
+            seq[dim_sol]=num;
+            new_dim_sol= dim_sol +1;
+            
+            backtrack(seq,N,sum,new_sum,new_dim_sol,dim_primes,primes,k);
+
+            seq[dim_sol]=0;
+            primes[k]=num;
+        } 
+    }
+    return;
+}
+
+
+bool is_safe(int num, int sum, int sum_now)
+{
+    if(sum_now+num <= sum && num!=-1) return true; 
+    return false;
+}
+
+
+
+bool is_solution(int dim_sol, int N)
+{ 
+    if(dim_sol==N)
+        return true;
+
+    return false;
+}
+
+--------------------------------------------------------------

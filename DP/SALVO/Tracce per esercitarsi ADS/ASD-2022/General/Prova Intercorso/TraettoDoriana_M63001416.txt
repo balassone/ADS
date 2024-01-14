@@ -1,0 +1,189 @@
+//PROBLEMA 1 TRAETTO_DORIANA_M63001416
+#include <iostream>
+using namespace std;
+
+/*Prototipi funzioni*/
+void insert(int [], int);
+int conteggio(int [], int, int, int);
+
+int main(){
+    /*Numero di casi di test*/
+    int tc;
+    cin>>tc;
+
+    int K, n;
+    while(tc--){
+        cin>>K; /*occorrenza K da cercare*/
+        cin>>n; /*dimensione dell'array*/
+
+        int * A= new int[n];
+        insert(A,n);
+
+        cout<<conteggio(A, 0, n-1, K)<<endl;
+        delete A;
+    }
+
+    system("PAUSE");
+    return 0;
+}
+
+/*Funzione per effettuare l'inserimento dei valori nel vettore.
+    Complessità O(n).*/
+void insert(int A[], int n){
+         for(int i=0; i<n; i++){
+            cin>>A[i];
+       }
+}
+
+/*Funzione che effettua il conteggo delle occorrenze di K, con approccio Divide et Impera.
+Nella chiamata ricorsiva il vettore é diviso a metà, fino al singolo elemento. Successivamente
+si effettuano due controlli: se è diverso da K restituisce 0, altrimenti restituisce 1.
+Infine vengono sommati i conteggi parziali, calcolati rispettivamente nella prima e nella seconda metà del vettore.
+    Complessità O(nlogn).*/
+int conteggio(int A[], int L, int H, int K){
+
+    if ((L>H) || (L==H && A[L] != K)){
+        return 0;
+    }
+
+    if (L == H && A[L] == K){
+        return 1;
+    }
+
+/* Qui avviene il passaggio iterativo della funzione conteggio.
+Per ogni passo i conteggi delle occorrenze di K vengono sommati.*/
+    int cont_parziale_1= conteggio(A, L, (L + H) / 2, K);
+    int cont_parziale_2= conteggio(A, 1 + (L + H) / 2, H, K);
+    return  cont_parziale_1 + cont_parziale_2; 
+}
+
+//PROBLEMA 2 TRAETTO_DORIANA_M63001416
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+vector<int> set;
+vector<int> num_primo;
+/*Prototipi funzioni*/
+
+bool primo(int );
+void stampa();
+void somma_primi(int, int, int, int);
+void Primi(int, int, int);
+
+int main(){
+
+    /*Numero di casi di test*/
+    int n;
+    cin>>n;
+
+    int S, N, P;
+    while(n--){
+        cin>>S; //SOMMA
+        cin>>N; //SEQUENZA DI NUMERI PRIMI 
+        cin>>P; //NUMERO PRIMO
+
+        cout<<"CASO DI TEST "<<endl;
+        Primi(N, S, P);
+
+    }
+    system("PAUSE");
+    return 0;
+}
+
+
+/*Funzione booleana che passa un valore x e valuta se è numero primo.
+Check sul valore 1 e successivamente verifica se esistono divisori del numero.
+Se viene trovato almeno un divisore la funzione ritorna false.*/
+bool primo(int x){
+    int radice = sqrt(x);
+    bool flag = true;
+
+    if (x == 1)
+        return false;
+
+    for (int i = 2; i <= radice; i++)
+        if (x % i == 0)
+        return false;
+
+    return true;
+}
+
+/*Funzione di stampa degli N numeri primi la cui somma è uguale a S.*/
+void stampa(){
+    int length = set.size();
+    for (int i = 0; i < length; i++){
+        cout << set[i] << " ";
+    }
+    cout << "\n";
+}
+
+/* Funzione che valuta tutti i possibili N numeri primi con somma uguale a S*/
+void somma_primi(int sum, int N, int S, int index){
+
+    /*se la somma è uguale a S e sum viene raggiunto utilizzando N numeri primi*/
+    if (sum == S && set.size() == N){
+        // stampa gli N numeri primi
+        stampa();
+        return;
+    }
+
+    /*se la somma è maggiore di S o se l'indice ha raggiunto l'ultimo elemento*/
+    if (sum > S || index == num_primo.size()){
+        return;
+    }
+    
+    //make_move
+    set.push_back(num_primo[index]);
+
+    //backtracking
+    somma_primi(sum+num_primo[index], N, S, index+1);
+
+    //unmake_move
+    set.pop_back();
+
+    somma_primi(sum, N, S, index+1);
+}
+
+/*Funzione che genera tutti i numeri primi*/
+void Primi(int N, int S, int P){
+    /*Numeri primi minori di S*/
+    for (int i = P+1; i <=S ; i++){
+        if (primo(i)){
+            num_primo.push_back(i);
+        }
+    }
+    /*Numeri primi minori di N*/
+    if (num_primo.size() < N){
+        return;
+    }
+    somma_primi(0, N, S, 0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//PROBLEMA 2

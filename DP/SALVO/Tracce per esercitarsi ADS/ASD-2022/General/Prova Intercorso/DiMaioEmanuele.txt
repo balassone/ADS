@@ -1,0 +1,171 @@
+//PROBLEMA 1----------------------------------------------
+
+package intercorso;
+
+import java.util.Scanner;
+/* Scritto in JAVA
+ * 
+ * PROVA INTERCORSO ALGORITMI E STRUTTURE DATI 2022
+ * Emanuele Di Maio
+ * ESERCIZIO 1
+ * 
+ * Per la complessità temporale:
+ * Nel caso Divide: partiziona il vettore finché indice di inizio (p) e fine (r) coincidono: 2 rami dell'albero
+ * e di conseguenza la sua altezza è logN, inoltre viene effettuato un controllo per ogni elemento del vettore
+ * quando si arriva alla foglia: N. La complessità è quindi N logN
+ * Es.
+ * K = 1
+ * p=0, r=3
+ * 				   2 3 1 6	Partiziono
+ * 				  /      \
+ * 				2 3		1 6		 Partiziono 
+ * 				/ \	    /  \
+ * 			   2   3   1    6		Su questo livello p ed r coincidono (passo base) e richiamo la CountNumber
+ */
+public class DiMaioEmanuele1 {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int T = scan.nextInt();
+		while(T-- > 0) {
+			int K = scan.nextInt();
+			int N = scan.nextInt();
+			int[] array = new int[N];
+			for(int i=0; i<N; i++) {
+				array[i] = scan.nextInt();
+			}
+			System.out.println(Count(array,0,N-1,K));
+		}
+		scan.close();
+		return;
+
+	}
+
+	private static int Count(int[] array, int p, int r, int K) {
+		int count1=0;		
+		int count2=0;
+		if(p == r) {		//Passo base: arrivo alla foglia dell'albero
+			return CountNumber(array, p, K); //Ritorno il conteggio appena effettuato nella foglia
+		}
+		if(p<r) {				//Divide
+			int q = (p+r)/2;
+			count1 += Count(array, p, q, K);	//Chiamata ramo sinistro albero	
+			count2 += Count(array, q+1, r, K);  //Chiamata ramo destro albero
+		}
+		return count1+count2;	//Impera: risalgo l'albero ritornando il conteggio
+	}
+	
+	public static int CountNumber(int[] A, int p, int K) {	//Funzione richiamata sulla foglia
+		int count = 0;
+		if(A[p] == K) {		//Verifico che la foglia sia uguale a K
+			count++;		//Incremento il conteggio se è uguale, altrimenti restituisco 0 (non l'ho contato)
+		}
+		return count;
+	}
+
+}
+
+//PROBLEMA 2----------------------------------------------
+package intercorso;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/*
+ * PROVA INTERCORSO ALGORITMI E STRUTTURE DATI 2022
+ * Emanuele Di Maio
+ * ESERCIZIO 2
+ * 
+ * Il linguaggio usato è JAVA compilato con versione 9 (JavaSE-9)
+ * HP1: Si è ipotizzato che nella soluzione è ammessa anche la ripetizione degli stessi elementi (ad esempio: [7,7,7] con S=21
+ * HP2: Si è ipotizzato che nella soluzione è ammessa anche la stessa sequenza di interi con ordine diverso
+ * (ad esempio: [7, 13, 43], [7,43,13], [43,7,13])
+ * La complessità temporale è di tipo esponenziale
+ */
+
+public class EmanueleDiMaio2 {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int T = scan.nextInt();
+		int n_caso_test = 1;
+		while(T-- > 0) {
+			int S = scan.nextInt();
+			int N = scan.nextInt();
+			int P = scan.nextInt();
+			
+			List<List<Integer>>  all_solutions = new ArrayList<>();
+			List<Integer> partial_solution = new ArrayList<>();
+			Foo(S,N,P, 0, partial_solution, all_solutions);
+			System.out.println("CASO DI TEST "+ n_caso_test);
+			n_caso_test++;
+			PrintSolutions(all_solutions);
+		}
+		scan.close();
+		return;
+	}
+
+	//k = elemento in posizione k del vettore delle soluzioni
+	private static void Foo(int S, int N, int P, int k, List<Integer> partial_solution, List<List<Integer>> all_solutions) {
+		if(k == N && SolutionEqualsSum(partial_solution, S)) {	//k è uguale a N e la somma degli elementi della soluzione candidata è uguale a S
+			List<Integer> buffer_solution = new ArrayList<>(partial_solution);
+			all_solutions.add(buffer_solution);
+		}else {
+			for(int i=P+1; i<=S; i++) {		//Provo ad aggiungere tutti gli elementi che vanno da i a 
+				partial_solution.add(k, i);			//Aggiungo l'elemento i in posizione k
+				if(isSafe(partial_solution, i, S, N)) {	//Se i è primo e se la somma degli elementi attuali è < S
+					Foo(S, N, P, k+1, partial_solution, all_solutions);	//Allora aggiungo l'elemento successivo alla soluzione
+				}
+				partial_solution.remove(k);	//Undo: rimuovo l'elemento in posizione k appena aggiunto dalla soluzione parziale
+			}
+		}
+	}
+
+	private static boolean isSafe(List<Integer> partial_solution, int i, int S, int N) {
+		if(!isPrime(i)) {
+			return false; 	// Se il numero i candidato aggiunto non è primo, allora return false
+		}
+		int solution_sum = 0;
+		int length = partial_solution.size();
+		for(int j=0; j<length; j++) {
+			solution_sum += partial_solution.get(j);
+		}
+		if(solution_sum > S) {	//Se la somma degli elementi è maggiore di S, allora ritorna falso, altrimenti vero
+			return false;
+		}
+		return true;
+		
+	}
+
+	private static boolean SolutionEqualsSum(List<Integer> partial_solution, int S) {
+		int solution_sum = 0;
+		int length = partial_solution.size();
+		for(int i=0; i<length; i++) {
+			solution_sum += partial_solution.get(i);
+		}
+		if(solution_sum == S) {	//Se la somma degli elementi è uguale a S ritorna true, altrimenti falso
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isPrime(int number) {
+		boolean isPrime = true;
+		for(int i=2; i<number-1; i++) {
+			if(number%i == 0) {			//è primo se il modulo è sempre diverso da 0 per ogni numero da 2 a number-1
+				isPrime = false;
+			}
+		}
+		return isPrime;
+	}
+	
+	public static void PrintSolutions(List<List<Integer>> all_solutions) {
+		for(int i=0; i<all_solutions.size(); i++) {
+			for(int j=0; j<all_solutions.get(i).size(); j++) {
+				System.out.print(all_solutions.get(i).get(j)+ " ");
+			}
+			System.out.println();
+		}
+	}
+}

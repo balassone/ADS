@@ -1,0 +1,174 @@
+
+ALFONSO D'AVINO M63001493
+PRIMO ALGORITMO-------------------------------------------------------------------COMPLESSITà O(NLOGN)
+
+#include <iostream>
+using namespace std;
+ 
+
+//funzione che ritorna l'occorrenza di un intero nel vettore [primo....ultimo]
+int count(int vet[], int primo, int ultimo, int x)
+{
+ 
+ // se il subarray non è valido o l'elemento non è trovato
+    if ((primo > ultimo)
+        || (primo == ultimo && vet[primo] != x))
+        return 0;*/
+        
+    //se c'è solo un elemento che è uguale a x 
+    if (primo == ultimo && vet[primo] == x)
+        return 1;
+ 
+    //divido l'array in due parti e faccio il count delle occorrenze di x in entrambe le parti
+
+    return count(vet, primo,(primo + ultimo) / 2, x)
+           + count(vet, 1 + (primo + ultimo) / 2, ultimo, x);
+}
+ 
+int main()
+{
+	int test;
+	cout<<"inserisci numero test: "<<endl;
+	cin>>test;
+	
+	while(test--){
+	    int k;
+	    cout<<"inserisci intero che occorre: "<<endl;
+	    cin>>k;
+	    int dim;
+	    cout<<"inserisci dim array: "<<endl;
+	    cin>>dim;
+	    
+	    int vet[dim];
+	    cout<<"inserisci elementi array: ";
+	    for(int i=0; i<dim; i++){
+	        cin>>vet[i];
+	        
+	    }
+	    
+	    int n = sizeof(vet) / sizeof(int);
+	    
+	    cout << count(vet, 0, n - 1, k)<<endl;
+	}
+
+	return 0;
+}
+
+--------------------------------------------------------------------------------------------------------------------------
+SECONDO ALGORITMO-----------------------------------------------------------[[[[SOLITAMENTE IL BACKTRACKING HA COMPLESSITà ESPONENZIALE]]]]
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+
+
+vector<vector<int>> sol;
+
+// isSafe deve dire se il numero è un numero primo
+
+bool isSafe(int num) {
+
+    for(int i=2; i<num; i++) {
+
+        if(num % i == 0) return false;
+    }
+
+    return true;
+}
+
+void stampasequenze() {
+
+    for(int i=0; i<sol.size(); i++) {
+
+        for(int j=0; j<sol[0].size(); j++) {
+
+            cout << sol[i][j] << " ";
+        }
+
+        cout << "\n";
+    }
+}
+
+void ClearAll(vector<int> & elemento, int & count) {
+
+    elemento.clear();
+    count = 0;
+
+    sol.clear();
+    sol[0].clear();
+}
+
+void algorithm(int somma, int num_elem, int p, vector<int> elemento, int & count) {
+
+    if(elemento.size()==num_elem) {
+
+        if(count == somma) {
+
+            sol.push_back(elemento);
+            return;
+        }
+
+        else return;
+    }
+
+
+
+    for(int i = p+1; i<=somma; i++) {
+
+        if(isSafe(i) && count+i<=somma) {
+            
+            count += i;
+
+            elem.push_back(i);
+
+            algorithm(somma, num_elem, i, elem, count);
+
+
+            //backtracking
+            count -= i;
+            elemento.pop_back();
+        }
+    }
+
+    return;
+}
+
+
+
+int main() {
+
+    vector<int> elem;
+    int count = 0;
+    int index = 1;
+
+    int tc;
+    int somma, num_elem, p;
+
+
+    cin >> tc;
+
+    while(tc) {
+        
+        cin >> somma;
+
+        cin >> num_elem;
+
+        cin >> p;
+
+
+        algorithm(somma, num_elem, p, elem, count);
+
+        cout << "\n\nCASO DI TEST " << index << endl;
+
+        printSolutions();
+
+        cout << "\n\n";
+
+        clearAll(elem, count);
+
+        index++;
+
+        tc--;
+    }
+}

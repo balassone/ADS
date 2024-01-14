@@ -1,0 +1,187 @@
+FRANCESCA DI MARTINO  M63001478
+
+
+Problema 1. La complessità è O(nlogn)
+
+
+#include <iostream>
+using namespace std;
+
+
+int count(int A[], int last, int first, int elem_cercato)
+{
+
+	// Se l'array è costituito da un unico elemento e questo è pari a quello cercato
+	//allora ritorna 1
+	if (last == first && A[last] == elem_cercato)
+		return 1;
+		
+	//Se il sottoarray non è valido oppure l'elemento non è trovato: 	
+	if ((last > first) || (last == first && A[last] != elem_cercato))
+		return 0;
+
+
+	// In tutti gli altri casi si divide l'array in 2 parti e si cerca per ognuna delle due parti
+	//quante volte compare x
+	return count(A, last,
+				(last + first) / 2, elem_cercato)
+		+ count(A, 1 + (last + first) / 2,
+				first, elem_cercato);
+}
+int main()
+{ 
+    int t_case;
+    cin>>t_case;
+        while(t_case){
+        
+        int K;
+        cin>>K;
+        int dim;
+        cin>>dim;
+        int arr[dim];
+        for(int i=0; i<dim; i++)
+            cin>>arr[i];
+        int n = (sizeof(arr)) / sizeof(int);
+     
+        cout << count(arr, 0, n - 1, K)<<endl;
+        t_case--;
+    }
+
+return 0;
+}
+
+
+
+
+ COMPLESSITA' : La complessità è O(nlogn)
+
+
+
+
+
+
+
+
+Secondo problema : Il backtracking ha complessità esponenziale. 
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<vector<int>> solutions; //matrice delle soluzioni
+
+bool is_valid(int num_is_prime) {
+    //is_valid deve valutare se il numero è primo
+
+    for(int i=2; i<num_is_prime; i++) {
+
+        // se il resto della divisione col numero i-esimo Ã¨ ritorna falso
+
+        if(num_is_prime % i == 0) return false;
+    }
+
+    return true;
+}
+
+//la soluzione è una matrice-->funzione che stampa una matrice(per le soluzioni)
+void print_matrix() {
+
+    for(int i=0; i<solutions.size(); i++) {
+
+        for(int j=0; j<solutions[0].size(); j++) {
+
+            cout << solutions[i][j] << " ";
+        }
+
+        cout << "\n";
+    }
+}
+
+
+void algorithm(int s, int n, int p, vector<int> elem, int & count) {
+    
+    //passo base
+
+    if(elem.size()==n) {
+
+        if(count == s) {
+
+            solutions.push_back(elem);
+            return;
+        }
+
+        else return;
+    }
+
+
+
+    for(int i = p+1; i<=s; i++) {
+
+        if(is_valid(i) && count+i<=s) {
+            
+            count += i;
+
+            elem.push_back(i);
+
+            algorithm(s, n, i, elem, count);
+
+
+            //backtracking
+            count -= i;
+            elem.pop_back();
+        }
+    }
+
+    return;
+}
+
+//cancella tutto
+void cancella(vector<int> & del_elem, int & num_cont) {
+
+    del_elem.clear();
+    num_cont = 0;
+
+    solutions.clear();
+    solutions[0].clear();
+}
+
+int main() {
+
+    vector<int> elem;
+    int count = 0;
+    int index = 1;
+
+    int test_case;
+    int somma, num, primo;
+
+
+    cin >> test_case;
+
+    while(test_case) {
+        
+        cin >> somma;
+
+        cin >> num;
+
+        cin >> primo;
+
+
+        algorithm(somma, num, primo, elem, count);
+        
+        //index riporta il numero del caso di test man mano lo incremento 
+        cout << "CASO TEST:  " << index << endl;
+
+        print_matrix();
+
+        cancella(elem, count);
+
+        index++;
+
+        test_case--;
+    }
+}
+
+
+COMPLESSITA': Il backtracking ha complessità esponenziale

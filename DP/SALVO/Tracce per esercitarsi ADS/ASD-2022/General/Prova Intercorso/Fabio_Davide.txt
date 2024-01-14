@@ -1,0 +1,149 @@
+//Esercizio 1
+ 
+#include <iostream>
+using namespace std;
+ 
+int count(int arr[], int l, int a, int x)
+{
+ 
+   
+    if ((l > a)|| (l == a && arr[l] != x))
+        return 0;
+ 
+    
+    if (l == a && arr[l] == x)
+        return 1;
+ 
+    
+    return count(arr, l,(l + a) / 2, x) + count(arr, 1 + (l + a) / 2, a, x);
+}
+ 
+// Driver code
+int main()
+{
+	/*int tc;
+	int N=8;
+	int arr[N];
+	int x;
+	cin >> tc;
+    while(tc--){
+		for(int i=0; i<N; i++){
+			cin >> arr[i];
+		}
+		x=arr[0];
+		cout << count(arr, 0,N-1,x);
+		
+	}*/
+	int arr1[] = { 1, 7, 1, 1, 2, 2, 2, 2, 3};
+    int n1 = sizeof(arr1) / sizeof(int);
+    int x1;
+	x1=arr1[0];
+	int arr2[] = {4, 7, 1, 1, 2, 2, 2, 2, 3};
+    int n2 = sizeof(arr2) / sizeof(int);
+    int x2;
+	x2=arr2[0];
+ 
+    cout << count(arr1, 1, n1 - 1, x1);
+	cout << count(arr2, 1, n2 - 1, x2);
+ 
+    return 0;
+}
+
+//Complessità totale Algoritmo O(nlogn)
+
+
+
+
+
+
+// Esercizio 2
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+ 
+
+vector<int> set;
+vector<int> primi;
+ 
+// controllo se è primo
+bool primo(int x) //isprime
+{
+    
+    int rad = sqrt(x);
+    bool flag = true;
+ 
+    if (x == 1)
+        return false;
+ 
+    for (int i = 2; i <= rad; i++)
+        if (x % i == 0)
+            return false;
+ 
+    return true;
+}
+ 
+
+void SommaPrimi(int totale, int N, int S, int index)
+{
+    
+    if (totale == S && set.size() == N)
+    {
+        // stampa
+		int dim = set.size();
+		for (int i = 0; i < dim; i++)
+        cout << set[i] << " ";
+		cout << "\n";
+        return;
+    }
+ 
+    
+    if (totale > S || index == primi.size())
+        return;
+ 
+    
+    set.push_back(primi[index]);
+ 
+    
+    SommaPrimi(totale+primi[index], N, S, index+1);
+ 
+    //backtrack
+    set.pop_back();
+	SommaPrimi(totale, N, S, index+1);
+}
+ 
+
+void GeneraPrimi(int N, int S, int P)
+{
+    
+    for (int i = P+1; i <=S ; i++)
+    {
+        
+        if (primo(i))
+            primi.push_back(i);
+    }
+ 
+    
+    if (primi.size() < N)
+        return;
+    SommaPrimi(0, N, S, 0);
+}
+ 
+
+int main()
+{
+	//caso test 1
+	int S1 = 63, N1 = 3, P1 = 5;
+    GeneraPrimi(N1, S1, P1);
+	
+	//caso test 2
+	int S2 = 23, N2 = 3, P2 = 2;
+    GeneraPrimi(N2, S2, P2);
+	
+	//caso test 3
+	int S3 = 17, N3 = 1, P3 = 5;
+    GeneraPrimi(N3, S3, P3);
+	
+    return 0;
+}
+

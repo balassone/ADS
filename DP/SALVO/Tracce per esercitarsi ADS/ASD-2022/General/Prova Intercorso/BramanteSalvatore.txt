@@ -1,0 +1,74 @@
+#Problema 1
+#Complessità O(N log N)
+
+def countK(arr, left, right, k):
+    #se il sotto array è invalido o l'elemento non trovato
+    if (left > right) or (left == right and arr[left] != k):
+        return 0
+    #se c'è un singolo elemento pari a k
+    if left == right and arr[left] == k:
+        return 1
+    #divido l'array in due parti e cerco nei sotto array a destra ed a sinistra
+    return countK(arr, left, (left + right) // 2, k) + countK(arr, 1 + (left + right) // 2, right, k)
+
+
+if __name__ == '__main__':
+    testCase = int(input())
+    for _ in range(testCase):
+        line = [int(item) for item in input().split()]
+        lineLen = line[1]
+	#escludo i primi due elementi dal calcolo perchè sono l'elemento k e la lunghezza
+        print(countK(line[1:len(line)], 0, lineLen - 1, line[0]))
+
+
+
+#Problema 2
+import sys
+
+
+def is_prime(n):
+    for i in range(2, int(n ** (1 / 2)) + 1):
+        if n % i == 0:
+            return False
+
+    return True
+
+
+# complessità esponenziale
+def backtrack(sol, primes, subtotal, lenght, Sum, index):
+    #se il subototale è uguale a Sum e la lunghezza è corretta
+    if subtotal == Sum and len(sol) == lenght:
+        print(sol)
+        return
+    #se ho superato la somma oppure accedo ad una locazione invalida
+    if subtotal > Sum or index == len(primes):
+        return
+
+    sol.append(primes[index])
+    #includo l'elemento i-esimo primo nella somma
+    backtrack(sol, primes, subtotal + primes[index], lenght, Sum, index + 1)
+    #rimuovo l'elemento dalla somma
+    sol.pop()
+    #rifaccio il passo dfs senza l'elemento escluso
+    backtrack(sol, primes, subtotal, lenght, Sum, index + 1)
+
+
+def solve(somma, lunghezza, primo, test):
+    print("CASO DI TEST", test)
+    listaPrimi = []
+
+    for i in range(primo + 1, somma + 1):
+        if is_prime(i):
+            listaPrimi.append(i)
+
+    solution = []
+    backtrack(solution, listaPrimi, 0, lunghezza, somma, 0)
+
+
+if __name__ == '__main__':
+    test_number = 0
+    for line in sys.stdin:
+        s, n, p = map(int, line.split())
+        test_number = test_number + 1
+        solve(s, n, p, test_number)
+

@@ -1,0 +1,76 @@
+numeriprimi=[]
+set = []
+
+def Valori():
+ 
+    global  numeriprimi, set
+    for i in range(len(set)) :
+        print (set[i], end = " ")
+    print () # a capo
+
+def isPrime(x) :
+ 
+    for i in range(2, int(x/2)+1):
+        
+        if (x % i) == 0:
+            return False
+    else:
+        return True
+ 
+
+
+ 
+
+def Primi(somma,pointer, N,  S) :
+     
+    global set, prime
+     
+    if somma == S and len(set) == N:
+        Valori()
+        return
+ 
+    #la somma non deve superare S
+    if somma > S or pointer == len(numeriprimi):
+        return
+
+    set.append(numeriprimi[pointer])
+ 
+    
+    Primi(somma + numeriprimi[pointer],pointer +1,  N, S)
+ 
+    #backtracking
+    set.pop()
+    
+    Primi(somma,pointer +1, N,  S)
+ 
+
+def Solver(N, S, P) :
+ 
+    global numeriprimi, set
+     
+    
+    for i in range(P + 1,S + 1) :
+     
+        
+        if isPrime(i) :
+            numeriprimi.append(i)
+     
+    if len(numeriprimi) < N :
+        return
+    Primi(0, 0,N, S)
+ 
+
+
+
+#arr = [int(x) for x in input().split()]
+#N =arr[0]
+#S = arr[1]
+#P = arr[2]
+
+
+N=63
+S=3
+P=5
+Solver(N, S, P)
+
+#complessità esponenziale N*2^(S-P)

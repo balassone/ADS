@@ -1,0 +1,159 @@
+/* -------------------------------- Problema 1 -------------------------------- */
+
+//Complessità O(NlogN)
+import java.util.*;
+
+class Main {
+    static int countOccurrence(int[] arr, int l, int r, int x) {
+
+        if ((l > r) || (l == r && arr[l] != x)){
+            return 0;
+        }
+
+        if (l == r && arr[l] == x){
+            return 1;
+        }
+
+        int m = (l + r) / 2;
+
+        return countOccurrence(arr, l, m, x) + countOccurrence(arr, m + 1, r, x);
+    }
+
+
+    public static void main(String args[]) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        int T = scanner.nextInt();
+
+        int[] result = new int[T];
+
+        int t, k, n;
+
+        for (t = 0; t < T; t++) {
+
+            k = scanner.nextInt();
+            n = scanner.nextInt();
+
+            int[] arr = new int[n];
+
+            for (int i = 0; i < n; i++) {
+                arr[i] = scanner.nextInt();
+            }
+
+            int res = countOccurrence(arr,0,n-1,k);
+
+            result[t] = res;
+
+        }
+
+        for (t = 0; t < T; t++) {
+            System.out.println(result[t]);
+        }
+
+    }
+}
+
+
+
+
+
+/* -------------------------------- Problema 2 -------------------------------- */
+
+//Complessità totale O((S-P)^2)
+
+import java.util.*;
+
+class Main {
+    static ArrayList<Integer> prime =  new ArrayList<>();
+    static ArrayList<Integer> set =  new ArrayList<>();
+
+    public static boolean isPrime(int x) {
+
+        int sqroot = (int)Math.sqrt(x);
+
+        if (x == 1)
+            return false;
+
+        for (int i = 2; i <= sqroot; i++)
+            if (x % i == 0)
+                return false;
+
+        return true;
+    }
+
+
+    static void printSequence() {
+        int length = set.size();
+        for (int i = 0; i < length; i++)
+            System.out.print(set.get(i) + " ");
+        System.out.println();
+    }
+
+
+    static void primeSum(int total, int N, int S, int index) {
+
+        if (total == S && set.size() == N){
+            printSequence();
+            return;
+        }
+
+
+        if (total > S || index == prime.size() || set.size() >= N){
+            return;
+        }
+
+
+        set.add(prime.get(index));
+
+        primeSum(total + prime.get(index), N, S, index + 1);
+
+        set.remove(set.size() - 1);
+
+        primeSum(total, N, S, index + 1);
+    }
+
+    static void allPrimeNumbers(int S, int N, int P) {
+
+        //Complessità O((S-P)*rad(S-P))
+        for (int i = P + 1; i <= S ; i++) {
+            if (isPrime(i)){
+                prime.add(i);
+            }
+        }
+
+        if (prime.size() < N){
+            return;
+        }
+
+        //Complessità O((S-P)^2)
+        primeSum(0, N, S, 0);
+    }
+
+
+    public static void main(String args[]) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        int T = scanner.nextInt();
+        int[][] input = new int[T][3];
+        int k;
+
+        for (k = 0; k < T; k++) {
+
+            for (int i = 0; i < 3; i++) {
+                input[k][i] = scanner.nextInt();
+            }
+        }
+
+        for (k = 0; k < T; k++) {
+            System.out.println("CASO DI TEST "+(k+1));
+            allPrimeNumbers(input[k][0], input[k][1], input[k][2]);
+            prime.clear();
+            set.clear();
+        }
+
+    }
+}
+
+

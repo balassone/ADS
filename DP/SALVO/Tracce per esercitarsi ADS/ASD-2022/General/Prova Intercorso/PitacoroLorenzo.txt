@@ -1,0 +1,108 @@
+Pitacoro Lorenzo
+Matricola: M63001499
+
+Soluzione esercizio 1:
+########################################################################################
+def cerca_occorrenze(k : int, dim : int, array : list, inizio : int, fine : int) -> int:
+    #siccome il vettore non è ordinato, non è possibile effettuare
+    #una ricerca binaria.
+    if fine >= inizio:
+        contatore = 0
+        if array[inizio] == k:
+            contatore += 1
+            #inizio += 1
+        if array[fine] == k:
+            contatore += 1
+            #fine -= 1
+        else:
+            contatore += cerca_occorrenze(k, dim-contatore, array, inizio+1, fine-1)
+        return contatore
+    return 0
+
+n_casi_test = int(input())
+for i in range(n_casi_test):
+    test = input().split()
+    k = int(test[0])
+    dim = int(test[1])
+    array = test[2:]
+    for j in range(dim):
+        array[j] = int(array[j])
+    print(cerca_occorrenze(k, dim, array, 0, dim-1))
+########################################################################################
+Complessità temporale della soluzione dell'esercizio 1: O(n), dove n è la dimensione del vettore in ingresso.
+
+Soluzione esercizio 2:
+########################################################################################
+def trova_primi(s : int, p : int) -> list:
+    risultato = []
+    controllo = 0
+    for i in range(p, s+1):
+        controllo = 0
+        for j in range(2, i):
+            if i % j == 0:
+                controllo = 1
+                break
+        if controllo == 0:
+            risultato.append(i)
+    return risultato
+
+def soluzione(s : int, n : int, p : int, lista : list) -> bool:
+    if len(lista) != n:
+        return False
+    somma = 0
+    for i in lista:
+        if i <= p:
+            return False
+        somma += i
+    if somma != s:
+        return False
+    else:
+        return True
+
+def elabora_soluzione(lista : list) -> None:
+    stampa = True
+    for i in range(len(lista)-1):
+        if lista[i] > lista[i+1]:
+            stampa = False
+    if stampa:    
+        print(lista)
+
+def individua_candidati(s : int, p : int, candidati : list, lista_corrente : list) -> None:
+    temp = trova_primi(s, p)
+    somma_corrente = 0
+    for i in lista_corrente:
+        somma_corrente += i
+    for i in range(len(temp)):
+        if temp[i] > p and temp[i] <= s-somma_corrente and temp[i] not in lista_corrente:
+            candidati.append(temp[i])
+
+def nuova_mossa(lista_corrente : list, nuova_mossa : int) -> None:
+    lista_corrente.append(nuova_mossa)
+
+def annulla_mossa(lista_corrente : list) -> None:
+    lista_corrente.pop()
+
+def backtrack(lista_corrente : list, s : int, n : int, p : int) -> None:
+    candidati = []
+    if soluzione(s, n, p, lista_corrente):
+        elabora_soluzione(lista_corrente)
+    else:
+        individua_candidati(s, p, candidati, lista_corrente)
+        for i in candidati:
+            temp = i
+            nuova_mossa(lista_corrente, temp)
+            backtrack(lista_corrente, s, n, p)
+            annulla_mossa(lista_corrente)
+
+def calcola_somme(s : int, n : int, p : int) -> None:
+    backtrack([], s, n, p)
+
+n_casi_test = int(input())
+for i in range(n_casi_test):
+    user = input().split(' ')
+    s = int(user[0])
+    n = int(user[1])
+    p = int(user[2])
+    calcola_somme(s, n, p)
+########################################################################################
+Complessità temporale della soluzione dell'esercizio 2: al netto delle funzioni di libreria utilizzate (ossia le funzioni append() e pop() delle liste di Python e l'operatore "not in", dei quali non è nota la complessità), la complessità è O(2^k), dove k indica il numero di numeri primi compresi tra p ed s, dovuta alla ricerca esaustiva effettuata dall'algoritmo di backtracking.

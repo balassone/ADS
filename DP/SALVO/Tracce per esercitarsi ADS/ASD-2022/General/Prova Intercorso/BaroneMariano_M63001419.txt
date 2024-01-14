@@ -1,0 +1,153 @@
+Per lo svolgimento dei due algoritmi ho utilizzato come linguaggio:  CPP
+_________________________________________________________________________
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int count(int array[], int sin, int dest, int num)
+{
+ 
+    if ((sin > dest) || (sin == dest && array[sin] != num))
+        return 0;
+ 
+
+    if (sin == dest && array[sin] == num)
+        return 1;
+ 
+    return count(array, sin, (sin + dest) / 2, num) + count(array, (sin + dest)+1 / 2,dest, num); //conta destra e sinistra e ne fa la somma ogni volta
+}
+ 
+
+int main()
+{
+
+	int casi;
+	cin >> casi;
+
+	while(casi--){
+
+		int k;
+		cin>>k;
+
+		int dim;
+		cin>>dim;
+
+		int array[dim];
+
+		for(int i=0;i<dim;i++){
+			cin>> array[i];
+		}
+ 
+    cout << count(array, 0, dim - 1, k);
+    cout << endl;
+	
+	}
+
+	}
+   
+Utilizzo approccio dividi et impera, ho una complessità O(nlogn) (divido il problema originario in due sottoproblemi di dimensione n/2), 
+
+____________________________________________________________________
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isPrime(int n);
+bool isSafe(int n, int *output, int k);
+bool primeBacktrack(int N, int P, int S, int *output, int k,int number);
+bool isSol(int *output, int N, int S);
+void stampa(int *output,int N);
+
+int main(int argc, const char * argv[]) {
+    int N, P, S;
+    int *output;
+    int test;
+    int conto_test = 0;
+  //  cout<<"Inserisci numero di casi di test"<<endl;
+    cin>>test;
+    while(conto_test < test){
+        cin>> S;
+        cin>> N;
+        cin>> P;
+        output = new int[N];
+        for(int i = 0; i<N;i++){
+            output[i] = 0;
+        }
+        cout<<"CASO DI TEST "<<conto_test+1<<endl;
+        primeBacktrack(N, P, S, output, 0,P);
+        delete[] output;
+        conto_test++;
+    }
+    return 0;
+}
+
+
+bool isPrime(int n){
+    bool is_prime = true;
+      if (n == 0 || n == 1) {
+        is_prime = false;
+     }
+      for (int i = 2; i <= n/2; ++i) {
+    if (n % i == 0) {
+          is_prime = false;
+          break;
+        }
+      }
+      return is_prime;
+}
+
+bool isSafe(int n, int *output, int k){
+    if( !isPrime(n) ){
+        return false;
+    }
+    for(int i=0; i<k; i++){
+        if(output[i] == n){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool primeBacktrack(int N, int P, int S, int *output, int k, int number){
+    if( k == N  ){
+        if(isSol(output, N, S)){
+            stampa(output, N);
+            return true;
+        }else{
+            return false;
+        }
+    }
+    bool res = false;
+    for(int i=number+1; i<=S ; i++ ){
+        if(isSafe(i,output,k)){
+            output[k]= i;
+            res = primeBacktrack(N, P, S, output, k+1,i) || res;
+            output[k] = 0;
+        }
+    }
+    return res;
+    
+}
+
+bool isSol(int *output, int N, int S){
+    int sum = 0;
+    for(int i = 0; i<N; i++){
+        sum += output[i];
+    }
+    if(sum == S){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+void stampa(int *output,int N){
+    for(int i = 0; i<N;i++){
+        cout<<output[i]<<" ";
+    }
+    cout<<endl;
+}
+
+O(2^(s-p))

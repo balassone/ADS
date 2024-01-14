@@ -1,0 +1,108 @@
+/************************************************PROBLEMA1*****************************************************************/
+public class Main {
+		
+	public static int conta(int vet[], int k, int i, int f){
+		//Se c'è un solo elemento
+		if (i==f) {
+			if (vet[i]==k)
+				return 1;
+			else
+				return 0;
+		}
+		//controllo l’array dividendolo a metà
+		else {
+			int a=conta(vet, k, i, (i+f)/2);
+			int b=conta(vet, k, (i+f)/2+1, f);
+			return a+b;
+		}
+	}
+
+	public static void main(String[] args) {
+		int vet1[]={1,7,1,1,2,2,2,2,3};
+		int vet2[]= {4,7,1,1,2,2,2,2,3};
+	
+		//Lo faccio partire da 1 perche il primo elemento è proprio quello da cercare
+		System.out.println(conta(vet1, vet1[0], 1, vet1.length-1));
+		System.out.println(conta(vet2, vet2[0], 1, vet2.length-1));
+	}
+
+}
+
+
+/************************************************PROBLEMA2*****************************************************************/
+
+import java.util.*; 
+  
+class Main { 
+    static ArrayList<Integer> sol = new ArrayList<Integer>(); 
+    static ArrayList<Integer> primo =  new ArrayList<Integer>(); 
+      
+    //Funzione che controlla un numero se è primo o meno 
+    static boolean numPrimo(int n){
+	    for (int i = 2; i * i <= n; i++) {
+	        if (n % i == 0) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+      
+    // funzione che valuta la somma dei numeri primi 
+    static void sommaPrimi(int totale, int N, int S, int index)  { 
+        
+        if (totale == S && sol.size() == N)  { 
+       
+            for (int i = 0;i < sol.size(); i++) 
+                System.out.print(sol.get(i) + " "); 
+            System.out.println();
+    
+            return; 
+        } 
+      
+        //Se il totale è maggiore della somma devo fermarmi
+        if (totale > S || 
+            index == primo.size() || sol.size() >= N) 
+            return; 
+      
+        // aggiungo l'elemento al vettore
+        sol.add(primo.get(index)); 
+      
+        
+        sommaPrimi(totale + primo.get(index), N, S, index + 1); 
+      
+        // rimuovo l'elemento dal vettore 
+        sol.remove(sol.size() - 1); 
+      
+        sommaPrimi(totale, N, S, index + 1); 
+    } 
+      
+    // Funzione che genera tutti i numeri primi 
+    static void numeriPrimi(int N, int S, int P){ 
+
+        for (int i = P + 1; i <= S ; i++) { 
+            if (numPrimo(i)) {
+            	primo.add(i);
+            }     	 
+        } 
+      
+        // se i numeri sono minori di n  
+        if (primo.size() < N) 
+            return; 
+        sommaPrimi(0, N, S, 0); 
+    } 
+      
+    public static void main(String args[]) { 
+    	int vet1[]= {63,3,5};
+    	int vet2[]= {23,3,2};
+    	int vet3[]= {17,1,5};
+    	
+    	System.out.print("Caso test 1\n");
+        numeriPrimi(vet1[1], vet1[0], vet1[2]); 
+        
+        System.out.print("Caso test 2\n");
+        numeriPrimi(vet2[1], vet2[0], vet2[2]); 
+        
+        System.out.print("Caso test 3\n");
+        numeriPrimi(vet3[1], vet3[0], vet3[2]); 
+    } 
+}

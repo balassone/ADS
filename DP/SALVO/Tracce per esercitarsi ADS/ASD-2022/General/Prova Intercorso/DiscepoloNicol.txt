@@ -1,0 +1,182 @@
+**************************************ESERCIZIO 1 ***********************************************************************************************************
+
+
+//La complessità è O(N logN)
+
+#include <iostream>         
+
+using namespace std;
+
+//funzione di conteggio ver verificare il numero di occorrenze all'interno di una data sequenza
+int conteggio(int vet[], int primo, int ultimo, int k)    
+{
+
+		//Verifico innanzitutto le condizioni di validità del vettore di elementi
+		if ((primo > ultimo) || (primo == ultimo && vet[primo] != k))
+			return 0;
+
+		if (primo == ultimo && vet[primo] == k)
+			return 1;
+
+		int val = conteggio(vet, primo,(primo + ultimo) / 2, k) + conteggio(vet, 1 + (primo + ultimo) / 2, ultimo, k);
+
+		return val;
+}
+
+int main(int argc, char** argv) {
+  int dim=0;
+  int k=0;
+
+  
+  cout << "Inserisci la dimensione dell'array ";
+  cin >> dim;
+  
+  int vet[dim];
+  
+  for (int i=0;i<dim;i++)
+    vet[i] = 0;   // ripulisco il vettore
+  
+  
+  cout << "Inserimento degli elementi " << endl;
+  for (int i=0;i<dim;i++)
+    cin >> vet[i];  
+  
+  cout << "Inserimento del valore di k: ";
+  cin >> k;
+  
+  cout << "Numero di occorrenze trovate e: " << conteggio(vet,0,dim-1,k) << endl;
+  
+  return 0;
+}
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+
+*******************************************************************ESERCIZIO 2*******************************************************************************
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+// vettore che memorizza gli N valori primi la cui somma è pari ad S
+vector<int> set;
+vector<int> primi;
+
+// funzione per verificare i numeri primi
+bool checkPrimi(int x)
+{
+	// radice quadrata di x
+	int rad = sqrt(x);
+	bool flag = true;
+
+	//poiché 1 non è un numero primo
+	if (x == 1)
+		return false;
+
+	// se viene trovato un fattore, restituisce false
+	for (int i = 2; i <= rad; i++)
+		if (x % i == 0)
+			return false;
+
+	// nessun fattore trovato
+	return true;
+}
+
+// Funzione per visualizzare N primi la cui somma è uguale a S
+void stampa()
+{
+	int dim = set.size();
+	for (int i = 0; i < dim; i++)
+		cout << set[i] << " ";
+	cout << "\n";
+}
+
+// Funzione per valutare tutti i possibili N primi la cui somma è uguale a S
+void sommaPrimi(int totale, int N, int S, int indice)
+{
+	// se il totale è uguale a S E ottenuto utilizzando N numeri primi
+	if (totale == S && set.size() == N)
+	{
+		// Stampa dei valori
+		stampa();
+		return;
+	}
+
+	// Verifica se il totale è maggiore di S o se l'indice ha raggiunto l'ultimo elemento
+	if (totale > S || indice == primi.size())
+		return;
+
+	//aggiunta al vettore set
+	set.push_back(primi[indice]);
+
+	// includere il primo (indice) al totale
+	sommaPrimi(totale+primi[indice], N, S, indice+1);
+
+	//rimozione dell'elemento dal vettore set
+	set.pop_back();
+
+	// escluzione dell'iesimo numero primo
+	sommaPrimi(totale, N, S, indice+1);
+}
+
+// Generazione numeri primi
+void generaPrimi(int N, int S, int P)
+{
+	// tutti i numeri primi minori di S stesso
+	for (int i = P+1; i <=S ; i++)
+	{
+		// Se i è primo lo aggiunge al vettore dei numeri primi
+		if (checkPrimi(i))
+			primi.push_back(i);
+	}
+
+	// Verifica che i  numeri primi siano minori di N
+	if (primi.size() < N)
+		return;
+	sommaPrimi(0, N, S, 0);
+}
+
+int main()
+{
+	//Caso di test 1
+	//int S = 63, N = 3, P = 5;
+	//Caso di test 2
+	//int S = 23, N = 3, P = 2;
+	//Caso di test 3
+	//int S = 17, N = 1, P = 5;
+	
+  	// S Somma, P primo, N elementi strettamenti maggiori di P
+  	int P, N, S=0;
+  
+  	cout<<"Inserimento, rispettivamente, di S, N, P:"<<endl;
+ 	cin>>S;
+  	cin>>N;
+  	cin>>P;
+  	
+  	cout<<endl;
+	
+	cout<<"In Output si ottiene"<<endl;
+	generaPrimi(N, S, P);
+	return 0;
+}
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+************************************************************************************************************************************************************
+
+

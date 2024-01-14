@@ -1,0 +1,150 @@
+//PRIMO PROBLEMA
+//COMPLESSITA' O(n*log(n))
+//CODICE
+#include <iostream>
+using namespace std;
+#include <sstream>
+ 
+int conta(int num, int inf, int sup, int lista[])
+{
+    // Se il sottoarray chiamato non è valido o l'elemento non è stato trovato
+    if ((inf > sup) || (lista[inf] != num && inf == sup )) return 0;
+ 
+    // Se invece vi è un singolo elemento trovato
+    if (lista[inf] == num && sup == inf ) return 1;
+ 
+    //Altrimenti dividi l'array in due parti con chiamata ricorsiva ad entrambe le parti
+    return conta( num, inf,(inf+sup)/2, lista) + conta(num, 1+(inf+sup)/2,sup, lista);
+}
+ 
+
+int main()
+{
+    int n;
+    cin>>n;
+    for(int j=0;j<n;j++){
+    
+    stringstream num_s;
+    stringstream len_s;
+    int num;
+    int len;
+	int i;
+	string a;
+	
+	getline(cin, a, ' ');
+	num_s<<a;
+	num_s>>num;
+	getline(cin, a, ' ');
+	len_s<<a;
+	len_s>>len;
+	string prova[len];
+	int numeri[len];
+	stringstream ss[len];
+	for(i=0;i<len;i++){
+	getline(cin, prova[i], ' ');
+	ss[i]<<prova[i];
+	ss[i]>>numeri[i];
+	}
+	
+    cout << conta(num, 0, len - 1, numeri)<<endl;
+ 
+}
+	return 0;
+}
+
+//INPUT CODECHEF:
+/*
+2
+1 7 1 1 2 2 2 2 3
+4 7 1 1 2 2 2 2 3
+*/
+
+
+
+//SECONDO PROBLEMA
+
+//CODICE
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+ 
+
+// vettori con numeri primi e N numeri primi la cui somma è uguale a S
+vector<int> primi;
+vector<int> n_primi;
+ 
+// controlla se primo
+bool primo(int num)
+{
+    int radq = sqrt(num);  // calcola la radice
+    if (num == 1) return false; // escludiamo il numero uno
+ 
+    for (int i = 2; i <= radq; i++)
+        if (num % i == 0)
+            return false;
+ 
+    // nessun fattore trovato
+    return true;
+}
+
+void somma(int sum, int N, int S, int index)
+{
+    // se si è raggiunta la somma usando N numeri primi maggiori di P stampa i numeri primi 
+    if (sum == S && primi.size() == N)
+    {
+        int length = primi.size();
+        for (int i = 0; i < length; i++)
+        cout << primi[i] << " ";
+        cout << "\n";
+        return;
+    }
+ 
+    if (sum > S || index == n_primi.size())
+        return;
+
+    primi.push_back(n_primi[index]);
+
+    somma(sum+n_primi[index], N, S, index+1);
+ 
+    primi.pop_back();
+ 
+    somma(sum, N, S, index+1);
+}
+ 
+// funzione in esame
+void trova(int N, int S, int P)
+{
+    // tutti i primi minori di S
+    for (int num = P+1; num <=S ; num++)
+    {
+        // se num è primo aggiungilo in lista
+        if (primo(num)) n_primi.push_back(num);
+    }
+
+    // se i primi sono meno di N
+    if (n_primi.size() < N)
+        return;
+    somma(0, N, S, 0);
+}
+
+int main()
+{
+    int casi;
+    cin>>casi;
+    int S, N, P;
+    for(int i=0;i<casi;i++){
+        cout<<"\nCASO DI TEST "<<i+1<<endl;
+        cin>>S>>N>>P;
+        trova(N, S, P);
+    }
+    return 0;
+    
+}
+//INPUT CODECHEF:
+/*
+3
+63 3 5
+23 3 2
+17 1 5
+*/

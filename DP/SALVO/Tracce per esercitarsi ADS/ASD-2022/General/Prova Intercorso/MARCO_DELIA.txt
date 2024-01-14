@@ -1,0 +1,308 @@
+// PRIMO ESERCIZIO
+
+#include <stdio.h>
+#define max_size 20
+
+void vprint (int *v, int n)
+{
+    for(int i = 0; i < n; i++)
+    {
+        printf("%d, ", v[i]);
+    }
+    printf("\n");
+}
+
+void vcpy (int d[], int v[], int n)
+{
+    for (int i = 0; i < n; i++)
+        d[i] = v[i];
+}
+
+int join (int v[], int l, int m, int r)
+{
+    int nswap = 0;
+    int vl[max_size];
+    int vr[max_size];
+
+    vcpy (vl, v + l, m - l + 1);
+    vcpy (vr, v + m + 1, r - m);
+
+    int i = 0, j = 0;
+    while (i < m - l + 1 && j < r - m)
+    {
+        if (vl[i] <= vr[j])
+        {
+            v[l + i + j] = vl[i];
+            i++;
+        }
+        else if (vr[j] < vl[i])
+        {
+            v[l + i + j] = vr[j];
+            nswap += m - l + 1 - i;
+            //printf ("NSWAAP: %d\n", nswap);
+
+            j++;
+        }
+    }
+    while (i < m - l + 1)
+    {
+        v[l + i + j] = vl[i];
+        i++;
+    }
+    while (j < r - m)
+    {
+        v[l + i + j] = vr[j];
+        nswap += m - l + 1 - i;
+
+        j++;
+    }
+    return nswap;
+}
+
+int merge_sort (int v[], int l, int r)
+{
+    int nswap = 0;
+    if (l < r)
+    {
+        int m = (l + r) / 2;
+        nswap += merge_sort (v, l, m);
+        //vprint (v, m - l + 1);
+        
+        nswap += merge_sort (v, m + 1, r);
+        //vprint (v, r - m);
+
+        nswap += join (v, l, m, r);
+    }
+    //printf ("%d\n", nswap);
+    return nswap;
+}
+
+int binarySearchIt(int array[],int low, int high, int x) {
+
+  while (low <= high) {
+    int mid = low + (high - low) / 2;
+
+    if (array[mid] == x)
+      return mid;
+
+    if (array[mid] < x)
+      low = mid + 1;
+
+    else
+      high = mid - 1;
+  }
+
+  return -1;
+}
+
+// PRIMO MODO DI RISOLVERE
+
+int solve1 (int vector[], int n, int elem)
+{
+    int count = 0;
+    // Ordino il vettore
+    merge_sort (vector, 0, n - 1);
+
+    int index = binarySearchIt (vector, 0, n - 1, elem);
+    
+    if (index == -1) return 0;
+
+    count += 1;
+
+    int i = index + 1;
+    while (i < n && vector[i] == elem)
+    {
+        /* code */
+        count += 1;
+        i++;
+    }
+
+    i = index - 1;
+    while (i >= 0 && vector[i] == elem)
+    {
+        count += 1;
+        i--;
+    }
+    
+    return count;
+}
+
+// SECONDO MODO DI RISOLVERE: USO APPROCCIO DIVIDE ET IMPERA
+// MODO CONSEGNATO
+int solve2 (int vector[], int left, int right, int elem)
+{
+    int index = 0;
+    int count = 0;
+
+    index =  binarySearchIt (vector, left, right, elem);
+
+    if (index == -1) return count;
+    
+    count += 1;
+    count += solve2 (vector, left, index - 1, elem);
+    count += solve2 (vector, index + 1, right, elem);
+
+    return count;
+}
+
+// Ordino il vettore e poi faccio la ricerca binaria in ogni
+// sezione del vettore, che è stata individuata dalla divisione
+// causata dall'individuazione delll'elemento ricercato
+// complessità O(nlogn)
+
+int main ()
+{
+    int vector[max_size];
+    int n = 0;
+    int elem = 0;
+
+    int T = 0;
+
+    scanf ("%d", &T);
+
+    // Input da tastiera
+    while (T--)
+    {
+        scanf ("%d %d", &elem, &n);
+        
+        for (int i = 0; i < n; i++)
+        {
+            scanf ("%d", &vector[i]);
+        }
+
+        // ordino il vettore prima di eseguire
+        merge_sort (vector, 0, n - 1);
+        printf ("%d\n", solve2 (vector, 0, n - 1, elem));
+    }
+    
+
+    return 0;
+}
+
+//
+//
+//
+// INIZIO SECONDO ESERICZIO
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 100
+int N;
+int S;
+int P; 
+
+bool is_prime (int n)
+{
+    bool is_prime = true;
+    
+    int i = 2;
+    while (i < n && is_prime)
+    {
+        if (n % i == 0)
+
+            is_prime = false;
+
+        i++;
+    }
+    return is_prime;
+}
+
+bool is_solution (int a[], int k)
+{
+    return k == N;
+}
+
+void elaborate_solution (int a[], int k)
+{
+    int sum = 0;
+    for (int i = 0; i < k; i++)
+    {
+        sum += a[i];
+        //printf ("sum %d", a[i]);
+    }
+
+    //printf ("SUMM: %d\n", sum);
+    if (sum == S)
+    {
+        for (int i = 0; i < k; i++)
+        {
+            printf ("%d ", a[i]);
+        }
+        printf ("\n");
+    }
+}
+
+void construct_candidates (int a[], int k, int c[], int *ncandidates)
+{
+    // creo un vettore booleano per sapere se un elemento è presente o
+    // meno nella soluzione
+
+    bool bools[MAX];
+
+    for (int i = 0; i <= S; i++) bools[i] = true;
+    for (int i = 0; i < k; i++) bools[a[i]] = false;
+
+    // se non è presente ed è primo lo aggiungo
+    for (int i = 0; i <= S; i++)
+    {
+        if (i > P && is_prime (i) && bools[i])
+        {
+            c[*ncandidates] = i;
+            *ncandidates += 1;
+        }
+    }
+}
+
+
+void backtrack (int a[], int k)
+{
+    int c[MAX];
+    int ncandidates = 0;
+    if (is_solution (a, k))
+    {
+        elaborate_solution (a, k);
+    }
+    else
+    {
+        construct_candidates (a, k, c, &ncandidates);
+
+        for (int i = 0; i < ncandidates; i++)
+        {
+            // non mi servono le permutazioni: le elimino cosi
+    
+            if (k == 0 )
+                a[k] = c[i];
+            else
+            {
+                if(c[i] > a[k - 1])
+                    a[k] = c[i];
+
+            }
+            backtrack (a, k + 1);
+        }
+    }
+}
+
+
+int main ()
+{
+    int a[MAX];
+    int k = 0;
+
+    //backtrack (a, k);
+
+    int T;
+
+    scanf ("%d", &T);
+    while (T--)
+    {
+        scanf ("%d %d %d", &S, &N, &P);
+
+        printf ("CASO DI TEST:\n");
+        backtrack (a, 0);
+        printf ("\n\n");
+    }
+
+    return 0;
+}
+

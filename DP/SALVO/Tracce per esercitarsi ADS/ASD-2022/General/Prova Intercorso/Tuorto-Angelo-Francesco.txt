@@ -1,0 +1,211 @@
+//PROBLEMA 1  O(n*log(n))
+
+#include <iostream>
+
+using namespace std;
+
+void mergeSort(int array[], int l, int r);
+void merge(int array[], int p, int q, int r);
+void printArray(int array[], int N);
+int Binary_Search(int array[], int l, int r, int x,int count);
+
+int main() {
+
+  int N_TEST_CASE;
+  int count;
+  int* Array;
+  int k;
+  int N;
+
+  cin >> N_TEST_CASE;
+
+  while (N_TEST_CASE--) {
+
+    scanf("%d %d", &k, &N);
+
+    Array = new int[N];
+
+    for (int i = 0; i < N; i++) 
+      scanf("%d", &Array[i]);
+
+    mergeSort(Array, 0, N-1);
+
+    count = 0;
+    count =Binary_Search(Array, 0, N-1, k,count);
+    cout<<count<<endl;
+
+  }
+
+  return 0;
+}
+
+void printArray(int array[], int N) {
+    for (int i = 0; i < N; i++) cout << array[i] << " ";
+    cout << endl;
+}
+
+void merge(int array[], int p, int q, int r) {
+
+  int n1 = q - p + 1;
+  int n2 = r - q;
+
+  int L[n1], M[n2];
+
+  for (int i = 0; i < n1; i++) L[i] = array[p + i];
+  for (int j = 0; j < n2; j++) M[j] = array[q + 1 + j];
+
+  int i, j, k;
+  i = 0;
+  j = 0;
+  k = p;
+
+  while (i < n1 && j < n2) {
+    if (L[i] <= M[j]) {
+      array[k] = L[i];
+      i++;
+    } else {
+      array[k] = M[j];
+      j++;
+    }
+    k++;
+  }
+
+  while (i < n1) {
+    array[k] = L[i];
+    i++;
+    k++;
+  }
+
+  while (j < n2) {
+    array[k] = M[j];
+    j++;
+    k++;
+  }
+}
+
+
+void mergeSort(int array[], int l, int r) {
+  if (l < r) {
+    int m = l + (r - l) / 2;
+
+    mergeSort(array, l, m);
+    mergeSort(array, m + 1, r);
+
+    merge(array, l, m, r);
+  }
+}
+
+int Binary_Search(int array[], int l, int r, int x,int count) {
+  if (r >= l) {
+    int middle = l + (r - l) / 2;
+      if (array[middle] == x)
+        count++;
+        
+      count = Binary_Search(array, l, middle - 1, x,count);
+	
+	    if(array[middle] > x) return count;
+
+      count = Binary_Search(array, middle + 1, r, x,count);
+  }
+
+  return count;
+}
+
+
+
+
+
+//PROBLEMA 2 O(N^(S-P))
+
+#include <iostream>
+using namespace std;
+
+int sum(int* solution,int N);
+void backtrack(int S, int N, int P,int* solution,int k);
+void Solution(int* solution, int N);
+bool isValid(int S,int P, int* solution,int k, int i);
+int sum(int* solution,int N);
+bool Prime(int n);
+
+int main(){
+
+    int N_CASE_TEST;
+    int S = 0;
+    int N = 0;
+    int P = 0;
+    int i=0;
+
+    int* solution;
+
+    cin>>N_CASE_TEST;
+
+    while(N_CASE_TEST--){
+
+        i++;
+        scanf("%d %d %d",&S,&N,&P);
+
+        solution = new int[N];
+
+        for(int i=0;i<N;i++)
+            solution[i]=0;
+
+        cout<<"CASO DI TEST "<<i<<endl;
+
+        backtrack(S,N,P,solution,0);
+
+    }
+}
+
+void Solution(int* solution, int N){
+    for(int i=0;i<N;i++)
+        cout<<solution[i]<<" ";
+    cout<<"\n";
+}
+
+void backtrack(int S, int N, int P,int* solution,int k){
+
+    if(k == N && (sum(solution,N)==S))            
+        Solution(solution,N);
+
+    for(int i=P; i<=S; i++){
+
+        if(isValid(S,P,solution,k,i)){
+            solution[k] = i;
+            backtrack(S,N,i,solution,k+1);
+            solution[k]= 0;
+        }
+    }
+
+}
+bool isValid(int S,int P, int* solution,int k, int i){
+
+    return (Prime(i) && i>P && sum(solution,k)+1 <= S);
+
+}
+
+int sum(int* solution,int N){
+    int sum=0;
+    for(int i=0;i<N;i++)
+        sum+=solution[i];
+    return sum;
+}
+
+bool Prime(int n)
+{
+ bool is_prime = true;
+
+  // 0 and 1 are not prime numbers
+  if (n == 0 || n == 1) {
+    is_prime = false;
+  }
+
+  for (int i = 2; i <= n / 2; ++i) {
+    if (n % i == 0) {
+      is_prime = false;
+      break;
+    }
+  }
+
+  return is_prime;
+}
+

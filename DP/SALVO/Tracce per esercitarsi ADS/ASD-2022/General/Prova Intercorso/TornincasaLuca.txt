@@ -1,0 +1,319 @@
+//esercizio 1
+
+
+///COMPLESSITA':  O(n*log(n))  MERGE SORT E SCORRIMENTO LINEARE
+
+
+
+#include <iostream>
+#include <climits>
+#include <string>
+using namespace std;
+
+// Merge UTILE PER IL MERGE SORT PER RIMETTERE INSIEME GLI ARRAY DIVISI O(2n)
+void merge(int v[], int p, int q, int r){
+    int n1 = q - p + 1;
+    int n2 = r - q; 
+    int i, j, k;
+    int left_array[n1 + 1];
+    int right_array[n2 + 1];
+
+    left_array[n1] = INT_MAX;
+    right_array[n2] = INT_MAX;
+
+    for (i = 0; i < n1; i++)
+        left_array[i] = v[p + i];
+    for (j = 0; j < n2; j++)
+        right_array[j] = v[q + j + 1];
+
+    i = 0;
+    j = 0;
+
+    for (k = p; k <= r; k++) {
+        if (left_array[i] <= right_array[j]) {
+            v[k] = left_array[i];
+            i++;
+        } else {
+            v[k] = right_array[j];
+            j++;
+        }
+    }
+}
+
+/* MERGESORT o(n*log(n)) SI AVVALE DELLA FUNZIONE MERGE E PRENDE IN INGRESSO IL VETTORE, INDICE DEL PRIMO ELEMENTO E INDICE DELL'ULTIMO ELEMENTO 
+Merge Sort è un algoritmo Divide and Conquer che divide continuamente un elenco a metà e quindi unisce le sottoliste in modo ordinato.
+Un singolo vantaggio più importante dell'ordinamento di tipo merge rispetto all'ordinamento rapido è la sua stabilità: gli elementi confrontati mantengono il loro ordine originale.
+| Case  | Performance |
+| :---: | :---: |
+| Worst case performance    | O(n log n)  |
+| Best case performance     | O(n log n)  |
+| Average case performance  | O(n log n)  |
+| Auxiliary Space           | O(n)        |  
+*/
+void mergeSort(int v[], int p, int r) {
+
+	if (p < r) {
+		int q = (p + r) / 2;
+		mergeSort(v, p, q);
+		mergeSort(v, q + 1, r);
+		merge(v, p, q, r);
+	}
+}
+
+int main(){
+
+    int testcases;
+    int k, n;
+    int counter;
+
+    cin>>testcases;
+
+    while(testcases--){
+        counter = 0;
+
+        //prendo il valore di k 
+        cin>>k;
+
+        //prendo la dim dell'array
+        cin>>n;
+
+        //dichiaro array input
+        int*array = new int[n];
+
+        //prendo il vet sulla stessa linea
+        for(int i=0; i<n; ++i){
+            cin>>array[i];
+        }
+
+        //ordino con merge sort nlogn
+        mergeSort(array, 0, n-1);
+
+
+        int i=0;
+        bool minore=true;
+        //effettuo funzione per contare gli elementi presenti=k 
+        //al primo valore >k essendo ordinato mi fermo
+        while(i<n && minore)
+        {
+            if(array[i]==k){
+                counter++;
+            }
+            else if (array[i]>k)
+            {
+                minore=false; // se è maggiore essendo ordinato non ha senso continuare
+            }
+            i++;
+        }
+
+        cout<<counter<<endl;
+
+    }
+
+
+    return EXIT_SUCCESS;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//esercizio 2
+
+
+
+
+
+
+///COMPLESSITA':  backtrack = (n-1)^(n) perchè per un dato valore i io posso fare i-1 confronti quindi
+// nel caso peggio per il primo valore
+// posso fare n-1 confornti e dunque dovendo fare per tutti gli n valori questo lavoro esce questa complessità
+
+#include <iostream>
+#include <string>
+#include <climits>
+#include <string.h>
+
+using namespace std;
+
+//f che calolca numeri primi in vet minore di n inserendo 1 se non sono primi al loro indice 0 altrimenti
+void eratostene(int *v, int n) {
+
+    int i,j;
+    for(i=2; i<=n; i++){
+        if(v[i]==0){ //se l'elemento v[i] è zero
+            for(j=2*i; j<=n; j+=i) {
+                //imposto v[j] a 1, cioè escludo i suoi multipli
+                v[j]=1;        
+            }
+        }
+    }
+}
+
+//dichiarazione backtrack
+void back(int * sequenza, int N, int somma, int somma_attuale, int dim_sol, int dim_primi, int* primi, int ciclo);
+
+
+//jackpot solution
+bool jackpot(int dim_sol, int N)
+{
+    //cout<<"controllo jackpot: "<<dim_sol<<endl;
+    
+    //controllo che squenza valori sia di lunghezza n
+    if(dim_sol==N)
+    {
+        return true;
+    }
+    return false;
+    
+}
+
+void algorithm(){
+
+    int testcase=0;
+    cin>>testcase;
+    int caso=1;
+
+    while(testcase--)
+    {
+        int N;
+        int somma;
+        int primo;
+        int dim_primi=0;
+
+
+        //dichiaro input 
+        cin>>somma;
+
+        cin>>N;
+
+        cin>>primo;
+
+        int* sequenza= new int[N];
+        int* totali= new int[somma];
+        int* primi= new int[somma];
+
+
+        //cerco numeri primi che siano minori di somma s
+        for(int i=0; i<somma;i++)
+        {
+            totali[i]=0;
+        }
+
+        eratostene(totali,somma);
+        int j=0;
+
+        //mi salvo solo quelli maggiori del numero primo
+        for(int i=0; i<somma; i++)
+        {
+            if( totali[i]==0 && i>primo)
+            {
+                primi[j]=i;
+                dim_primi++;
+                j++;
+            }
+        }
+
+        //aggiungo l'ultimo valore che è primo e utile se N==1
+        primi[dim_primi]=somma;
+        dim_primi++;
+
+
+        //piccolo array per contenere la sequenza talvolta
+        for(int i=0; i<N;i++)
+        {
+            sequenza[i]=0;
+        }
+
+        /*for(int i=0; i<dim_primi;i++)
+        {
+            cout<<" "<<primi[i];
+        }*/
+
+        //stampa output
+        cout<<"CASO DI TEST "<<caso<<endl;
+        back(sequenza,N,somma,0,0,dim_primi,primi,-1);
+        caso++;
+
+    }
+
+    return;
+}
+    
+bool is_safe(int numero, int somma, int somma_attuale)
+{
+    //cout<<"sono in is safe "<<endl;
+    //cout<<"sono in is safe "<<endl;
+
+    //controllo di non aver riutilizzato un numero e di non aver sforato somma S
+    if(somma_attuale+numero <= somma && numero!=-1) //&& è primo e minore di primo)
+    {
+        return true;
+    }
+    return false;
+ 
+}
+
+void back(int * sequenza, int N, int somma, int somma_attuale, int dim_sol, int dim_primi, int* primi, int ciclo)
+{
+    if(jackpot(dim_sol,N)==true)
+    {
+        //cout<<"jackpot"<<endl;
+        //se di lunghezza n e ho ottenuta somma stampo
+        if(somma_attuale==somma)
+        {
+                for(int i=0; i<N; i++)
+                {
+                    cout<<" "<<sequenza[i];
+                }
+                cout<<endl;
+        }
+        return;
+    }
+    
+    int numero=0;
+    int nuova_somma_attuale= somma_attuale;
+    int nuova_dim_sol= dim_sol;
+    
+
+    for(int k=ciclo+1; k<dim_primi; k++)
+    {
+        //cout<<"ciclo k "<<k<<endl;
+        numero=primi[k];
+
+        if(is_safe(numero,somma,somma_attuale)==true)
+        {
+            //cout<<"safe"<<endl;
+            //passo nuovi parametri e metto il numero usato a valore -1 per indicare di non riutilizzarlo
+            primi[k]=-1;
+            nuova_somma_attuale= somma_attuale + numero;
+            sequenza[dim_sol]=numero;
+            nuova_dim_sol= dim_sol +1;
+
+            //cout<<"somma attuale "<<nuova_somma_attuale<<endl;
+            
+            back(sequenza,N,somma,nuova_somma_attuale,nuova_dim_sol,dim_primi,primi,k);
+
+            sequenza[dim_sol]=0;
+            //reimposto i valori di partenza e tolgo l'usato al valore primo
+            primi[k]=numero;
+        } 
+    }
+    return;
+}
+
+int main()
+{
+    algorithm();
+    return 0;
+}

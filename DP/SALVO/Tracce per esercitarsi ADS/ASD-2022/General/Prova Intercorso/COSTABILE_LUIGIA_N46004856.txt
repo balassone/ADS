@@ -1,0 +1,296 @@
+
+// ---- PRIMO ESERCIZIO----
+//COMPLESSITA'= O(n*log(n))
+
+
+#include <bits/stdc++.h>
+#include <iostream>
+
+using namespace std;
+void trova_target(int*, int target, int N);
+void mergesort(int* a, int start, int end);
+void merge(int* a, int start, int mid, int end);
+
+int main(){
+
+    int t, target, N;
+    cin>> t;
+    for(int i=0; i<t; i++){
+
+        cin>> target;
+        cin>> N;
+        int* a= new int[N];
+
+
+        for(int i=0;i<N;i++){
+            cin>> a[i];
+        }
+
+
+        trova_target(a,target, N);
+
+    }
+
+}
+
+
+void trova_target(int*a, int target, int N){
+
+mergesort(a,0, N-1);
+int count=0;
+
+ for(int i=0; i<N; ++i){
+            if(a[i]==target){
+                count++;
+            }
+}
+cout<<count<<endl;
+}
+
+
+
+
+void mergesort(int* a, int start, int end)
+{
+if(start<end) {
+int mid= start+(end-start)/2; 
+mergesort(a,start,mid);
+mergesort(a,mid+1,end);
+
+merge(a,start,mid,end);
+}
+}
+
+
+
+void merge(int* a, int start, int mid, int end)
+{
+    int i,j,k;
+    int n1=mid-start+1;
+    int n2=end-mid;
+    int L1[n1];
+    int L2[n2];
+
+    for(i=0;i<n1;i++)
+        L1[i]=a[start+i]; 
+    for(i=0;i<n2;i++)
+        L2[i]=a[mid+1+i];
+    i=0;
+    j=0;
+    k=start; 
+    while(i<n1 && j<n2){  
+        if(L1[i]<L2[j]){ 
+            a[k]=L1[i]; 
+            i++;
+        }else{
+            a[k]=L2[j]; 
+            j++;
+        }
+        k++;
+    }
+   
+    while(i<n1){
+        a[k]=L1[i];
+        i++;
+        k++;
+    }
+     while(j<n2){
+        a[k]=L2[j];
+        j++;
+        k++;
+    }
+
+
+
+}
+
+//-----------------------------------------------------------------------------
+
+//esercizio 2
+// LA COMPLESSITA' OSSERVANDO IL NUMERO DI CANDIDATI E CONSIDERANDO IL CASO PEGGIORE
+// (N-1)*N
+
+#include <iostream>
+#include <string>
+#include <climits>
+#include <string.h>
+
+using namespace std;
+
+int *last_solution;
+
+
+void utility_eratostene(int *v, int n) {
+
+    int i,j;
+    for(i=2; i<=n; i++){
+        if(v[i]==0){ 
+            for(j=2*i; j<=n; j+=i) {
+                
+                v[j]=1;        
+            }
+        }
+    }
+}
+
+bool prime(int num)
+{
+
+    int i=1;
+
+    if(num>1){
+
+        do{
+
+            i++;
+
+        }while(num%i);
+
+    }
+
+    if(i==num){ 
+        
+        return true;
+        }else {
+
+             return false;
+        }
+
+            
+}
+
+void back(int * seq_arr, int N, int add, int now_sum, int dim_sol, int size_primi, int* primi, int ciclo);
+
+bool jackpot(int dim_sol, int N)
+{
+
+    
+    if(dim_sol==N)
+    {
+        return true;
+    }
+    return false;
+    
+}
+
+void algorithm(){
+
+    int testcase=0;
+    cin>>testcase;
+
+    while(testcase--)
+    {
+        int N;
+        int add;
+        int primo;
+        int size_primi=0;
+
+        cin>>add;
+
+        cin>>N;
+
+        cin>>primo;
+
+        int* seq_arr= new int[N];
+        int* totali= new int[add];
+        int* primi= new int[add];
+
+        for(int i=0; i<add;i++)
+        {
+            totali[i]=0;
+        }
+
+        utility_eratostene(totali,add);
+        int j=0;
+        int h=0;
+
+        for(int i=0; i<add; i++)
+        {
+            if( totali[i]==0 && i>primo)
+            {
+                primi[j]=i;
+                size_primi++;
+                j++;
+            }
+        }
+
+        primi[size_primi]=add;
+
+        size_primi++;
+
+        for(int i=0; i<N;i++)
+        {
+            seq_arr[i]=0;
+        }
+
+
+    
+        back(seq_arr,N,add,0,0,size_primi,primi,-1);
+
+    }
+
+    return;
+}
+    
+bool is_safe(int numero, int add, int now_sum)
+{
+
+
+    if(now_sum+numero <= add && numero!=-1) 
+    {
+        return true;
+    }
+    return false;
+ 
+}
+
+void back(int * seq_arr, int N, int add, int now_sum, int dim_sol, int size_primi, int* primi, int ciclo)
+{
+    if(jackpot(dim_sol,N)==true)
+    {
+        
+        if(now_sum==add)
+        {
+                for(int i=0; i<N; i++)
+                {
+                    cout<<" "<<seq_arr[i];
+                }
+                cout<<endl;
+        }
+        return;
+    }
+    
+    int numero=0;
+    int nuova_now_sum= now_sum;
+    int nuova_dim_sol= dim_sol;
+    
+
+    for(int k=ciclo+1; k<size_primi; k++)
+    {
+        //cout<<"ciclo k "<<k<<endl;
+        numero=primi[k];
+
+        if(is_safe(numero,add,now_sum)==true)
+        {
+            //cout<<"safe"<<endl;
+            primi[k]=-1;
+            nuova_now_sum= now_sum + numero;
+            seq_arr[dim_sol]=numero;
+            nuova_dim_sol= dim_sol +1;
+
+            //cout<<"add attuale "<<nuova_now_sum<<endl;
+            
+            back(seq_arr,N,add,nuova_now_sum,nuova_dim_sol,size_primi,primi,k);
+
+            seq_arr[dim_sol]=0;
+            primi[k]=numero;
+        } 
+    }
+    return;
+}
+
+int main()
+{
+    algorithm();
+    return 0;
+}

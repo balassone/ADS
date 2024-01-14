@@ -1,0 +1,119 @@
+Primo Problema
+è stato utilizzato l'algoritmo divide et impera e la complessità di tale algoritmo è O(nlogn)
+
+#include <iostream>
+using namespace std;
+
+int conteggio(int arr[], int low, int high, int k){
+
+	if ((low>high) || (low==high && arr[low] != k))
+		return 0;
+
+    //se l'array ha dimensione 1 e coincide con il valore da trovare
+	if (low==high && arr[low]==k)
+		return 1;
+
+    //chiamo ricorsivamente la funzione conteggio()
+	return conteggio(arr, low,(low + high)/2, k)+ conteggio(arr, 1 + (low + high)/2,high, k);
+}
+
+int main(){
+    
+    /*int cs, k, n;
+    int arr[] = {};
+    int cscount = 0;
+    cout<<"Inserisci numero casi di test"<<endl;
+    cin>>cs;
+    while(cscount < cs){
+        cout<<"Inserisci numero da trovare: ";
+        cin>>k;
+        cout<<"Inserisci dimensione array: ";
+        cin>>n;
+        //int arr[n];
+        for(int i = 0; i<n; i++){
+            cin>>arr[i];
+        }
+        cout<<conteggio(arr, 0, n-1, k);
+        cscount++;
+    }*/
+	int arr[] = { 1, 1, 2, 2, 2, 2, 3 };
+	int n = sizeof(arr)/sizeof(int);
+	int k = 1;
+
+	cout << conteggio(arr, 0, n-1, k);
+
+	return 0;
+}
+
+
+
+Secondo problema
+La complessità del secondo problema è esponenziale
+
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+vector<int> set;
+vector<int> nprimi;
+
+void backtrack(int N, int S, int P);
+
+int main(){
+	int S = 63, N = 3, P = 5;
+	backtrack(N, S, P);
+	return 0;
+}
+
+bool controllo(int k){
+	
+	if (k == 1)
+		return false;
+	for (int i = 2; i <= k/2; i++)
+		if (k % i == 0)
+			return false;
+	return true;
+}
+
+
+void stampa(){
+	int lunghezza = set.size();
+	for (int i=0; i<lunghezza; i++)
+		cout << set[i] << " ";
+		cout<<"\n";
+}
+
+
+void somma(int totale, int N, int S, int in){
+
+	if (totale == S && set.size() == N){
+	
+		stampa();
+		return;
+	}
+
+	if (totale > S || in==nprimi.size())
+		return;
+
+		set.push_back(nprimi[in]);
+	
+	//chiamo ricorsivamente la funzione somma() e incremento i numeri utilizzati per arrivare alla somma desiderata
+	somma(totale+nprimi[in], N, S, in+1);
+	set.pop_back();
+
+	somma(totale, N, S, in+1);
+}
+
+
+void backtrack(int N, int S, int P){
+
+	for (int i = P+1; i <=S ; i++){
+		if (controllo(i))
+		nprimi.push_back(i);
+	}
+	if (nprimi.size() < N)
+		return;
+	somma(0, N, S, 0);
+}

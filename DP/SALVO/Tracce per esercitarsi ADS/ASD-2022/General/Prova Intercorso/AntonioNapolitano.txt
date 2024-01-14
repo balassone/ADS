@@ -1,0 +1,239 @@
+// complessità O(nlogn)
+#include <iostream>
+
+using namespace std;
+
+
+
+void merge(int *,int, int , int );
+void merge_sort(int *arr, int low, int high)
+{
+    int mid;
+    if (low < high){
+    
+        mid=(low+high)/2;
+        merge_sort(arr,low,mid);
+        merge_sort(arr,mid+1,high);
+        
+        merge(arr,low,high,mid);
+    }
+}
+// Merge sort
+void merge(int *arr, int low, int high, int mid)
+{
+    int i, j, k, c[50];
+    i = low;
+    k = low;
+    j = mid + 1;
+    while (i <= mid && j <= high) {
+        if (arr[i] < arr[j]) {
+            c[k] = arr[i];
+            k++;
+            i++;
+        }
+        else  {
+            c[k] = arr[j];
+            k++;
+            j++;
+        }
+    }
+    while (i <= mid) {
+        c[k] = arr[i];
+        k++;
+        i++;
+    }
+    while (j <= high) {
+        c[k] = arr[j];
+        k++;
+        j++;
+    }
+    for (i = low; i < k; i++)  {
+        arr[i] = c[i];
+    }
+}
+
+
+
+
+int binarySearch(int arr[], int l, int r, int x)
+{
+    if (r >= l) {
+        int mid = l + (r - l) / 2;
+
+        
+        if (arr[mid] == x)
+            return mid;
+
+        
+        if (arr[mid] > x)
+            return binarySearch(arr, l, mid - 1, x);
+
+       
+        return binarySearch(arr, mid + 1, r, x);
+    }
+
+    // We reach here when element is not
+    // present in array
+    return -1;
+}
+
+
+
+
+
+  int main(){
+    int Tc;
+    cin >>Tc;
+    
+    // prendo i dati in input
+    while(Tc--){
+        int num, dim;
+        
+        cin>> num >> dim;
+        int arr[dim];
+        for(int i=0; i<dim; i++){
+            cin >>arr[i];
+        }
+        
+       
+        
+    // inizializzo il conteggio
+    int count;
+    // ordino array con merge sort
+    merge_sort(arr,0,dim);
+    
+    
+    // cerco il valore
+	int indice =binarySearch(arr,0,dim,num);
+
+	// se non lo trovo stampo zero
+	if (indice == -1){
+		cout << "0" << endl;
+	}else{
+		if (arr[indice] == num){
+			cout << indice << endl;
+			while(arr[indice]==num && indice< dim){
+				count++;
+				indice++;
+			}
+		}
+		
+		
+		
+cout << count;
+
+	}
+        
+    }
+    }
+
+
+
+
+
+
+
+
+// secondo esercizio
+// complessità dell'algoritmo esponenziale
+    
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+// vector to store prime and N primes
+// whose sum equals given S
+vector<int> set;
+vector<int> prime;
+
+// function per i numeri primi
+bool isPrime(int x)
+{
+
+	bool is_prime = true;
+
+
+	for(int k =2; k<=x/2;k++){
+		if (x%k==0 ){
+
+		is_prime = false;
+		break;
+		}
+
+	}
+	if(is_prime){
+		return true;
+	}else{
+		return false;
+}
+}
+
+
+
+//controlla tutti i possibili numeri primi
+//
+void somma(int total, int n, int s, int index)
+{
+    // se sono arrivato alla fine stampo il risultato
+    if (total == s && set.size() == n)
+    {
+        // display the N primes
+    	 for (int i = 0; i < 3; i++)
+    	        cout << set[i] << " ";
+    	    cout << "\n";
+        return;
+    }
+
+    //controllo che la somma non sia maggiore
+    if (total > s || index == prime.size())
+        return;
+
+
+    set.push_back(prime[index]);
+
+    // ricorro
+    somma(total+prime[index], n, s, index+1);
+
+    // backtrack
+    set.pop_back();
+
+
+    somma(total, n, s, index+1);
+}
+
+// genera primi
+void primi(int n, int s, int p)
+{
+    // all primes less than S itself
+    for (int i = p+1; i <=s ; i++)
+    {
+        // if i is prime add it to prime vector
+        if (isPrime(i))
+            prime.push_back(i);
+    }
+
+    // se i numero primi sono inferiori a N sono non devo cercarne più
+    if (prime.size() < n)
+        return;
+    somma(0, n, s, 0);
+}
+
+int main(){
+    int Tc;
+    while(Tc--){
+        int s,n,p;
+        
+        // prendo i valori 
+       for (int i =0; i<3;i++){
+           cin >> s >> n>> p;
+       } 
+    
+        primi(n,s,p);
+        
+       cout << endl;
+    }
+        
+        
+    
+}

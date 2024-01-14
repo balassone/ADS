@@ -1,0 +1,166 @@
+ESERCIZIO 1:
+
+#include <iostream>
+
+using namespace std;
+
+int count(int arr[], int low, int high, int x)
+{
+    if ((low > high) || (low == high && arr[low] != x)) return 0;
+    if (low == high && arr[low] == x) return 1;
+    return count(arr, low,(low + high) / 2, x) + count(arr, 1 + (low + high) / 2, high, x); // Dividi et impera, divide l'array e cerca le occorrenze nei subarray
+}
+
+int main()
+{ 
+    // Numero di test
+	int test=0;
+	cin>>test;
+
+    int test_res[test] = {};
+	
+	for(int i=0; i<test; i++){
+        // Numero da trovare
+        int K = 0;
+		cin >> K;
+
+        // Dimensione dell'array
+        int size = 0;
+        cin >> size;
+
+        if(size <= 0) return 1;
+
+        // Array
+        int arr[size];
+        
+        // Aggiungo elementi all'array
+        for(int i = 0; i < size; i++){
+            cin >> arr[i];
+        }
+        
+        int n = sizeof(arr) / sizeof(int);
+        test_res[i] = count(arr, 0, n-1, K);
+	}
+ 
+    for(int i = 0; i < test; i++){
+        cout << test_res[i] << endl;
+    } 
+ 							
+    return 0;
+}
+
+
+Complessita temporale O(nlogn)
+
+							
+
+ESERCIZIO 2:
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+
+vector<int> set;
+vector<int> prime;
+
+bool isPrime(int x)
+{
+
+  bool is_prime = true;
+
+
+  for(int k =2; k<=x/2;k++){
+    if (x%k==0 ){
+
+    is_prime = false;
+    break;
+    }
+
+  }
+  if(is_prime){
+    return true;
+  }else{
+    return false;
+}
+}
+
+
+
+// Controlla tutti i possibili numeri primi
+
+void somma(int total, int n, int s, int index)
+{
+    // Se sono arrivato alla fine stampo il risultato
+    if (total == s && set.size() == n)
+    {
+        // Mostra gli N primi
+       for (int i = 0; i < 3; i++)
+              cout << set[i] << " ";
+          cout << "\n";
+        return;
+    }
+
+    // Controllo che la somma non sia maggiore di S
+    if (total > s || index == prime.size())
+        return;
+
+
+    set.push_back(prime[index]);
+
+    // ricorro
+    somma(total+prime[index], n, s, index+1);
+
+    // backtrack
+    set.pop_back();
+
+
+    somma(total, n, s, index+1);
+}
+
+// Genera primi
+void primi(int n, int s, int p)
+{
+    // Tutti i primi minuri di S
+    for (int i = p+1; i <=s ; i++)
+    {
+
+        if (isPrime(i))
+            prime.push_back(i);
+    }
+
+    // Se i numero primi sono inferiori a N sono non devo cercarne più
+    if (prime.size() < n)
+        return;
+    somma(0, n, s, 0);
+}
+
+int main(){
+    int Tc;
+    while(Tc--){
+        int s,n,p;
+        
+        // Prendo i valori 
+       for (int i =0; i<3;i++){
+           cin >> s >> n>> p;
+       } 
+    
+        primi(n,s,p);
+        
+       cout << endl;
+    }
+        
+        
+    
+}
+
+
+
+Complessità temporale:
+O(2^N) 
+Provo prima d includere e poi ad escludere il primo ogni volta sono 2 tentativi
+per ogni numero primo prima di S e dopo P (dipende quindi anche da S e P, provo per tutti gl interi almeno S-P volte)
+parto dal primo numero, considero se prendere il numero primo all'indice i oppure escluderlo
+2 scelte per poi riprovare.
+	

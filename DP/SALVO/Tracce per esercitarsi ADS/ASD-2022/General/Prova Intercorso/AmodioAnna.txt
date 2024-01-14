@@ -1,0 +1,154 @@
+AMODIO ANNA
+Prima prova intercorso
+
+-----------------------------------------------
+
+PROBLEMA 1
+
+#include <iostream>
+using namespace std;
+
+int contaOccorrenze(int K, const int* arr, int l,int r){
+
+    if(l<r){
+        int mid = (l+r)/2;
+        return contaOccorrenze(K,arr,l,mid) + contaOccorrenze(K,arr,mid+1,r);
+    }
+    /* raggiunge questo punto quando l==r, cioè quando la funzione è stata chiamata su un solo elemento */
+    if(arr[l] == K) return 1;
+    return 0;
+}
+
+int main(){
+
+    int t,k,dim;
+    int * array;
+    cin>>t;
+    while(t--){
+        cin>>k>>dim;
+        array = new int[dim];
+        for(int i=0; i<dim; i++) cin>>array[i];
+
+        cout<<contaOccorrenze(k,array,0,dim-1)<<endl;
+        delete[] array;
+
+    }
+}
+
+
+/*
+    La complessità è O(n), dove n è la dimensione dell'array
+*/
+
+
+-----------------------------------------------
+
+PROBLEMA 2
+
+#include <iostream>
+#include <vector>
+using namespace std;
+int val = 0;
+
+bool isPrime(int n ){
+    int i=1,x;
+    if(n>1){
+        do{
+            i++; 
+            x=n%i; 
+        }while(x); 
+    }
+    if(i==n) return true;
+    return false; 
+}
+
+void findCandidates(int A, int B, vector<int>& values,vector<bool>& used){
+
+//numeri primi fra A e B
+    for(int i=A+1; i<=B;i++){
+        if(isPrime(i)){
+            values.push_back(i);
+            used.push_back(false);
+        }
+    }
+}
+
+bool canInsert(const vector<int>& candidates,int current, vector<int>& seq, int N, int S, vector<bool>& used){
+
+    if(used[current])
+        return false;
+
+    int sum = 0;
+
+    //calcolo la somma degli elementi fino ad ora inseriti, più il valore del candidato corrente
+    for(int i=0; i<seq.size(); i++) sum+=seq[i];
+    sum+=candidates[current];
+    
+    //se sto inserendo l'ultimo elemento e la somma è proprio S, ritorna vero
+    //se non sto inserendo l'ultimo e la somma è <S, ritorna vero: potrebbe essere una sequenza corretta
+    if((seq.size()==N-1 && sum == S) || (seq.size()<N-1 && sum<S) )
+        return true;
+
+    //altrimenti, ritorna falso
+    return false;
+}
+
+void trySolution(const vector<int>& candidates,int current, vector<int>& seq, int N, int S,vector<bool>& used){
+
+    seq.push_back(candidates[current]);
+    used[current] = true;
+
+    if(seq.size() == N){
+        for(int i=0; i<seq.size(); i++) cout<<seq[i]<<" ";
+        cout<<endl;
+        val++; //conto quante sequenze ho stampato
+    }
+    else{
+    for(int i=current+1; i<candidates.size();i++){
+        //se può essere inserito, inserisco l'elemento successivo
+        if(canInsert(candidates,i,seq,N,S,used)){
+            trySolution(candidates,i,seq,N,S,used);
+            }
+        }
+    }
+    used[current] = false;
+    seq.pop_back();
+
+
+}
+
+void solve(int S, int N, int P){
+    
+    vector<int> candidates;
+    vector<int> seq;
+    vector<bool>used;
+    findCandidates(P,S,candidates,used);
+    for(int i=0; i<candidates.size(); i++){
+        //per ogni elemento del vettore, tento di iniziare una sequenza a partire da quello
+        if(canInsert(candidates,i,seq,N,S,used))
+            trySolution(candidates,i,seq,N,S,used);
+    }
+
+    //se non ho stampato nessuna sequenza, dico che non ci sono soluzioni
+    if(val == 0) cout<<"no solutions\n";
+}
+
+int main(){
+
+    int t,s,n,p;
+    cin>>t;
+    for(int i=1; i<=t; i++){
+        cin>>s>>n>>p;
+        cout<<"CASO DI TEST "<<i<<endl;
+        solve(s,n,p);
+
+    }
+}
+
+
+
+/*
+    La complessità di questo problema, trattato con il backtracking, è esponenziale
+    si prova infatti, a partire da ogni elemento della sequenza, ad aggiungere ciascuno degli altri, e si verifica se la sequenza
+    così ottenuta fa parte di una soluzione
+*/

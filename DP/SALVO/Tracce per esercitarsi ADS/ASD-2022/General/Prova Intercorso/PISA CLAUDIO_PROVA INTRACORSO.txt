@@ -1,0 +1,169 @@
+//ESERCIZIO 1
+
+
+#include <iostream>
+
+int binarySearch(int arr[], int l, int r, int x)
+{
+	while (l <= r) {
+		int m = l + (r - l) / 2;
+
+		if (arr[m] == x)
+			return m;
+
+		if (arr[m] < x)
+			l = m + 1;
+
+		else
+			r = m - 1;
+	}
+
+	return -1;
+}
+
+void _count(int v[], int size, int k, int& c, int low)
+{
+    int i;
+    iterator it;
+
+    i = binarySearch(v, low, size-1, k);
+    if(i > 0){
+        _count(v, size-1, k, ++c, low+1);
+    }
+
+}
+
+int main()
+{
+    int k, size, c;
+    int tc = 0;
+    int v[100];
+/* STIB DI TEST
+    int v[100] = {1, 1, 2, 2, 2, 2, 3};
+    k = 1;
+    size = 7;
+    c = 0;
+
+    sort(v, v+size);
+    _count(v, size, k, c, 0);
+
+    cout << c;*/
+
+    cin >> tc;
+
+    while(tc--){
+        cin >> k >> size;
+        c = 0;
+
+        for(int i = 0; i < size; i++){
+            cin >> v[i];
+        }
+
+        sort(v, v+size);
+        _count(v, size, k, c, 0);
+        
+        cout << c;
+    }
+
+
+    return 0;
+}
+
+
+
+/**************************************************/
+
+//ESERCIZIO 2
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using std::cin;
+using std::cout;
+using std::endl;
+using std::max;
+using std::min;
+using std::lower_bound;
+using std::upper_bound;
+using std::sort;
+using std::vector;
+using std::pair;
+
+typedef vector<int>::iterator iterator;
+typedef pair<int, int> type_name;
+
+
+bool is_prime(int n)
+{
+	if(n <= 1)
+		return false;
+
+	for(int i = 2; i < n; i++)
+		if(n % i == 0)
+			return false;
+
+	return true;
+}
+
+void backtracking(int n, int s, int p, int k, int sol[])
+{
+    if(k == n){
+        //cout << "solution reached" << endl;
+        int sum = 0;
+
+        //for(int i = 0; i < n; i++){
+          //  cout << sol[i] << " ";
+        //}
+        //cout << endl;
+        
+        for(int i = 0; i < n; i++){
+            sum += sol[i];
+        }
+        if(sum == s){
+            cout << endl <<  "somma uguale " << endl;
+            for(int i = 0; i < n; i++)
+                cout << sol[i] << " " << endl;
+
+            cout << sum;
+            return;
+        }
+    }
+
+    for(int i = p+1; i < s; i++){
+        if(is_prime(i)){
+           // cout << i << "is prime" << endl;
+            sol[k] = i;
+            backtracking(n, s, i+1, k+1, sol);
+            sol[k] = i; 
+        }
+    } 
+}
+
+int main()
+{
+    int n, s, p;
+    int tc = 0;
+    int sol[100]{};
+
+    
+  /* STUB SI PROVA
+    n = 3; 
+    s = 63;
+    p = 5;
+
+    backtracking(n, s, p, 0, sol); */
+
+
+    cin >> tc;
+    while(tc--){
+        cin >> n, s, p;
+
+        backtracking(n, s, p, 0, sol);
+    }
+
+    
+    return 0;
+}
+
+

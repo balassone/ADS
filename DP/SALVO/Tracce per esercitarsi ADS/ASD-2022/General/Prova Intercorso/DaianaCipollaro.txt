@@ -1,0 +1,158 @@
+PROBLEMA 1
+package Problema1;
+
+import java.util.*;
+
+public class DivideEtImpera {
+	
+	public static void main(String[] args) {
+
+		Scanner s = new Scanner(System.in);
+		Vector<Integer> A = new Vector<Integer>();
+		int k, dim;
+		int test_case = s.nextInt();
+		
+		for(int t = 0; t < test_case; ++t) {
+			
+			k = s.nextInt();			
+			dim = s.nextInt();
+
+			for(int i = 0; i < dim; ++i) 
+				A.add(s.nextInt());
+										
+			System.out.println(find(A, 0, dim-1, k));
+						
+		}
+		
+		s.close();
+
+	}
+
+	public static int find(Vector<Integer> A, int start, int end, int k) {
+		
+		int middle, count;
+		
+		if (start < end) {
+			count = 0;
+			middle = start + (end-start)/2;
+			
+			count += find(A, start, middle, k);
+			count += find(A, middle+1, end, k);
+			
+			return count;
+		}
+		
+		if (A.get(start) == k) return 1;
+		else return 0;
+	
+	}
+	
+}
+
+
+
+
+PROBLEMA 2
+package Problema2;
+
+import java.util.*;
+
+public class BackTracking {
+
+	public static Vector<Integer> p;
+	
+	public static void main(String[] args) {
+		
+		Scanner s = new Scanner(System.in);
+		int test_case = s.nextInt();
+		int N, P, S;
+		Vector<Integer> seq = new Vector<Integer>();
+		
+		for(int t = 0; t < test_case; ++t) {
+			
+			S = s.nextInt();
+			N = s.nextInt();
+			P = s.nextInt();
+
+			p = new Vector<Integer>();
+			primi(P, S, p);
+			
+			System.out.println("CASO TEST " + t);
+			backtrack(seq, p, N, S);
+			
+		}
+		
+		s.close();
+
+	}
+
+
+	public static void primi(int P, int S, Vector<Integer> p) {
+				
+		boolean check = true;
+						
+		for(int i = P+1; i <= S; ++i) {
+		
+			for(int j = 2; j <= Math.ceil(Math.sqrt(i)); ++j)
+				if(i % j == 0)
+					check = false;
+					
+			if(check)
+				p.add(i);
+		}
+		
+	}
+	
+	public static boolean is_a_solution(Vector<Integer> a, int N) {
+		return a.size() == N;
+	}
+	
+	public static void construct_candidates(Vector<Integer> a, Vector<Integer> solution, Vector<Integer> c) {
+		int elem;
+		
+		if (a.size() == 0) 
+			elem = 0;
+		else 
+			elem = solution.indexOf(a.lastElement()) + 1;
+		
+		for (int i = elem; i < solution.size(); ++i) 
+			c.add(solution.get(i));	
+		
+	}
+	
+	public static void process_solution(Vector<Integer> a, int N, int S) {
+	
+		int somma = 0;
+		for (int i = 0; i < a.size(); ++i) 
+			somma += a.get(i);		
+
+		if (a.size() == N && somma == S) {
+			for(int i = 0; i < a.size(); ++i)
+				System.out.println(a.get(i));			
+		}
+		
+	}
+
+	public static void backtrack(Vector<Integer> a, Vector<Integer> solution, int N, int S) {
+		
+		Vector<Integer> c = new Vector<Integer>();	
+		
+		if (is_a_solution(a, N)) {
+			process_solution(a, N, S);
+		}
+		else {
+			construct_candidates(a, solution, c);
+			
+			for (int i = 0; i < c.size(); ++i) {
+				a.add(c.get(i));
+				backtrack(a, solution, N, S);
+				a.remove(a.lastElement());
+			}
+		}
+		
+	}
+	
+}
+
+
+

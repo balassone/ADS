@@ -1,0 +1,178 @@
+//PROBLEMA 1
+
+#include <bits/stdc++.h>
+
+/*Complessità O(nlogn) a causa dell'algoritmo di ricerca implementato poichè
+  si va a dividere il vettore a meta e fare il controllo su parte destra e
+  parte sinistra e così via fino alla condizione di terminazione
+*/
+using namespace std;
+
+
+int trova(int vett[],int a, int b, int val){
+	
+	// Se l'elemento non è stato trovato o il vettore non è valido
+	if((a>b) || (a==b && vett[a]!=val))
+		return 0;
+	//Se esiste un singolo elemento e questo è uguale al valore
+	if(a==b && vett[a]==val)
+		return 1;
+	
+	//Dividiamo il vettore il due parti e trivamo il numero delle occorrenze nelle due metà
+	return trova(vett,a,(a+b)/2,val)+trova(vett,1+(a+b)/2,b,val);
+
+	
+}
+
+
+
+
+
+int main(){
+	
+	int tc;
+	cout<<"Numero di test: ";
+	cin>>tc;
+	
+	while(tc--){
+		
+		int k;
+		int dim;
+		cout<<"Inserire valore e dimensione: ";
+		cin>>k>>dim;
+		cout<<"Inserimento vettore: ";
+		int vett[dim];
+		for(int i=0;i<dim;i++){
+			cin>>vett[i];
+		}
+		cout<<"Occorrenza: "<<trova(vett,0,dim-1,k)<<endl;
+	}
+	
+	
+	system("PAUSE");
+	return 0;
+	
+	
+}
+
+
+
+
+//PROBLEMA 2
+
+#include <bits/stdc++.h>
+#include <vector>
+using namespace std;
+
+//Vettori dei numeri primi e vettore per la somma
+
+vector<int> nprimi;
+vector <int> s;
+
+
+bool primo(int val){
+	
+	if(val==1)
+		return false;
+	
+	for(int i=2;i<=sqrt(val);i++){
+		if((val%i)==0)
+			return false;
+	}
+	
+	return true;
+
+	//La funzione controlla se il valore passato è un numero primo
+
+}
+
+void stampa(){
+	
+	for(int i=0;i<s.size();i++){
+		cout<<s[i]<<" ";
+	}
+	cout<<endl;
+	
+}
+
+void somma(int totale, int S, int N, int k){
+	
+	//Se il totale è S e la dimensione del vettore è pari ad N
+	if(totale==S && s.size()==N){
+		stampa();
+		return;
+	}
+	
+	//Se il totale è maggiore di S oppure siamo arrivati alla fine del vettore
+	if(totale>S || k==nprimi.size()){
+		return;
+	}
+	
+	//Aggiungiamo al vetore
+	s.push_back(nprimi[k]);
+	
+	//e richiamiamo la funzione di somma sul totale sommato al valore primo nel vettore, andando a incrementare l'indice
+	somma(totale+nprimi[k],S,N,k+1);
+	
+	//Rimozione elemento
+	s.pop_back();
+	//e richiamiamo la funzione di somma sull'elemento successivo 
+	somma(totale,S,N,k+1);
+	
+	
+	
+} 
+
+void genera(int S, int N, int P){
+	
+	
+	for(int i=P+1;i<=S;i++){
+		if(primo(i))
+		//Se il valore è un numero primo lo aggiungo al vettore nprimi
+			nprimi.push_back(i);
+	}
+	
+	//Se i numeri primi sono minori di N
+	if(nprimi.size()<N)
+		return;
+	
+	somma(0,S,N,0);
+	
+}
+
+
+
+int main(){
+		
+	int tc;
+	cout<<"Numero casi di test:";
+	cin>>tc;
+	
+	int x=0;
+	while(tc--){
+		cout<<"Inserimento valori"<<endl;
+		int S,N,P;
+		cout<<"S: ";
+		cin>>S;
+		cout<<"N: ";
+		cin>>N;
+		cout<<"P: ";
+		cin>>P;
+		
+		x++;		
+		cout<<"Caso di test "<<x<<" :"<<endl;
+		
+		genera(S,N,P);
+		nprimi.erase(nprimi.begin(),nprimi.end());
+	}	
+	
+	system("PAUSE");	
+	return 0;
+	
+}
+
+
+
+
+
+

@@ -1,0 +1,157 @@
+Bisogno Francesco - M63001449
+
+1° esercizio
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int countOccurrence(vector <int> Array, int left, int right, int k)
+{
+  if(left > right || (left == right && Array[left] != k))
+  	return 0;
+
+  if(left == right && Array[left] == k)
+  	return 1;
+  	
+  return countOccurrence(Array, left, (left + right)/2, k) + countOccurrence(Array, (left + right)/2 + 1, right, k);
+}
+
+int main()
+{
+
+  vector <int> Array;
+  
+  int T, k, n, v;
+
+  cin>>T;
+
+  while(T--)
+  {
+    cin>>k;
+    cin>>n;
+
+    for(int i = 0; i < n; i++)
+    {
+    	cin>>v;
+    	Array.push_back(v);
+	}
+      
+    sort(Array.begin(), Array.end());
+    
+    cout<<countOccurrence(Array, 0, n - 1, k)<<endl;
+  }
+
+  return 0;
+}
+
+Al netto dell'operazione di Sorting, la complessità è pari a O(nlogn).
+
+
+2° Esercizio
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int vectorSolution[100];
+
+bool numPrimo(int n)
+{
+	int i = 1, Temp;
+	
+	do{
+		i++;
+		Temp = n%i;
+		
+	  }while(Temp);
+	  
+	if(i == n)	return true;
+	 else return false;
+}
+
+void printSequence(int N)
+{
+	for(int i = 0; i < N; i++)
+		cout<<vectorSolution[i]<<endl;
+			
+	cout<<endl;
+}
+
+void backtracking(int S, int N, int P, int numSequence, int sum, bool* &Used)
+{
+	if(numSequence > N)	return;
+	
+	//cout<<"BACKTRACKING"<<endl;
+	
+	if(numSequence == N)
+	{
+		
+		if(sum == S)	{printSequence(N);}
+			
+		return;
+	}
+	else
+		{
+				for(int i = P + 1; i < (S - P); i++)
+				{
+					if(numPrimo(i) && !Used[i])
+					{
+						Used[i] = 1;
+						sum += i;
+						vectorSolution[numSequence] = i;
+						
+						backtracking(S, N, i, numSequence + 1, sum, Used);
+						
+						numSequence--;
+						vectorSolution[numSequence] = 0;
+						sum -= i;
+						Used[i] = 0;
+					}
+				}		
+		}	
+}
+
+int main()
+{
+	int numberCase = 1;
+	int testCase;
+	bool* Used;
+	
+	int S, N, P;
+	
+	cin>>testCase;
+	
+	while(testCase--)
+	{
+		
+		cin>>S>>N>>P;
+		
+		Used = new bool[S];
+		
+		for(int i = 0; i < S; i++)
+			Used[i] = 0;
+		
+		cout<<"CASO DI TEST "<<numberCase<<endl;
+		
+		for(int i = P + 1; i <= (S - P); i++)
+		{
+			if(numPrimo(i))
+			{
+				Used[i] = 1;
+				vectorSolution[0] = i;
+				backtracking(S, N, i, 1, i, Used);
+				Used[i] = 0;	
+			}
+
+		}
+		
+		numberCase++;
+		
+		delete [] Used;
+	}
+	
+	return 0;
+}
+
+La complessità, al netto del backtracking, è di tipo esponenziale. In particolare, è del tipo (n2^n).

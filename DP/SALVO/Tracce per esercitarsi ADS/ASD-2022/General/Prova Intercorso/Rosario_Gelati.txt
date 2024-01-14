@@ -1,0 +1,154 @@
+
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int count(int vett[], int begin, int end, int x)
+{
+
+	
+	// Nel caso in cui non trovo l'elemento o la dimensione dell'array è non valida
+	if ((begin > end)
+		|| (begin == end && vett[begin] != x))
+		return 0;
+
+
+		if (begin == end && vett[begin] == x)
+		return 1;
+
+	//divido l'array in due parti uguali, e cerco le occorrenze nel sottovettore di sinistra e quelle nel sottovettore di destra 
+	return count(vett, begin,
+				(begin + end) / 2, x)
+		+ count(vett, 1 + (begin + end) / 2,
+				end, x);
+}
+
+
+int main()
+{
+	int x,dim;
+
+	cout<<"Inserisci il numero da cercare: ";
+	cin>>x;
+	
+	cout<<"Inserisci la dimensione del vettore: ";
+	cin>>dim;
+	
+	int vett[dim];	
+	for(int i=0; i<dim;i++){
+		cout<<"inserisci il valore dell'elemento "<< i<< "-esimo:";
+		cin>>vett[i];
+	}
+	
+
+	cout <<"Il numero di occorenze con cui compare :"<<x<<" e': "<<count(vett, 0, dim - 1, x);
+
+	return 0;
+}
+
+
+//fine primo
+
+//secondo esercizio
+
+
+
+// secondo esercizio
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+vector<int> poss_sum;
+vector<int> vett_prime; //vettore dove immagazzino tutti i numeri primi > primo e < sum
+
+// funzione per controllare se un num è primo
+bool isPrimeValid(int x)
+{
+
+	int sqroot = sqrt(x);
+
+
+	//tutti numeri sono divisibili per uno quindi restituisco false
+	if (x == 1)
+		return false;
+
+
+	for (int i = 2; i <= sqroot; i++)  //parto da 2 siccome tutti i numeri sono divisibili per uno
+		if (x % i == 0) //vuol dire che divisibile per altri numeri al di fuori di 1 e se stesso e quindi ritorno false
+			return false;
+
+	//se non trovo nessun numero per cui è divisibile vuol dire che è primo
+	return true;
+}
+
+// funzione per visualizzare le possibili combinazioni
+void visualizza()
+{
+	int length = poss_sum.size();
+	for (int i = 0; i < length; i++)
+		cout << poss_sum[i] << " ";
+	cout << "\n";
+}
+
+// function per valutare tutte le possivbili somme
+void Sum_num_primi(int totale, int N, int sum, int index)
+{
+		// Se raggiungo la somma desiderata in n elementi ,allora mostro la combinazione
+	if (totale == sum && poss_sum.size() == N)
+	{
+	
+		visualizza();
+		return;
+	}
+
+	//se il totale sfora la somma o sono arrivato all'ultimo elemento vuol dire che non va bene 
+	if (totale > sum || index == vett_prime.size())
+		return;
+
+
+	poss_sum.push_back(vett_prime[index]);
+
+	Sum_num_primi(totale+vett_prime[index], N, sum, index+1);
+
+	poss_sum.pop_back();
+
+	Sum_num_primi(totale, N, sum, index+1);
+}
+
+// function to generate all primes
+void allPrime(int N, int sum, int primo)
+{
+	
+	for (int i = primo+1; i <=sum ; i++)
+	{
+	//scorro tutti gli elementi > primo e minori di s e quando ci sono dei numeri primi li aggiungo al vettore vett_prime
+		if (isPrimeValid(i))
+			vett_prime.push_back(i);
+	}
+
+
+	if (vett_prime.size() < N)
+		return;
+	Sum_num_primi(0, N, sum, 0);
+}
+
+
+int main()
+{
+		int sum,num,primo;
+	
+	cout<<"Inserisci la somma desiderata:";
+	cin>>sum;
+	
+	cout<<"Con quanti numeri primi devo sommare per restituire la somma: ";
+	cin>>num;
+	
+	cout<<"Qual e' il numero primo da cui iniziare cercare gli altri num primi per la somma:";
+	cin>>primo;
+
+	cout<<"le combinazioni possibili sono:"<<endl;
+	allPrime(num, sum, primo);
+
+	return 0;
+}

@@ -1,0 +1,155 @@
+Problema 1
+
+#include <iostream>
+using namespace std;
+
+#define DIM 100
+
+int count(int *, int, int, int);
+
+int main()
+{
+	int test;
+	int dim, value;
+	int A[DIM];
+	
+	cin >> test;
+	
+	int t = 0;
+	while(t < test){
+		
+	
+		cin >> value; //Inserire elemento di cui contare le occorrenze
+		
+		
+		cin >> dim;//Inserire la dimensione del vettore
+		
+		int counter = 0;
+		
+		for(int i = 0; i < dim; i++)
+			cin >> A[i];
+		
+		//array
+		counter = count(A,value,0,dim-1);
+		
+		cout << "Occorrenze elemento " << value << " : " << counter << endl;
+		
+		t++;
+	}
+	
+	return 0;
+}
+
+int count(int * A, int e, int index_first, int index_last)
+{
+	int counter;
+   
+    if((index_first > index_last) or (index_first == index_last and A[index_first] != e)) return 0;
+    
+   
+    if(index_first == index_last and A[index_first] == e) return 1;
+    
+    counter = count(A, e, index_first,(index_first + index_last)/2) + count(A, e, 1 + (index_first + index_last)/2, index_last); 
+    
+	return counter;
+}
+
+Nella funzione count() prima della ricorsione individuiamo  3 casi : 
+ 1)se il sotto-array non è valido (ultimo indice > primo indice) 
+ 2)se h un solo elemento ma non è quello cercato
+ 3)se e compare una sola volta e l'array ha dimensione 1
+
+
+La complessità è O(n log(n))
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Problema 2
+#include <iostream>
+#include <vector>
+#include <cmath>
+using namespace std;
+
+
+vector<int> set; //conservo i numeri  la cui somma mi da S
+vector<int> prime;//conservo tutti i numeri primi fra P e S
+
+
+bool isPrime(int x){
+	int root = sqrt(x);
+
+	if (x == 1)
+		return false;
+
+	for (int i = 2; i <= root; i++)
+		if (x % i == 0)
+			return false;
+
+	return true;
+}
+
+void display(){
+	int length = set.size();
+	for (int i = 0; i < length; i++)
+		cout << set[i] << " ";
+	cout << "\n";
+}
+
+//Calcolo tutti i numeri primi la cui somma mi da S
+void primeSum(int total, int N, int S, int index){
+
+	if (total == S && set.size() == N){
+		display();
+		return;
+	}
+
+	if (total > S || index == prime.size())
+		return;
+
+	set.push_back(prime[index]);
+	primeSum(total+prime[index], N, S, index+1);
+
+	set.pop_back();
+
+	primeSum(total, N, S, index+1);
+}
+
+// Funzione ausiliaria per generare tutti i numeri primi fra P e S
+void allPrime(int N, int S, int P){
+	for (int i = P+1; i <=S ; i++)
+	{
+		if (isPrime(i))
+			prime.push_back(i);
+	}
+
+	if (prime.size() < N)
+		return;
+	primeSum(0, N, S, 0);
+}
+
+int main(){
+	int test;
+    int S,N,P;
+
+	cin >> test;
+	
+	int t = 0;
+	while(t < test){
+	
+		cin >> S;
+		cin >> N;
+		cin >> P;
+		
+		cout<<"CASO DI TEST "<<t + 1<<endl;
+		allPrime(N, S, P);
+		
+		t++;
+	}
+	
+	return 0;
+}
+
+
+
+

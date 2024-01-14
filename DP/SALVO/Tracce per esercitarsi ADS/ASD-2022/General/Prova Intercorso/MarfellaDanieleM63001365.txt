@@ -1,0 +1,184 @@
+PROVA INTRACORSO ALGORITMI E STRUTTURE DATI - MARFELLA DANIELE M63001365 
+-----------------------------------------------------------------------------------------------------------------------------------------
+ESERCIZIO 1.
+
+Nel primo esercizio si è utilizzato un approccio divide et impera dove ad ogni chiamata ricorsiva suddivido l'array
+in due parti di ugual dimensione contando poi le occorrenze fino ad arrivare alla dimensione univoca.
+Tutte le occorrenze vengono poi sommate per poter generare la somma totale nella funzione ContaOccorrenze.
+
+La complessità è O = (n lg n) per gli approcci di suddivisione noti.
+
+-----------
+
+Implementazione in C++ :
+
+
+#include <iostream>                    /* ESERCIZIO 1 PROVA INTRACORSO ALGORITMI MARFELLA DANIELE M63001365 */
+
+using namespace std;
+
+
+int ContaOccorrenze(int A[], int p, int q, int k)    // primo elemento = p         ultimo elemento = q  
+{
+                        // NB Prima di contare le occorrenze devo distinguere tre casi
+if ((p > q)
+|| (p == q && A[p] != k))   // Caso 1: la dimensione è uno ma l'elemento non è presente nell'array
+return 0;
+ 
+if (p == q && A[p] == k)    // caso 2: la dimensione è uno e l'elemento è l'unico dell'array
+return 1;
+
+int S = ContaOccorrenze(A, p,       // caso 3: divide et impera e chiamata ricorsiva all'array, la dimensione non è uno.
+(p + q) / 2, k)
++ ContaOccorrenze(A, 1 + (p + q) / 2,
+q, k);
+
+return S;
+}
+
+int main(int argc, char** argv) {
+	int m=0;
+	int k=0;
+
+	
+	cout << "Inserisci la dimensione dell'array ";
+	cin >> m;
+	
+	int A[m];
+	
+	for (int i=0;i<m;i++)
+	  A[i] = 0;   // giusto per una pulizia dell'array per checkare poi eventuali errori
+	
+	for (int i=0;i<m;i++)
+	{ cout << "Inserisci l'elemento " << i << ":";
+	  cin >> A[i];  }
+	
+	cout << "Inserisci l'elemento da contare: ";
+	cin >> k;
+	
+	cout << "Numero di occorrenze : " << ContaOccorrenze(A,0,m-1,k) << endl;
+	
+	return 0;
+}
+
+-----------------------------------------------------------------------------------
+
+ESERCIZIO 2.
+
+Nel secondo esercizio utilizzando la libreria vector e particolari operazioni di push e pop per facilitare l'inserimento nel vettore, si è utilizzato
+un approccio di backtracking utilizzando dei vettori ausiliari che vengono riempiti man mano ci si avvicina alla soluzione.
+Tramite una funzione che calcola il modulo dei numeri minori di un dato k in maniera iterativa capiamo se il nostro numero è primo.
+Successivamente vi sono due funzioni che utilizzano le chiamate ricorsive, una per la somma e un altra per il riempimento.
+
+
+-------
+
+Implementazione in C++:
+
+                               /* ESERCIZIO 2, PROVA INTRACORSO ALGORITMI MARFELLA DANIELE M63001365 */
+#include <iostream> 
+#include <vector> 
+#include <cmath> 
+using namespace std; 
+
+// Utilizzo due vettori in modo globale per tener conto dei numeri primi e di quelli temporanei calcolati man mano
+vector<int> temp; 
+vector<int> risultato; 
+
+bool Primo(int x)  // Questa funzione serve a vedere se un numero è primo o meno
+{ 
+int radice = sqrt(x); 
+bool flag=true;
+
+if (x == 1)                               // Qui uno non è un considerato come numero primo.
+return false; 
+
+for (int i = 2; i <= radice; i++)   // Se il modulo è zero rispetto ad una divisione con un numero i
+                                    // Uso la radice per ridurne i casi..
+                                    // Allora non sarà un numero primo poich ho trovato un numero divisibile
+if (x % i == 0)   
+return false; 
+
+                                       // Qui sono sicuro che è primo.
+return true; 
+} 
+
+void stampa()    // Funzione utilitaria per stampare a video i risultati di un vettore
+{ 
+int length = temp.size(); 
+for (int i = 0; i < length; i++) 
+cout << temp[i] << " "; 
+
+} 
+
+// Funzione principale, valuto i numeri primi fino ad averne N la cui somma è S
+
+void Sommatore(int total, int N, int S, int index) 
+{ 
+if (total == S && temp.size() == N)  // Se il totale è uguale ad S ed ho usato N numeri primi
+{ 
+stampa();   // Stampo a video i numeri ottenuti.
+return; 
+} 
+
+// Se il totale supera S o se sono arrivato all'ultimo indice allora..
+if (total > S || index == risultato.size()) 
+return; 
+
+// Pusho l'elemento primo nell insieme risultato
+temp.push_back(risultato[index]); 
+
+// aggiungo il risultato
+Sommatore(total+risultato[index], N, S, index+1); 
+
+// rimuovo l'elemento dal vettore temporaneo
+temp.pop_back(); 
+
+// richiamo il sommatore
+Sommatore(total, N, S, index+1); 
+} 
+
+// Funzione per generare tutti i numeri primi
+void CercaPrimi(int N, int S, int P) 
+{ 
+// cerco fra tutti i primi minori di S
+for (int i = P+1; i <=S ; i++) 
+{ 
+if (Primo(i))        // Se ho trovato un numero primo i lo aggiungo al vettore risultato
+risultato.push_back(i); 
+} 
+
+// Se i numeri primi non raggiungono le N occorrenze desiderate esco
+if (risultato.size() < N) 
+{
+    cout << "I numeri primi non raggiungono le N occorrenze desiderate.. " << endl;
+    return;  } 
+Sommatore(0, N, S, 0);    // Richiamo il sommatore.
+} 
+
+
+int main() 
+{ int N,S,P = 0;
+    cout << "Inserisci la somma S: ";
+  cin >> S;
+    
+  cout << "Inserisci il numero primo minore di S ";
+  cin >> P;
+  
+  if ( P > S)
+   {cout << "Devi inserire un numero primo minore della somma.. Rientra!" << endl; 
+    return 0; }
+  
+  if (!Primo(P))
+   { cout << "Il numero che hai inserito non è primo. Il programma terminerà " << endl;
+   return 0; }
+   
+  cout << "Inserire il numero di occorrenze N da trovare per arrivare ad S:";
+  cin >> N;
+                                    
+  CercaPrimi(N, S, P); 
+  return 0; 
+} 
+
+
+

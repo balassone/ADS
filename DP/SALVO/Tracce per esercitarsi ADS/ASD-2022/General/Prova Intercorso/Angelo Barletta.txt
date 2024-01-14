@@ -1,0 +1,241 @@
+ESERCIZIO 1
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+
+void Merge(vector<int> &A, int low, int mid, int high){
+    int n1 = mid - low + 1;
+    int n2 = high - mid;
+    int leftarr[n1];
+    int rightarr[n2];
+    
+    for(int i=0; i<n1; i++){
+        leftarr[i] = A[low + i];
+    }
+    for(int j=0; j<n2; j++){
+        rightarr[j] = A[mid+1+j];
+    }
+    
+    int i=0;
+    int j=0;
+    int k=low;
+    
+    while(i<n1 && j<n2){
+        if(leftarr[i] <= rightarr[j]){
+            A[k] = leftarr[i];
+            i++;
+        }
+        else{
+            A[k] = rightarr[j];
+            j++;
+        }
+        k++;
+    }
+    
+    while(i<n1){
+        A[k] = leftarr[i];
+        i++;
+        k++;
+    }
+    
+    while(j<n2){
+        A[k] = rightarr[j];
+        j++;
+        k++;
+    }
+    
+}
+
+
+void MergeSort(vector<int> &A, int low, int high){
+    if(low<high){
+        int mid = (low+high)/2;
+        MergeSort(A,low, mid);
+        MergeSort(A, mid+1, high);
+        Merge(A, low, mid, high);
+    }
+}
+
+
+int occorrenze(vector<int> A, int dim, int key){
+
+    MergeSort(A, 0, dim-1);
+    
+    int res = 0;
+
+    for(int i=0; i<dim; i++){
+        if(A[i] == key){
+            res++;
+        }
+    }
+
+    return res;
+
+}
+
+
+int main(){
+
+    int tests, key, dim, elem;
+    vector<int> A;
+
+    cin>>tests;
+    while(tests--){
+        
+        A.clear();
+
+    cin>>key;
+    cin>>dim;
+    for(int i=0; i<dim; i++){
+        cin>>elem;
+        A.push_back(elem);
+    }
+
+    int res = occorrenze(A, dim, key);
+
+    cout<<res<<endl;
+
+    }
+
+    return 0;
+}
+
+
+Analisi di complessità: MergeSort ha complessità O(nlogn), 
+la ricerca dell, elemento con il for impiega un tempo O(n)
+Quindi la complessità totale è O(nlogn + n) = O(nlogn)
+-----------------------------------------------------------
+
+
+
+ESERCIZIO 2
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+void print(vector<int> seq){
+    for(int k=0; k<seq.size(); k++){
+        cout<<seq[k]<<"\t";
+    }
+    cout<<endl;
+}
+
+bool isPrime(int n){
+    if (n <= 1)
+        return false;
+ 
+    for (int i = 2; i < n; i++)
+        if (n % i == 0)
+            return false;
+ 
+    return true;
+}
+
+void PrimeNum(vector<int> &prime, int P, int S){
+    for(int i=P+1; i<S; i++){
+        if(isPrime(i)){
+            prime.push_back(i);
+        }
+    }
+}
+
+int sumUtil(vector<int> seq){
+    int sum=0;
+    for(int k=0; k<seq.size(); k++){
+        sum += seq[k];
+    }
+    return sum;
+}
+
+bool isSafe(vector<int> seq, int num, int S){
+
+    int sum = sumUtil(seq);
+    sum += num;
+
+    if(sum > S){
+        return false;
+    }
+    
+    for(int k=0; k<seq.size(); k++){
+        if(num == seq[k]){
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+bool func(int S, int N, int P, vector<int> &seq, vector<int> prime){
+
+    if(N==1){
+        if(S > P && isPrime(S)){
+            cout<<S;
+            return true;
+        }
+    }
+
+    if(seq.size() == N){
+        if(sumUtil(seq) == S){
+            print(seq);
+            
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    for(int j=0; j<prime.size(); j++){
+        
+        int num = prime[j];
+        
+        if(isSafe(seq, num, S)){
+            
+            seq.push_back(num);
+            
+            func(S, N, P, seq, prime);
+            
+            seq.pop_back();
+            
+        }
+        
+    }
+
+    return false;
+}
+
+
+
+int main(){
+
+    int tests, P, N, S;
+    int i = 0;
+    vector<int> sequence;
+    vector<int> prime;
+
+    cin>>tests;
+    while(tests--){
+        
+        i++;
+        
+        sequence.clear();
+        prime.clear();
+
+        cin>>S>>N>>P;
+    
+        PrimeNum(prime, P, S);
+    
+        cout<<"#CASO DI TEST "<<i<<endl;
+        func(S, N, P, sequence, prime);
+
+    }
+
+    return 0;
+}
+

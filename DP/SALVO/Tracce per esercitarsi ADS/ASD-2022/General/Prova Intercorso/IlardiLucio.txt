@@ -1,0 +1,88 @@
+//Problema 1 : Complessità O(log(n))
+#include <iostream>
+using namespace std;
+int count(int* vet,int p,int r,int k);
+int main() {
+	int T,k,dim;
+	cin>>T;
+	while(T--) {
+		cin>>k>>dim;
+		int* vet = new int[dim];
+		for(int i=0;i<dim;++i) cin>>vet[i];
+		cout<<count(vet,0,dim-1,k)<<endl;
+		delete vet;
+	}
+}
+
+int count(int* vet,int p,int r,int k) {
+	int cnt = 0;
+	if(p<r) {
+		int q = (p+r)/2;
+		cnt += count(vet,p,q,k);
+		cnt += count(vet,q+1,r,k);
+	}
+	else if(vet[p]==k) cnt = 1;
+	return cnt;
+}
+
+////////////////////////////////////////////////////
+
+//Problema 2 : Complessità O( (S-P)^N )
+//NB: aggiungere in input il numero di casi di test.
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void solve(int S,int N,int P);
+void lista_primi(vector<int>* lista,int S,int P);
+bool is_primo(int x);
+int somma(int* seq,int k);
+void backtrack(int* seq,int k,int S,int N,vector<int>* lista,int list_start_index);
+int main() {
+	int T,S,N,P,i=1;
+	cin>>T;
+	while(T--) {
+		cin>>S>>N>>P;
+		cout<<"CASO DI TEST "<<i++<<endl;
+		solve(S,N,P);
+	}
+}
+
+void solve(int S,int N,int P) {
+	int* seq = new int[N];
+	vector<int> lista;
+	lista_primi(&lista,S,P);
+	backtrack(seq,0,S,N,&lista,0);
+	delete seq;
+}
+
+void backtrack(int* seq,int k,int S,int N,vector<int>* lista,int list_start_index) {
+	if(k==N) {
+		if(somma(seq,k) == S) {
+			for(int i=0;i<N;++i) cout<<seq[i]<<" ";
+			cout<<endl;
+		}
+	}
+	else if(somma(seq,k) < S) {
+		for(int i=list_start_index;i<lista->size();++i) {
+			seq[k] = lista->at(i);
+			backtrack(seq,k+1,S,N,lista,i+1);
+		}
+	}
+}
+
+int somma(int* seq,int k) {
+	int cnt = 0;
+	for(int i=0;i<k;++i) cnt += seq[i];
+	return cnt;
+}
+void lista_primi(vector<int>* lista,int S,int P) {
+	for(int i=P+1;i<=S;++i)
+		if(is_primo(i)) lista->push_back(i);
+}
+
+bool is_primo(int x) {
+	for(int i=2;i<x;++i)
+		if(x%i==0) return false;
+	return true;
+}

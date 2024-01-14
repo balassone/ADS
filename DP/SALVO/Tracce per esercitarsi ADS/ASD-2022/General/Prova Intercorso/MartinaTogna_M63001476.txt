@@ -1,0 +1,194 @@
+PROBLEMA 1:
+Per la risoluzione di questo problema ho ragionato nel seguente modo: ho ordinato il vettore di partenza con il mergeSort
+(complessità nlogn), poi ho ricercato nel vettore ordinato l'elemento di cui vogliamo conoscere l'occorrenza. L'idea è stata 
+quella di utilizzare una ricerca binaria modificata per trovare la prima occorrenza dell'elemeneto e l'ultima occorrenza.
+In questo modo il numero di occorrenze sarà data dalla differenza tra la posizione dell'ultima occorrenza e la prima occorrenza +1.
+
+
+
+Complessità; O(nlogn);
+CODICE:
+
+#include <iostream>
+using namespace std;
+void Merge(int A[], int p, int q, int r){
+	
+	int n1=q-p+1;
+	int n2=r-q;
+	int L[n1+1];
+	int R[n2+1];
+	for(int i=0;i<n1;i++) L[i]=A[p+i];
+	for(int j=0;j<n2;j++) R[j]=A[q+j+1];
+	L[n1]=INT_MAX;
+	R[n2]=INT_MAX;
+	
+	int i=0;
+	int j=0;
+
+	for(int k=p;k<=r;k++){
+		if(L[i]<=R[j]){
+			A[k]=L[i];
+			i++;
+		}
+		else {
+		A[k]=R[j];
+		j++;
+	}
+	}
+}
+
+void Mergesort(int A[], int p, int r){
+	
+	int q;
+	if(p<r){
+		q=(p+r)/2;
+		Mergesort(A,p,q);
+		Mergesort(A,q+1,r);
+		Merge(A,p,q,r);
+	}
+}
+
+int RicercaBinariaUltimaOccorrenza(int C [], int x,int n){
+
+	int pos=-1;
+    int inf=0;
+    int sup=n-1;
+    while (inf<= sup) {
+        int q =(sup-inf)/2+inf;   
+        if (C[q]>x){
+            sup=q-1;
+        }else if(C[q]==x) {
+            pos=q;
+            inf=q+1;
+        }else
+            inf=q+1;
+    }
+	return pos;
+}
+
+int RicercaBinariaPrimaOccorrenza(int C [], int x,int n){
+
+	int pos=-1;
+    int inf=0;
+    int sup=n-1;
+    while (inf<= sup) {
+        int q =(sup-inf)/2+inf;   
+        if (C[q]>x){
+            sup=q-1;
+        }else if(C[q]==x) {
+            pos=q;
+    		sup=q-1;
+        }else
+            inf=q+1;
+    }
+	return pos;
+}
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
+
+
+int main(int argc, char** argv) {
+	
+	int numcases;
+	scanf("%d",&numcases);
+
+	while(numcases--){
+	
+	int elementocerca;
+	cin>>elementocerca;
+	int N;
+	cin>>N;
+
+	int * vettore=new int[N];
+	for(int i=0;i<N;i++) cin>>vettore[i];
+	Mergesort(vettore,0,N-1);
+	int pos=RicercaBinariaUltimaOccorrenza(vettore,elementocerca,N);
+	int pos1=RicercaBinariaPrimaOccorrenza(vettore,elementocerca,N);	
+	
+	if(pos!=-1 && pos1!=-1) cout<<(pos-pos1+1)<<endl;
+	else cout<<0<<endl;
+	
+	}
+	
+	return 0;
+}
+
+
+
+PROBLEMA 2:
+Per risolvere questo problema ho ragionato nel seguente modo: prima di tutto ho utilizzato una funzione "calcoloPrimi" che effettua il calcolo
+dei numeri primi tra P ed S, se quel numero è primo lo inserisce in un vettore "numeriprimi". Quindi parto da P e arrivo fino ad
+S e se quel numero è divisibile per un numero che va da 2 a <di se stesso allora non è primo. Se è primo lo inserisco nel vettore.
+Ottenuta questa sequenza di numeri primi, considero una funzione backtracking, che prende i tre input S,N,P in ingresso e un vettore
+di numeri primi, un vettore path in cui salverò la sequenza di lunghezza N che ha somma pari ad S. L'idea per costruire questa
+sequenza è considerare un singolo valore alla volta presente nella sequenza di numeri primi da me generata(numeri primi tra P E S)
+Per non considerare i numeri primi ripetuti più volte, ho ragionato in questo modo: l'indice viene incrementato (nel mio caso K)
+viene incrementato in entrambe le chiamate di BackTracking da me effettuate, solo che in una aggiorno la somma per vedere se quella
+strada potrà portarmi alla situazione, nell'altrà no, per non considerare l'indice precedente nella mia prossima sequenza da generare.
+
+Complessità: O(2^(L)) dove L è il numero di numeri primi presenti tra P+1 e S.
+
+CODICE:
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void calcoloPrimi(vector<int> & numeriprimi, int P, int S){
+	
+	
+	for(int i=P+1;i<=S;i++){
+		
+		bool primo=true;
+		for(int j=2;j<i;j++){
+			
+			if(i%j==0) primo=false;
+		}
+		if(primo==true) numeriprimi.push_back(i);
+		
+	}
+
+}
+
+
+void BackTracking( int S, int N, int P, int  K, vector<int> numeriprimi, vector<int> path, int sum){
+	
+	if(path.size()>=N && sum!=S ) return;
+	if(path.size()>=N && sum==S) {
+		
+		for(int i=0;i<path.size();i++) cout<<path[i]<<" ";
+		cout<<endl;
+		return;
+	}
+	if(sum>S && path.size()!=K) return;
+	if(K>=numeriprimi.size()) return;
+
+    path.push_back(numeriprimi[K]);
+    
+    BackTracking(S,N,P,K+1,numeriprimi,path,sum+numeriprimi[K]);
+    path.pop_back();
+    BackTracking(S,N,P,K+1,numeriprimi,path,sum);
+ 
+}
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
+int main(int argc, char** argv) {
+	
+	for(int l=1;l<=3;l++){
+	cout<<"CASO DI TEST "<<l<<endl;
+	int S,N,P;
+	cin>>S;
+	cin>>N;
+	cin>>P;
+	vector<int> numeriprimi;
+	calcoloPrimi(numeriprimi,P,S);
+	int K=0;
+	int sum=0;
+	vector<int> path;
+	BackTracking(S,N,P,K,numeriprimi,path,sum);	
+		
+	}
+	
+
+	return 0;
+}

@@ -1,0 +1,133 @@
+//esercizio 1
+#include <iostream>
+
+using namespace std;
+
+int occorrenze(int * arr, int l, int r, int elem) {
+
+    // uso un approccio simile a quello usato dalla ricerca binaria
+
+    int mid = (l+r)/2;
+
+    if (l > r) {
+        return 0;
+    }
+
+    if (l==r && arr[mid] != elem) {
+        return 0;
+    }
+
+    if (l==r && arr[mid] == elem) {
+        return 1;
+    }
+
+    return occorrenze(arr, l, mid, elem) + occorrenze(arr, mid+1, r, elem);
+}
+
+// complessitÃ  di count Ã¨ n*logn perchÃ¨ eseguo una ricerca binaria (log*n)
+// per tutti gli elementi all'interno dell'array quindi n*logn
+
+int main () {
+	
+	int ct;
+	int ct_dim;
+    int elem;
+	int dim = 0;
+    int input[100];
+	
+	cin>>ct;
+	
+	while(ct--) {
+		cout<<endl<<endl;
+        cin>>elem;
+		cin>>ct_dim;
+		dim=ct_dim;
+		while(ct_dim--) {
+	    	cin>>input[ct_dim];
+		}
+    cout<<"Occorrenze dell'elemento "<<elem<<": "<<occorrenze(input, 0, dim-1, elem)<<endl;
+
+	}
+	
+	return 0;
+}
+
+// -------------------------------------------------------------------------------------------------------
+//esercizio 2
+
+#include <iostream>
+
+using namespace std;
+
+int primeNum(int *primes, int P, int S) {
+    bool flag;
+    int index = 0;
+    //int * primes = new int [S-P];
+
+    for (int i=P; i<S+1; i++) {
+        flag = true;
+        for (int j=2; j<i+1/2; j++) {
+            if (i % j == 0) {
+                flag = false;
+                break;
+            }
+        }
+
+        if (flag==true) {
+            primes[index] = i;
+            index++;
+        }
+    }
+    return index;
+}
+
+// l'algoritmo non funziona correttamente
+
+bool sequence(int * primes, int dim, int * taken, int N, int P, int S, int n_tmp, int sum) {
+
+    if (sum == S && n_tmp == N) {
+        return true;
+    }
+
+    if (sum > S || n_tmp > N) {
+        return false;
+    }
+
+    for (int i=0; i<dim; i++) {
+        if (taken[i] != -1) {
+            return false;
+        }
+        taken[i] = primes[i];
+        if (sequence(primes, dim, taken, N, P, S, n_tmp+1, sum+primes[i]) == true ) {
+            return true;
+        }
+        taken[i] = -1;
+    }
+}
+
+
+
+int main () {
+	
+    int S,N,P;
+
+    cin>>S;
+    cin>>N;
+    cin>>P;
+
+    int primes[S-P];
+	int taken[S-P];
+	int dim = primeNum(primes, P, S);
+	
+	for (int i=0; i<dim; i++) {
+        taken[i] = -1;
+    }
+
+    cout<<sequence(primes, dim, taken, N, P, S, 0, 0);
+    
+    for (int i=0; i<dim; i++) {
+        cout<<taken[i]<<" ";
+    }
+
+	return 0;
+}

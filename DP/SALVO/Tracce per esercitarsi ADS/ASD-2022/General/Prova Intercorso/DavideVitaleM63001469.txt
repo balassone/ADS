@@ -1,0 +1,228 @@
+
+/*
+Davide Vitale M63001469
+////////////////////////////////PROBLEMA 1//////////////////////////////////////////////
+Complessità della funzione di conteggio O(n log(n))
+*/
+
+#include <bits/stdc++.h>
+using namespace std;
+ int conteggio(int * v, int, int, int);
+int main(void)
+{
+	int n_query;
+	int k,n;
+	do
+	{
+		cin>>n_query;
+	}
+	while(n_query<0);
+	
+	int * results = new int [n_query];
+	
+	
+	for(int x=0;x<n_query;x++)
+	{
+		do
+	    {
+		cin>>k;
+	    }
+	    while(k<0);
+	    
+	    do
+	    {
+		cin>>n;
+	    }
+	    while(n<0);
+		
+		int * v = new int [n];
+		for(int i=0;i<n;i++)
+		{
+			cin>>v[i];
+		}
+		
+		results[x]=conteggio(v,0,n-1,k);
+		
+		
+		delete [] v;
+		
+	}
+	
+	
+	for(int i=0;i<n_query;i++)
+	{
+		cout<<results[i]<<"\n";
+	}
+	
+	
+	delete [] results;
+	return 0;
+}
+
+int conteggio(int * v, int l, int r, int x)
+{
+   //complessità O (nlogn)
+    if ((l > r)
+        || (l == r && v[l] != x))
+        return 0;
+ 
+    if (l == r && v[l] == x)
+        return 1;
+ 
+    return conteggio(v, l,(l + r) / 2, x)+conteggio(v, 1 + (l + r) / 2,r, x);
+}
+///////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////PROBLEMA 2//////////////////////////////////////////////
+/*
+Problema 2
+complessità dell'algoritmo di backtracking O(K^N) dove k è il numero di volte totali che la funzione richiama se stessa 
+
+*/
+
+
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct ingressi{
+	int n;
+	int s;
+	int p;
+};
+bool verifica_primo(int n);
+void backtracking(int s,int n,int p,int i,int * sequenza,int count,int somma);
+bool trovato(int * v,int n,int x);
+int main(void)
+{
+	int n_query;
+	ingressi * v;
+	do
+	{
+		cin>>n_query;
+	}
+	while(n_query<0);
+	
+	v= new ingressi  [n_query];
+	
+	
+	
+	
+	for(int i=0;i<n_query;i++)
+	{
+		do
+	    {
+		cin>>v[i].s;
+	    }
+	    while(v[i].s<0);
+	    
+	    do
+	    {
+		cin>>v[i].n;
+	    }
+	    while(v[i].n<=0);
+	    
+	    do
+	    {
+		cin>>v[i].p;
+	    }
+	    while(!(v[i].p>1||(verifica_primo(v[i].p))));
+	}
+	
+	for(int i=0;i<n_query;i++)
+	{
+		int * seq= new int [v[i].n];
+		cout<<"CASO DI TEST "<<i+1<<endl;
+		backtracking(v[i].s,v[i].n,v[i].p,0,seq,0,0);
+		
+		delete [] seq;
+	}
+	
+	
+	
+
+	
+	delete [] v;
+	return 0;
+}
+
+void backtracking(int s,int n,int p,int i,int * sequenza,int count,int somma)
+{
+	if(i>0)
+	{
+	  sequenza[count]=i;
+	  somma=somma+i;
+	  count++;	
+	}
+	
+		if(count==n)
+	    {
+		
+		if(somma==s)
+		{
+		   for(int j=0;j<n;j++)
+		   {
+		     cout<<sequenza[j]<<" ";
+		   }	
+		   cout<<endl;
+		}
+		return;
+	    }
+	
+	else
+	{
+		int j=i+1;
+		while(((j+p)+somma)<=s)
+		{
+			
+			if(verifica_primo(j+p)&&(!trovato(sequenza,count,(j+p))))
+			{
+				backtracking(s,n,p,j+p,sequenza,count,somma);
+			}
+			j++;
+		}
+		return;
+	}
+	
+}
+
+bool trovato(int * v,int n,int x)
+{
+	//funzione di ricerca nella sequenza di numeri già inseriti
+	for(int i=0;i<n;i++)
+	{
+		if(x==v[i])
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool verifica_primo(int n)
+{
+	//funzione che controlla se il numero è primo
+	for(int i=2;i<n;i++)
+	{
+		if((n%i)==0)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

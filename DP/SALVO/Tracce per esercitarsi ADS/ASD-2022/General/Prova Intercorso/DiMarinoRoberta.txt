@@ -1,0 +1,115 @@
+//la complessità è log n
+
+#include<iostream>
+
+using namespace std;
+
+int global;
+
+void calcola(int *v, int sx, int rx, int x){
+	if (rx >= sx) {
+        int mid = sx + (rx - sx) / 2;
+
+        if (v[mid] == x) {
+        	global++;
+        }
+
+        calcola(v, sx, mid - 1, x);
+        calcola(v, mid + 1, rx, x);
+    }
+}
+
+int main(){
+	int casi,K,n;
+	int *v;
+	cin>>casi;
+	for(int i=0;i<casi;i++){
+		cin>>K;
+		cin>>n;
+		v=new int[n];
+		for(int j=0;j<n;j++){
+			cin>>v[j];
+		}
+		global=0;
+		calcola(v,0,n-1,K);
+		cout<<global<<endl;
+	}
+}
+
+***********************************************************************
+secondo esercizio
+********************************************************************
+
+//complessità esponenziale, dipende da N
+
+#include<iostream>
+
+using namespace std;
+
+bool primo(int n){
+	for(int i=2;i<n/2;i++){
+		if(n%i==0){
+			return false;
+		}
+	}
+	return true;
+}
+
+void stampaVettore(int *v, int n){
+	for(int i=0;i<n;i++){
+		cout<<v[i]<<" ";
+	}
+	cout<<endl;
+}
+
+int calcolaPrimi(int *v, int S,int P){
+	int p=0;
+	for(int i=P+1;i<S+1;i++){
+		if(primo(i)){
+			v[p]=i;
+			p++;
+		}
+	}
+	return p;
+}
+
+int sommaVettore(int *v, int n){
+	int somma=0;
+	for(int i=0;i<n;i++){
+		somma+=v[i];
+	}
+	return somma;
+}
+
+void BT(int S,int N, int P, int *v, int numprim, int *vs, int n){
+	if(sommaVettore(v,N)>=S){
+		if(sommaVettore(vs,N)==S){
+			stampaVettore(vs,N);
+		}
+		return;
+	}
+	for(int i=0;i<N;i++){
+		vs[i]=v[n];
+		BT(S,N,P,v,numprim,vs,n+1);
+	}
+}
+
+
+int main(){
+	int casi,S,N,P,numprim;
+	int *v, *vs;
+	cin>>casi;
+	for(int i=0;i<casi;i++){
+		cin>>S;
+		cin>>N;
+		cin>>P;
+		cout<<"CASO DI TEST "<<i+1<<endl;
+		v= new int[S-P];
+		numprim=calcolaPrimi(v,S,P);
+		vs = new int[N];
+		for(int j=0;j<N;j++){
+			vs[i]=v[i];
+		}
+		BT(S,N,P,v,numprim,vs,0);
+	}
+}
